@@ -64,7 +64,7 @@ In the **development window** (the new Cursor window that opened):
 3. **Verify it's using your local CLI:**
    - Command Palette (`Cmd+Shift+P`)
    - "Stencila: Stencila Shell"
-   - Run `stencila --version` - should show 2.7.0 (your local build)
+   - Run `stencila --version` - should show 2.6.0 (your local build)
 
 ## Development Workflow
 

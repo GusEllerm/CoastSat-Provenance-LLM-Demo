@@ -24,7 +24,7 @@ Looking at `stencila/vscode/src/cli.ts`, the extension finds the CLI based on it
 
 You have:
 - **Global Stencila**: 2.6.0 at `/usr/local/bin/stencila`
-- **Local Build**: 2.7.0 at `./stencila/target/debug/stencila`
+- **Local Build**: 2.6.0 at `./stencila/target/debug/stencila`
 - **Installed Extension**: Likely using the global CLI (2.6.0)
 
 ## Options to Use Your Local Build

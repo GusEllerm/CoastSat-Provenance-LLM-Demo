@@ -19,7 +19,7 @@
 - ✅ Sample documents for testing CLI
 
 ### Verified
-- ✅ Local CLI build working (2.7.0)
+- ✅ Local CLI build working (2.6.0)
 - ✅ Extension development mode working
 - ✅ Extension correctly uses local build
 - ✅ Test change verified and reverted

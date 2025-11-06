@@ -1,9 +1,11 @@
-
-
-# Title
-
-Some content
+# Example LLM use case
 
 ```python exec
-print("Hello, world!")
+list = [1143, 224, 33, 4111, 5]
 ```
+
+::: for item in list
+
+::: describe [openai/gpt-5] Wax lyical about this variable: {{item}} :::
+
+:::

@@ -9,6 +9,8 @@
 test-files/outputs/
 *.test
 *.spec
+test-output.json
+test-files/examples/*.json
 
 # IDE files
 .idea/

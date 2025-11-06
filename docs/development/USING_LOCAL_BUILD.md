@@ -100,7 +100,7 @@ cargo build --release --bin stencila
 stencila --version  # => 2.6.0
 
 # Local development version
-./stencila/target/debug/stencila --version  # => 2.7.0 (or whatever you're building)
+./stencila/target/debug/stencila --version  # => 2.6.0 (or whatever you're building)
 
 # Via cargo
 cd stencila && cargo run --bin stencila -- --version

@@ -70,7 +70,7 @@ You can verify which CLI is being used:
 2. **Use the Stencila Shell**:
    - Command Palette → "Stencila: Stencila Shell"
    - Run `stencila --version`
-   - Should show 2.7.0 (your local build)
+   - Should show 2.6.0 (your local build)
 
 3. **Check the code path**:
    ```bash

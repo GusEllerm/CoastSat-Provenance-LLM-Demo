@@ -110,9 +110,10 @@ cargo build --bin stencila
 
 ## Current Status
 
-- **Global Stencila**: 2.x.x (installed at `/usr/local/bin/stencila`)
-- **Local Build**: 2.x.x (at `stencila/target/debug/stencila`)
+- **Global Stencila**: 2.6.0 (installed at `/usr/local/bin/stencila`)
+- **Local Build**: 2.6.0 (at `stencila/target/debug/stencila`)
 - **Extension**: Uses local build automatically in development mode
+- **Note**: Working with v2.6.0 release (previous stable version)
 
 ## Need Help?
 

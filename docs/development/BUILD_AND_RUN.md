@@ -5,7 +5,7 @@
 Your local build is **working**! Here's what you have:
 
 - **Global Stencila**: 2.6.0 (at `/usr/local/bin/stencila`)
-- **Local Build**: 2.7.0 (at `./stencila/target/debug/stencila`)
+- **Local Build**: 2.6.0 (at `./stencila/target/debug/stencila`)
 
 ## Quick Start
 
@@ -90,7 +90,7 @@ stencila --version          # => 2.6.0
 stencila kernels list
 
 # Your local version
-cargo run --bin stencila -- --version  # => 2.7.0
+cargo run --bin stencila -- --version  # => 2.6.0
 cargo run --bin stencila -- kernels list
 ```
 
@@ -175,7 +175,7 @@ cargo build --bin stencila
 ```bash
 # Compare versions
 stencila --version                              # Global: 2.6.0
-./stencila/target/debug/stencila --version      # Local: 2.7.0
+./stencila/target/debug/stencila --version      # Local: 2.6.0
 
 # Compare help output
 diff <(stencila --help) <(./stencila/target/debug/stencila --help)

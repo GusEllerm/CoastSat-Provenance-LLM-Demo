@@ -2,8 +2,6 @@
 # Development environment startup script
 # This script sets up everything needed to start developing Stencila
 
-set -e
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR/.."
 STENCILA_DIR="$PROJECT_DIR/stencila"
@@ -37,12 +35,18 @@ fi
 echo "✅ Prerequisites check passed"
 echo ""
 
-# Build CLI
+# Build CLI (this must succeed)
 echo "🔨 Building Stencila CLI..."
 cd "$STENCILA_DIR"
-cargo build --bin stencila
+if ! cargo build --bin stencila; then
+    echo "❌ CLI build failed!"
+    exit 1
+fi
 echo "✅ CLI built"
 echo ""
+
+# From here on, don't exit on error - extension build may fail
+set +e
 
 # Install and build extension
 echo "📦 Setting up VS Code extension..."
@@ -75,11 +79,16 @@ if [ ! -d "$TS_DIR/dist" ]; then
     npm run build
 fi
 
-# Now compile extension
+# Now compile extension (this may fail due to Tailwind CSS v4 conflict - that's OK)
 cd "$VSCODE_DIR"
 echo "  Compiling extension..."
-npm run compile
-echo "✅ Extension compiled"
+if npm run compile 2>&1 | tee /tmp/stencila-compile.log; then
+    echo "✅ Extension compiled"
+else
+    echo "⚠️  Extension compilation had issues (see /tmp/stencila-compile.log)"
+    echo "   This is often due to Tailwind CSS v4 conflict - CLI will still work!"
+    echo "   See docs/troubleshooting/README.md for details"
+fi
 echo ""
 
 # Check if launch.json exists
@@ -131,13 +140,7 @@ echo "  4. Your changes to the CLI will be automatically used!"
 echo "     (Just rebuild: cargo build --bin stencila, then restart LSP server)"
 echo ""
 
-# Ask if user wants to open the extension workspace
-if [ -n "$IDE_CMD" ]; then
-    read -p "Open extension workspace in $IDE_CMD now? (y/n) " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "Opening $VSCODE_DIR..."
-        $IDE_CMD "$VSCODE_DIR"
-    fi
-fi
+# Always return success - extension build failure is non-critical
+# (start-dev.sh will handle opening the IDE)
+exit 0
 
