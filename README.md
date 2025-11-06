@@ -74,6 +74,27 @@ See [Development Workflow](docs/development/DEVELOPMENT_WORKFLOW.md) for details
 - ✅ **Test Files** - Ready-to-use test documents
 - ✅ **Watch Mode** - Auto-rebuild on changes
 
+## Completed Setup Tasks
+
+### Documentation
+- Organized all documentation under the `docs/` hierarchy
+- Main README covers quick start and orientation guides
+- Detailed guides for getting started, development, and extension workflows
+
+### Scripts
+- Automated setup and development scripts, including `./scripts/start-dev.sh`
+- Watch mode for auto-rebuild on file changes
+- Helper scripts for common tasks (build, test, CLI, etc.)
+
+### Test Files
+- Created `test-files/` directory with inputs, examples, and outputs
+- Sample documents ready for CLI testing
+
+### Verification
+- Local CLI build validated at 2.6.0
+- Extension development mode confirmed working with the local build
+- Checked the extension uses the local build in dev mode
+
 ## First Time Setup
 
 1. **Clone and setup** (one-time):
