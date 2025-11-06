@@ -1,0 +1,30 @@
+{
+  "type": "Article",
+  "title": "Article with Code Example",
+  "content": [
+    {
+      "type": "Heading",
+      "depth": 1,
+      "content": ["Python Code Example"]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        "Here's a simple Python code chunk:"
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "programmingLanguage": "python",
+      "text": "x = 10\ny = 20\nprint(f'The sum is {x + y}')",
+      "outputs": []
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        "This code calculates the sum of two numbers."
+      ]
+    }
+  ]
+}
+

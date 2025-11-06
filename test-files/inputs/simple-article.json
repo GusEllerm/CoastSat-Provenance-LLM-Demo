@@ -1,0 +1,24 @@
+{
+  "type": "Article",
+  "title": "A Simple Test Article",
+  "content": [
+    {
+      "type": "Heading",
+      "depth": 1,
+      "content": ["Introduction"]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        "This is a simple test article to verify that the Stencila CLI is working correctly."
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        "You can use this file to test format conversions, document execution, and rendering."
+      ]
+    }
+  ]
+}
+

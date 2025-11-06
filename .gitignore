@@ -1,0 +1,40 @@
+# Development artifacts
+*.log
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test files and outputs
+test-files/outputs/
+*.test
+*.spec
+
+# IDE files
+.idea/
+.vscode/
+*.code-workspace
+
+# Build artifacts (keep stencila/ repo structure)
+# But ignore local changes tracking
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+
+# Node (for workspace root only)
+node_modules/
+
+# Rust
+target/
+**/*.rs.bk
