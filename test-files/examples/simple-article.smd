@@ -6,6 +6,6 @@ list = [1143, 224, 33, 4111, 5]
 
 ::: for item in list
 
-::: template_describe [openai/gpt-5] describe this item: {{item}} :::
+::: template_describe [openai/gpt-5] Wax lyrical regarding this number: {{item}} :::
 
 :::
