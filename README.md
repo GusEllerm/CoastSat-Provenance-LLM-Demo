@@ -136,6 +136,16 @@ cargo build --bin stencila
 - **Extension**: Uses local build automatically in development mode
 - **Note**: Working with v2.6.0 release (previous stable version)
 
+## Known Issues & Fixes
+
+### Render Command Hanging
+
+**Issue**: The `stencila render` command would hang after successfully writing output files, especially when using LLM inference features.
+
+**Fix**: The render command now exits immediately after writing output files using `exit(0)`, preventing hangs from background tasks (e.g., LLM inference tasks that may still be running). This is safe since the file is already written to disk.
+
+**Location**: `stencila/rust/cli/src/render.rs` - The render command exits immediately after successful file export.
+
 ## Need Help?
 
 - Check [Getting Started](docs/getting-started/QUICKSTART.md) for quick reference
