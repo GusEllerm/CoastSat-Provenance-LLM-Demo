@@ -369,6 +369,15 @@ CREATE NODE TABLE IF NOT EXISTS `IncludeBlock` (
   `position` UINT32
 );
 
+CREATE NODE TABLE IF NOT EXISTS `InstructionAttachment` (
+  `alias` STRING,
+  `docId` STRING,
+  `nodeId` STRING PRIMARY KEY,
+  `nodePath` STRING,
+  `nodeAncestors` STRING,
+  `position` UINT32
+);
+
 CREATE NODE TABLE IF NOT EXISTS `Link` (
   `target` STRING,
   `rel` STRING,
@@ -744,6 +753,11 @@ CREATE NODE TABLE IF NOT EXISTS `VideoObject` (
 CREATE REL TABLE IF NOT EXISTS `author` (
   FROM `AuthorRole` TO `Person`,
   FROM `AuthorRole` TO `Organization`,
+  ONE_ONE
+);
+
+CREATE REL TABLE IF NOT EXISTS `file` (
+  FROM `InstructionAttachment` TO `File`,
   ONE_ONE
 );
 

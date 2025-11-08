@@ -1,3 +1,6 @@
+use std::path::PathBuf;
+
+use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 use codec_cbor::r#trait::CborCodec;
 use codec_markdown::to_markdown_flavor;
 use codecs::Format;
@@ -7,11 +10,13 @@ use common::{
     tokio,
 };
 use schema::{
-    Author, AuthorRole, AuthorRoleAuthor, AuthorRoleName, CompilationDigest, InstructionBlock,
-    SoftwareApplication,
+    Author, AuthorRole, AuthorRoleAuthor, AuthorRoleName, CompilationDigest, ExecutionMessage,
+    InstructionAttachment, InstructionBlock, MessageLevel, SoftwareApplication,
 };
 
 use crate::{ExecuteOptions, interrupt_impl, message_utils, prelude::*, state_digest};
+
+const MAX_ATTACHMENT_BYTES: u64 = 5 * 1024 * 1024;
 
 impl Executable for InstructionBlock {
     #[tracing::instrument(skip_all)]
@@ -136,6 +141,9 @@ impl Executable for InstructionBlock {
         let started = Timestamp::now();
         let mut messages = Vec::new();
 
+        resolve_instruction_attachments(&mut self.options.attachments, executor, &mut messages)
+            .await;
+
         // Determine the types of nodes in the content of the instruction
         // TODO: reinstate use of node_types
         let _ = self
@@ -177,14 +185,18 @@ impl Executable for InstructionBlock {
 
         // Render variables in the instruction message through Jinja
         // This allows {{variable}} syntax to be resolved from code kernels
-        let rendered_message = match message_utils::render_message_variables(&self.message, executor).await {
-            Ok(rendered) => rendered,
-            Err(error) => {
-                tracing::warn!("Failed to render variables in message, using original: {}", error);
-                // If rendering fails, use original message
-                self.message.clone()
-            }
-        };
+        let rendered_message =
+            match message_utils::render_message_variables(&self.message, executor).await {
+                Ok(rendered) => rendered,
+                Err(error) => {
+                    tracing::warn!(
+                        "Failed to render variables in message, using original: {}",
+                        error
+                    );
+                    // If rendering fails, use original message
+                    self.message.clone()
+                }
+            };
 
         // Create a future for each replicate
         let mut futures = FuturesUnordered::new();
@@ -273,4 +285,114 @@ impl Executable for InstructionBlock {
         // Continue to interrupt executable nodes in `content`
         WalkControl::Continue
     }
+}
+
+async fn resolve_instruction_attachments(
+    attachments: &mut Option<Vec<InstructionAttachment>>,
+    executor: &Executor,
+    messages: &mut Vec<ExecutionMessage>,
+) {
+    if let Some(attachments) = attachments {
+        for attachment in attachments.iter_mut() {
+            if attachment.file.content.is_some() {
+                continue;
+            }
+
+            if let Err(error) = resolve_instruction_attachment(attachment, executor).await {
+                tracing::warn!("{error}");
+                messages.push(ExecutionMessage::new(MessageLevel::Warning, error));
+            }
+        }
+    }
+}
+
+async fn resolve_instruction_attachment(
+    attachment: &mut InstructionAttachment,
+    executor: &Executor,
+) -> Result<(), String> {
+    let original_path = attachment.file.path.clone();
+    let path = original_path.trim();
+
+    if path.is_empty() {
+        return Err(format!(
+            "Attachment `{}` does not specify a file path.",
+            attachment.alias
+        ));
+    }
+
+    if path.starts_with("http://") || path.starts_with("https://") {
+        return Err(format!(
+            "Remote attachment `{}` using `{}` is not yet supported.",
+            attachment.alias, path
+        ));
+    }
+
+    let path = path.trim_start_matches("file://");
+
+    let mut resolved = PathBuf::from(path);
+    if !resolved.is_absolute() {
+        if let Some(base) = executor.directory_stack.last() {
+            resolved = base.join(&resolved);
+        }
+    }
+
+    let metadata = tokio::fs::metadata(&resolved).await.map_err(|error| {
+        format!(
+            "Unable to access attachment `{}` at `{}`: {error}",
+            attachment.alias,
+            resolved.display()
+        )
+    })?;
+
+    if !metadata.is_file() {
+        return Err(format!(
+            "Attachment `{}` at `{}` is not a file.",
+            attachment.alias,
+            resolved.display()
+        ));
+    }
+
+    let size = metadata.len();
+    if size > MAX_ATTACHMENT_BYTES {
+        return Err(format!(
+            "Attachment `{}` is {} bytes which exceeds the limit of {} bytes.",
+            attachment.alias, size, MAX_ATTACHMENT_BYTES
+        ));
+    }
+
+    let data = tokio::fs::read(&resolved).await.map_err(|error| {
+        format!(
+            "Failed to read attachment `{}` at `{}`: {error}",
+            attachment.alias,
+            resolved.display()
+        )
+    })?;
+
+    let format = Format::from_path(&resolved);
+    let media_type = format.media_type();
+
+    let name = resolved
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or(&attachment.alias)
+        .to_string();
+
+    attachment.file.name = name;
+    attachment.file.path = resolved.to_string_lossy().to_string();
+    attachment.file.media_type = Some(media_type);
+    attachment.file.size = Some(size);
+
+    match String::from_utf8(data.clone()) {
+        Ok(text) => {
+            attachment.file.content = Some(text);
+            attachment.file.options.transfer_encoding = None;
+        }
+        Err(_) => {
+            let encoded = BASE64.encode(data);
+            attachment.file.content = Some(encoded);
+            attachment.file.options.transfer_encoding = Some("base64".to_string());
+        }
+    }
+
+    Ok(())
 }

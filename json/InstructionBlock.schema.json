@@ -430,6 +430,21 @@
       "items": {
         "$ref": "SuggestionBlock.schema.json"
       }
+    },
+    "attachments": {
+      "@id": "stencila:attachments",
+      "description": "Attachments to upload alongside the instruction message.",
+      "aliases": [
+        "attachment"
+      ],
+      "walk": true,
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "InstructionAttachment.schema.json"
+      }
     }
   }
 }

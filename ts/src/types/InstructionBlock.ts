@@ -2,6 +2,7 @@
 
 import { Block } from "./Block.js";
 import { Instruction } from "./Instruction.js";
+import { InstructionAttachment } from "./InstructionAttachment.js";
 import { InstructionMessage } from "./InstructionMessage.js";
 import { InstructionType } from "./InstructionType.js";
 import { ModelParameters } from "./ModelParameters.js";
@@ -24,6 +25,11 @@ export class InstructionBlock extends Instruction {
    * Suggestions for the instruction
    */
   suggestions?: SuggestionBlock[];
+
+  /**
+   * Attachments to upload alongside the instruction message.
+   */
+  attachments?: InstructionAttachment[];
 
   constructor(instructionType: InstructionType, prompt: PromptBlock, message: InstructionMessage, modelParameters: ModelParameters, options?: Partial<InstructionBlock>) {
     super(instructionType, prompt, message, modelParameters);

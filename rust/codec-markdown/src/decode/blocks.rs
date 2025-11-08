@@ -22,12 +22,12 @@ use codec::{
     schema::{
         Admonition, AdmonitionType, AppendixBreak, Author, Block, CallArgument, CallBlock, Chat,
         ChatMessage, ChatMessageGroup, ChatMessageOptions, Claim, CodeBlock, CodeChunk,
-        CodeExpression, ExecutionBounds, ExecutionMode, Figure, ForBlock, Heading,
+        CodeExpression, ExecutionBounds, ExecutionMode, Figure, File, ForBlock, Heading,
         HorizontalAlignment, IfBlock, IfBlockClause, ImageObject, IncludeBlock, Inline,
-        InstructionBlock, InstructionMessage, LabelType, List, ListItem, ListOrder, MathBlock,
-        Node, Paragraph, PromptBlock, QuoteBlock, RawBlock, Section, SoftwareApplication,
-        StyledBlock, SuggestionBlock, SuggestionStatus, Table, TableCell, TableRow, TableRowType,
-        Text, ThematicBreak, Walkthrough, WalkthroughStep,
+        InstructionAttachment, InstructionBlock, InstructionMessage, LabelType, List, ListItem,
+        ListOrder, MathBlock, Node, Paragraph, PromptBlock, QuoteBlock, RawBlock, Section,
+        SoftwareApplication, StyledBlock, SuggestionBlock, SuggestionStatus, Table, TableCell,
+        TableRow, TableRowType, Text, ThematicBreak, Walkthrough, WalkthroughStep,
     },
 };
 
@@ -932,6 +932,7 @@ fn instruction_block(input: &mut Located<&str>) -> ModalResult<Block> {
         opt(preceded(multispace1, block_node_type)),
         opt(preceded(multispace1, prompt)),
         opt(preceded(multispace1, model_parameters)),
+        opt(preceded(multispace1, instruction_attachments)),
         opt(take_while(1.., |_| true)),
     )
         .map(
@@ -942,6 +943,7 @@ fn instruction_block(input: &mut Located<&str>) -> ModalResult<Block> {
                 node_type,
                 prompt,
                 model_parameters,
+                attachments,
                 query,
             )| {
                 let node_types = node_type.map(|node_type| vec![node_type.to_string()]);
@@ -986,7 +988,15 @@ fn instruction_block(input: &mut Located<&str>) -> ModalResult<Block> {
 
                 let content = capacity.map(Vec::with_capacity);
 
-                Block::InstructionBlock(InstructionBlock {
+                let attachments = attachments.and_then(|attachments| {
+                    let attachments: Vec<_> = attachments
+                        .into_iter()
+                        .filter(|attachment| !attachment.file.path.is_empty())
+                        .collect();
+                    (!attachments.is_empty()).then_some(attachments)
+                });
+
+                let mut instruction = InstructionBlock {
                     instruction_type,
                     prompt,
                     message,
@@ -994,10 +1004,74 @@ fn instruction_block(input: &mut Located<&str>) -> ModalResult<Block> {
                     content,
                     execution_mode,
                     ..Default::default()
-                })
+                };
+
+                if let Some(attachments) = attachments {
+                    instruction.options.attachments = Some(attachments);
+                }
+
+                Block::InstructionBlock(instruction)
             },
         )
         .parse_next(input)
+}
+
+fn instruction_attachments(input: &mut Located<&str>) -> ModalResult<Vec<InstructionAttachment>> {
+    delimited('[', take_until(0.., ']'), (']', multispace0))
+        .map(parse_instruction_attachments)
+        .parse_next(input)
+}
+
+fn parse_instruction_attachments(raw: &str) -> Vec<InstructionAttachment> {
+    raw.split(',')
+        .filter_map(|entry| {
+            let entry = entry.trim();
+            if entry.is_empty() {
+                return None;
+            }
+
+            let (alias, path) = match entry.split_once(':') {
+                Some((alias, path)) => (alias.trim(), path.trim()),
+                None => {
+                    let path = entry;
+                    let alias = path
+                        .rsplit(['/', '\\'])
+                        .next()
+                        .filter(|name| !name.is_empty())
+                        .unwrap_or(path);
+                    (alias.trim(), path.trim())
+                }
+            };
+
+            if path.is_empty() {
+                return None;
+            }
+
+            let display_name = path
+                .rsplit(['/', '\\'])
+                .next()
+                .filter(|name| !name.is_empty())
+                .unwrap_or(alias);
+
+            let alias = if alias.is_empty() {
+                display_name
+            } else {
+                alias
+            };
+
+            let file = File {
+                name: display_name.to_string(),
+                path: path.to_string(),
+                ..Default::default()
+            };
+
+            Some(InstructionAttachment {
+                alias: alias.to_string(),
+                file,
+                ..Default::default()
+            })
+        })
+        .collect()
 }
 
 /// Parse a [`SuggestionBlock`] node
@@ -1606,7 +1680,7 @@ fn myst_to_block(code: &mdast::Code, context: &mut Context) -> Option<Block> {
             select: options.get("select").map(|select| select.to_string()),
             ..Default::default()
         }),
-        "create" | "edit" | "fix" | "describe" => {
+        "create" | "edit" | "fix" | "describe" | "template_describe" => {
             let prompt = options
                 .get("prompt")
                 .map(|prompt| PromptBlock {

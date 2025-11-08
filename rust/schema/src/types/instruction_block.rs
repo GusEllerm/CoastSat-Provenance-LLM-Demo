@@ -13,6 +13,7 @@ use super::execution_mode::ExecutionMode;
 use super::execution_required::ExecutionRequired;
 use super::execution_status::ExecutionStatus;
 use super::execution_tag::ExecutionTag;
+use super::instruction_attachment::InstructionAttachment;
 use super::instruction_message::InstructionMessage;
 use super::instruction_type::InstructionType;
 use super::integer::Integer;
@@ -204,6 +205,14 @@ pub struct InstructionBlockOptions {
     #[cfg_attr(feature = "proptest", proptest(value = "None"))]
     #[dom(elem = "span")]
     pub execution_messages: Option<Vec<ExecutionMessage>>,
+
+    /// Attachments to upload alongside the instruction message.
+    #[serde(alias = "attachment")]
+    #[serde(default, deserialize_with = "option_one_or_many")]
+    #[walk]
+    #[cfg_attr(feature = "proptest", proptest(value = "None"))]
+    #[dom(elem = "div")]
+    pub attachments: Option<Vec<InstructionAttachment>>,
 }
 
 impl InstructionBlock {

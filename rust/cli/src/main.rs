@@ -3,7 +3,7 @@
 use std::{env::set_var, process::exit};
 
 use cli_utils::message;
-use common::{clap::Parser, eyre::Result, tokio};
+use common::{clap::Parser, eyre::Result, tokio, tracing};
 
 use cli::{
     Cli, Command, errors,
@@ -53,9 +53,15 @@ async fn main() -> Result<()> {
 
         let skip_upgrade = matches!(cli.command, Command::Upgrade(..));
         if !skip_upgrade {
-            upgrade::check(false);
+            tracing::debug!("Starting upgrade check in background");
+            let _handle = upgrade::check(false);
+            // Drop the handle immediately - we don't wait for the task to complete
+            // The task will complete in the background and set the atomic flag
+            drop(_handle);
+            tracing::debug!("Upgrade check handle dropped, task running in background");
         }
 
+        tracing::debug!("Running CLI command");
         if let Err(error) = cli.run().await {
             if error_details == "none" || (error_details == "auto" && !cfg!(debug_assertions)) {
                 message(&error.to_string(), Some("💥"));
@@ -64,11 +70,15 @@ async fn main() -> Result<()> {
                 return Err(error);
             }
         }
+        tracing::debug!("CLI command completed successfully");
 
         if !skip_upgrade {
+            tracing::debug!("Checking upgrade availability status");
             upgrade::notify();
         }
+        tracing::debug!("About to return from main()");
     }
 
+    tracing::debug!("Returning Ok(()) from main()");
     Ok(())
 }

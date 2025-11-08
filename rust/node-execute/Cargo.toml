@@ -4,6 +4,7 @@ version = "0.0.0"
 edition = "2024"
 
 [dependencies]
+base64 = { workspace = true }
 codec-cbor = { path = "../codec-cbor" }
 codec-markdown = { path = "../codec-markdown" }
 codecs = { path = "../codecs" }

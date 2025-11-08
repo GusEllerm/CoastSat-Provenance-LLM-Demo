@@ -45,3 +45,12 @@ properties:
     walk: true
     dom:
       elem: div
+  attachments:
+    "@id": stencila:attachments
+    description: Attachments to upload alongside the instruction message.
+    type: array
+    items:
+      $ref: InstructionAttachment
+    walk: true
+    dom:
+      elem: div

@@ -24,6 +24,7 @@ use common::{
         self,
         fs::{self, read_to_string, write},
         task::JoinHandle,
+        time::timeout,
     },
     tracing,
 };
@@ -55,29 +56,70 @@ static UPGRADE_AVAILABLE: Lazy<AtomicBool> = Lazy::new(AtomicBool::default);
 /// of the CLI. A check is only done if one has not been done recently,
 /// unless `force = true`.
 pub fn check(force: bool) -> JoinHandle<Option<String>> {
+    tracing::debug!("upgrade::check() called, force={force}");
     let check = async move {
+        tracing::debug!("Upgrade check task started");
         let cache = get_app_dir(DirType::Cache, true)?.join("latest-release.json");
+        tracing::debug!("Cache path: {:?}", cache);
 
         let fetch = if !force && cache.exists() {
             let metadata = fs::metadata(&cache).await?;
             let modification_time = metadata.modified()?;
-            SystemTime::now().duration_since(modification_time)? > Duration::from_secs(3600 * 24)
+            let should_fetch = SystemTime::now().duration_since(modification_time)?
+                > Duration::from_secs(3600 * 24);
+            tracing::debug!("Cache exists, should_fetch={should_fetch}");
+            should_fetch
         } else {
+            tracing::debug!("Force check or cache doesn't exist, will fetch");
             true
         };
 
         let latest = if fetch {
-            let latest = GithubRelease::latest().await?;
-
-            let json = serde_json::to_string(&latest)?;
-            write(cache, json).await?;
-
-            latest
+            tracing::debug!("Fetching latest release from GitHub (with 5s timeout)");
+            // Add a timeout to prevent hanging on network requests
+            match timeout(Duration::from_secs(5), GithubRelease::latest()).await {
+                Ok(Ok(latest)) => {
+                    tracing::debug!("Successfully fetched latest release: {}", latest.version());
+                    let json = serde_json::to_string(&latest)?;
+                    write(cache, json).await?;
+                    latest
+                }
+                Ok(Err(error)) => {
+                    tracing::debug!("Error fetching latest release: {error}");
+                    // If fetch fails, try to use cached version if available
+                    if cache.exists() {
+                        tracing::debug!("Falling back to cached version");
+                        let json = read_to_string(&cache).await?;
+                        serde_json::from_str(&json)?
+                    } else {
+                        tracing::debug!("No cache available, returning None");
+                        return Ok(None);
+                    }
+                }
+                Err(_) => {
+                    tracing::debug!("Timeout while checking for upgrade (5s exceeded)");
+                    // If timeout, try to use cached version if available
+                    if cache.exists() {
+                        tracing::debug!("Falling back to cached version after timeout");
+                        let json = read_to_string(&cache).await?;
+                        serde_json::from_str(&json)?
+                    } else {
+                        tracing::debug!("No cache available after timeout, returning None");
+                        return Ok(None);
+                    }
+                }
+            }
         } else {
+            tracing::debug!("Using cached version (cache is fresh)");
             let json = read_to_string(&cache).await?;
             serde_json::from_str(&json)?
         };
 
+        tracing::debug!(
+            "Comparing versions: latest={}, current={}",
+            latest.version(),
+            STENCILA_VERSION
+        );
         // Both versions are expected to be semver, but if they are not then, then
         // the will return None
         if let (Ok(latest_semver), Ok(current_semver)) = (
@@ -85,31 +127,63 @@ pub fn check(force: bool) -> JoinHandle<Option<String>> {
             semver::Version::parse(STENCILA_VERSION),
         ) {
             if latest_semver > current_semver {
+                tracing::debug!("Upgrade available: {} > {}", latest_semver, current_semver);
                 UPGRADE_AVAILABLE.store(true, Ordering::SeqCst);
                 Ok::<_, Report>(Some(latest.version()))
             } else {
+                tracing::debug!("No upgrade needed: {} <= {}", latest_semver, current_semver);
                 Ok(None)
             }
         } else {
+            tracing::debug!("Version parsing failed, returning None");
             Ok(None)
         }
     };
-    tokio::spawn(async {
-        match check.await {
-            Ok(version) => version,
-            Err(error) => {
-                tracing::debug!("While checking for upgrade: {error}");
+    // Spawn the task with a maximum time limit to prevent blocking shutdown
+    // If it takes longer than 10 seconds total, we'll abort it
+    let handle = tokio::spawn(async {
+        tracing::debug!("Upgrade check spawned task started");
+        let check_future = async {
+            match check.await {
+                Ok(version) => {
+                    tracing::debug!(
+                        "Upgrade check completed successfully, version={:?}",
+                        version
+                    );
+                    version
+                }
+                Err(error) => {
+                    tracing::debug!("While checking for upgrade: {error}");
+                    None
+                }
+            }
+        };
+
+        // Ensure the task completes within 10 seconds total
+        match timeout(Duration::from_secs(10), check_future).await {
+            Ok(result) => {
+                tracing::debug!("Upgrade check spawned task finished within timeout");
+                result
+            }
+            Err(_) => {
+                tracing::debug!("Upgrade check task exceeded 10s timeout, aborting");
                 None
             }
         }
-    })
+    });
+    tracing::debug!("Upgrade check task spawned, returning handle");
+    handle
 }
 
 /// Notify the user if a upgrade is available on stderr
 #[allow(clippy::print_stderr)]
 pub fn notify() {
+    tracing::debug!("upgrade::notify() called");
     if UPGRADE_AVAILABLE.load(Ordering::SeqCst) {
+        tracing::debug!("Upgrade available, printing message");
         eprintln!("🎂 A newer version is available. Get it using `stencila upgrade`");
+    } else {
+        tracing::debug!("No upgrade available");
     }
 }
 

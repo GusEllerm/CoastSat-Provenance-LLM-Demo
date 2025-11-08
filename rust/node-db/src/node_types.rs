@@ -813,6 +813,30 @@ impl DatabaseNode for IncludeBlock {
     }
 }
 
+impl DatabaseNode for InstructionAttachment {
+    fn node_type(&self) -> NodeType {
+        NodeType::InstructionAttachment
+    }
+
+    fn node_id(&self) -> NodeId {
+        InstructionAttachment::node_id(self)
+    }
+    
+    fn primary_key(&self) -> Value {
+        self.node_id().to_kuzu_value()
+    }
+    
+    fn node_table(&self) -> Vec<(NodeProperty, LogicalType, Value)> {
+        vec![
+            (NodeProperty::Alias, self.alias.to_kuzu_type(), self.alias.to_kuzu_value())
+        ]
+    }
+
+    fn rel_tables(&self) -> Vec<(NodeProperty, Vec<(NodeType, Value)>)> {
+        vec![(NodeProperty::File, relations(std::iter::once(&self.file)))]
+    }
+}
+
 impl DatabaseNode for Link {
     fn node_type(&self) -> NodeType {
         NodeType::Link
@@ -1741,6 +1765,7 @@ impl DatabaseNode for Node {
             Node::IfBlockClause(node) => node.node_type(),
             Node::ImageObject(node) => node.node_type(),
             Node::IncludeBlock(node) => node.node_type(),
+            Node::InstructionAttachment(node) => node.node_type(),
             Node::Link(node) => node.node_type(),
             Node::List(node) => node.node_type(),
             Node::ListItem(node) => node.node_type(),
@@ -1799,6 +1824,7 @@ impl DatabaseNode for Node {
             Node::IfBlockClause(node) => node.node_id(),
             Node::ImageObject(node) => node.node_id(),
             Node::IncludeBlock(node) => node.node_id(),
+            Node::InstructionAttachment(node) => node.node_id(),
             Node::Link(node) => node.node_id(),
             Node::List(node) => node.node_id(),
             Node::ListItem(node) => node.node_id(),
@@ -1857,6 +1883,7 @@ impl DatabaseNode for Node {
             Node::IfBlockClause(node) => node.primary_key(),
             Node::ImageObject(node) => node.primary_key(),
             Node::IncludeBlock(node) => node.primary_key(),
+            Node::InstructionAttachment(node) => node.primary_key(),
             Node::Link(node) => node.primary_key(),
             Node::List(node) => node.primary_key(),
             Node::ListItem(node) => node.primary_key(),
@@ -1915,6 +1942,7 @@ impl DatabaseNode for Node {
             Node::IfBlockClause(node) => node.node_table(),
             Node::ImageObject(node) => node.node_table(),
             Node::IncludeBlock(node) => node.node_table(),
+            Node::InstructionAttachment(node) => node.node_table(),
             Node::Link(node) => node.node_table(),
             Node::List(node) => node.node_table(),
             Node::ListItem(node) => node.node_table(),
@@ -1973,6 +2001,7 @@ impl DatabaseNode for Node {
             Node::IfBlockClause(node) => node.rel_tables(),
             Node::ImageObject(node) => node.rel_tables(),
             Node::IncludeBlock(node) => node.rel_tables(),
+            Node::InstructionAttachment(node) => node.rel_tables(),
             Node::Link(node) => node.rel_tables(),
             Node::List(node) => node.rel_tables(),
             Node::ListItem(node) => node.rel_tables(),

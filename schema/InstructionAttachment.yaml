@@ -1,0 +1,20 @@
+title: InstructionAttachment
+'@id': stencila:InstructionAttachment
+nick: iat
+extends: Entity
+category: edits
+description: An attachment that can be provided to an instruction for model context.
+required:
+  - alias
+  - file
+properties:
+  alias:
+    '@id': stencila:alias
+    description: A short name for referring to the attachment within prompts.
+    type: string
+  file:
+    '@id': stencila:file
+    description: The file to attach.
+    $ref: File
+    walk: true
+

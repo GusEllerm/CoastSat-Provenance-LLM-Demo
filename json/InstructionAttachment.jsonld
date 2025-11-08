@@ -1,0 +1,45 @@
+{
+  "@id": "https://stencila.org/InstructionAttachment",
+  "name": "InstructionAttachment",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "https://schema.org/",
+    "stencila": "https://stencila.org/"
+  },
+  "@graph": [
+    {
+      "@id": "stencila:InstructionAttachment",
+      "@type": "rdfs:Class",
+      "rdfs:label": "InstructionAttachment",
+      "rdfs:comment": "An attachment that can be provided to an instruction for model context.",
+      "rdfs:subClassOf": {
+        "@id": "stencila:Entity"
+      }
+    },
+    {
+      "@id": "stencila:alias",
+      "@type": "rdfs:Property",
+      "rdfs:label": "alias",
+      "rdfs:comment": "A short name for referring to the attachment within prompts.",
+      "schema:domainIncludes": {
+        "@id": "stencila:InstructionAttachment"
+      },
+      "schema:rangeIncludes": {
+        "@id": "schema:Text"
+      }
+    },
+    {
+      "@id": "stencila:file",
+      "@type": "rdfs:Property",
+      "rdfs:label": "file",
+      "rdfs:comment": "The file to attach.",
+      "schema:domainIncludes": {
+        "@id": "stencila:InstructionAttachment"
+      },
+      "schema:rangeIncludes": {
+        "@id": "stencila:File"
+      }
+    }
+  ]
+}

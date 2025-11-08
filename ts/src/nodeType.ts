@@ -71,6 +71,7 @@ export type NodeType =
   | "ImageObject"
   | "IncludeBlock"
   | "InlinesBlock"
+  | "InstructionAttachment"
   | "InstructionBlock"
   | "InstructionInline"
   | "InstructionMessage"
@@ -210,6 +211,7 @@ export const NodeTypeList = [
   "ImageObject",
   "IncludeBlock",
   "InlinesBlock",
+  "InstructionAttachment",
   "InstructionBlock",
   "InstructionInline",
   "InstructionMessage",

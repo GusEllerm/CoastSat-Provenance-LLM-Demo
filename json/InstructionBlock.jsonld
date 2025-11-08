@@ -452,6 +452,18 @@
       "schema:rangeIncludes": {
         "@id": "stencila:SuggestionBlock"
       }
+    },
+    {
+      "@id": "stencila:attachments",
+      "@type": "rdfs:Property",
+      "rdfs:label": "attachments",
+      "rdfs:comment": "Attachments to upload alongside the instruction message.",
+      "schema:domainIncludes": {
+        "@id": "stencila:InstructionBlock"
+      },
+      "schema:rangeIncludes": {
+        "@id": "stencila:InstructionAttachment"
+      }
     }
   ]
 }

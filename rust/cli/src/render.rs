@@ -5,6 +5,7 @@ use cli_utils::{Code, ToStdout, color_print::cstr};
 use common::{
     clap::{self, Parser},
     eyre::{Result, bail, eyre},
+    tracing,
 };
 use document::Document;
 use format::Format;
@@ -292,6 +293,9 @@ impl Cli {
             }
         }
 
-        Ok(())
+        // File is written, so we can exit immediately without waiting for background tasks
+        // This prevents hanging on LLM inference tasks or other background operations
+        tracing::debug!("Render complete, exiting immediately");
+        exit(0)
     }
 }

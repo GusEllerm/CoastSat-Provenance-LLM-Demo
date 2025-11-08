@@ -104,6 +104,7 @@ export * from "./IncludeBlock.js";
 export * from "./Inline.js";
 export * from "./InlinesBlock.js";
 export * from "./Instruction.js";
+export * from "./InstructionAttachment.js";
 export * from "./InstructionBlock.js";
 export * from "./InstructionInline.js";
 export * from "./InstructionMessage.js";

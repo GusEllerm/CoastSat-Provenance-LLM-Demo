@@ -2156,6 +2156,21 @@ class InlinesBlock(Entity):
 
 
 @dataclass(kw_only=True, repr=False)
+class InstructionAttachment(Entity):
+    """
+    An attachment that can be provided to an instruction for model context.
+    """
+
+    type: Literal["InstructionAttachment"] = "InstructionAttachment"
+
+    alias: str
+    """A short name for referring to the attachment within prompts."""
+
+    file: File
+    """The file to attach."""
+
+
+@dataclass(kw_only=True, repr=False)
 class InstructionBlock(Instruction):
     """
     An instruction to edit some block content.
@@ -2168,6 +2183,9 @@ class InstructionBlock(Instruction):
 
     suggestions: list[SuggestionBlock] | None = None
     """Suggestions for the instruction"""
+
+    attachments: list[InstructionAttachment] | None = None
+    """Attachments to upload alongside the instruction message."""
 
 
 @dataclass(kw_only=True, repr=False)
@@ -3573,6 +3591,7 @@ Node = Union[
     ImageObject,
     IncludeBlock,
     InlinesBlock,
+    InstructionAttachment,
     InstructionBlock,
     InstructionInline,
     InstructionMessage,
@@ -3783,6 +3802,7 @@ TYPES = [
     IfBlockClause,
     ImageObject,
     InlinesBlock,
+    InstructionAttachment,
     InstructionBlock,
     InstructionInline,
     InstructionMessage,
