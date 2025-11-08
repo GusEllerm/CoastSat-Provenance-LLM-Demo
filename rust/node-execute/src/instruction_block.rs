@@ -14,7 +14,7 @@ use schema::{
     InstructionAttachment, InstructionBlock, MessageLevel, SoftwareApplication,
 };
 
-use crate::{ExecuteOptions, interrupt_impl, message_utils, prelude::*, state_digest};
+use crate::{ExecuteOptions, interrupt_impl, message_utils, model_utils, prelude::*, state_digest};
 
 const MAX_ATTACHMENT_BYTES: u64 = 5 * 1024 * 1024;
 
@@ -210,6 +210,10 @@ impl Executable for InstructionBlock {
             let mut instruction = self.clone();
             // Use the rendered message with variables resolved
             instruction.message = rendered_message.clone();
+            if let Some(attachments) = instruction.options.attachments.as_ref() {
+                let mut parts = model_utils::attachments_to_message_parts(attachments);
+                instruction.message.parts.append(&mut parts);
+            }
             if let Some(model_ids) = model_ids.clone() {
                 // Apply the model id for revisions
                 instruction.model_parameters.model_ids = Some(model_ids);

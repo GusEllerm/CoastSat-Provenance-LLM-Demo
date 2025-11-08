@@ -932,7 +932,7 @@ fn instruction_block(input: &mut Located<&str>) -> ModalResult<Block> {
         opt(preceded(multispace1, block_node_type)),
         opt(preceded(multispace1, prompt)),
         opt(preceded(multispace1, model_parameters)),
-        opt(preceded(multispace1, instruction_attachments)),
+        opt(preceded(multispace0, instruction_attachments)),
         opt(take_while(1.., |_| true)),
     )
         .map(
@@ -1023,6 +1023,13 @@ fn instruction_attachments(input: &mut Located<&str>) -> ModalResult<Vec<Instruc
 }
 
 fn parse_instruction_attachments(raw: &str) -> Vec<InstructionAttachment> {
+    let looks_like_attachments =
+        raw.contains(':') || raw.contains('/') || raw.contains('\\') || raw.contains('.');
+
+    if !looks_like_attachments {
+        return Vec::new();
+    }
+
     raw.split(',')
         .filter_map(|entry| {
             let entry = entry.trim();
@@ -2089,6 +2096,36 @@ mod tests {
                 source: "".to_string(),
                 ..Default::default()
             })
+        );
+    }
+
+    #[test]
+    fn test_instruction_block_with_attachments() {
+        let mut input = Located::new(
+            "template_describe [openai/gpt-5] [chart: ./plots/latest.png] Describe this chart.",
+        );
+
+        let Block::InstructionBlock(instruction) = instruction_block(&mut input).unwrap() else {
+            panic!("Expected instruction block");
+        };
+
+        let attachments = instruction
+            .options
+            .attachments
+            .as_ref()
+            .expect("Expected attachments to be parsed");
+
+        assert_eq!(attachments.len(), 1);
+        assert_eq!(attachments[0].alias, "chart");
+        assert_eq!(attachments[0].file.path, "./plots/latest.png");
+
+        assert_eq!(
+            instruction
+                .model_parameters
+                .model_ids
+                .clone()
+                .expect("Expected model id to be captured"),
+            vec!["openai/gpt-5".to_string()]
         );
     }
 

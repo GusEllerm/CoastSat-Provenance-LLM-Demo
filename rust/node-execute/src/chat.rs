@@ -346,6 +346,7 @@ impl Executable for Chat {
                     ..*self.model_parameters.clone()
                 },
                 instruction_messages.clone(),
+                None,
             );
             futures.push(async move {
                 let started = Timestamp::now();

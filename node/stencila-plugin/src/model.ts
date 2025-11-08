@@ -22,6 +22,11 @@ export interface ModelTask {
   messages: InstructionMessage[];
 
   /**
+   * Attachments sent with the task
+   */
+  attachments?: unknown[];
+
+  /**
    * The desired format of the generated content
    */
   format: string;

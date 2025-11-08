@@ -5,7 +5,7 @@ use common::{
     strum::Display,
 };
 use format::Format;
-use schema::{InstructionMessage, InstructionType, ModelParameters};
+use schema::{InstructionAttachment, InstructionMessage, InstructionType, ModelParameters};
 
 /// The kind of generative model task
 #[derive(Debug, Default, Display, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -64,6 +64,9 @@ pub struct ModelTask {
 
     /// The list of input messages
     pub messages: Vec<InstructionMessage>,
+
+    /// Attachments associated with the task (if any)
+    pub attachments: Option<Vec<InstructionAttachment>>,
 
     /// The kind of model task
     pub kind: ModelTaskKind,
@@ -202,6 +205,7 @@ impl ModelTask {
         instruction_type: InstructionType,
         model_parameters: ModelParameters,
         messages: Vec<InstructionMessage>,
+        attachments: Option<Vec<InstructionAttachment>>,
     ) -> Self {
         // Extract and transform any model execution options from
         // model parameters and put in the top level of the task
@@ -216,6 +220,7 @@ impl ModelTask {
             instruction_type: Some(instruction_type),
             model_parameters: Some(model_parameters),
             messages,
+            attachments,
             temperature,
             seed,
             ..Default::default()

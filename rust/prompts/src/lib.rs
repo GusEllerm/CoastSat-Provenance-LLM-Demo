@@ -687,6 +687,7 @@ pub async fn execute_instruction_block(
         instruction.instruction_type,
         *instruction.model_parameters.clone(),
         messages,
+        instruction.options.attachments.clone(),
     );
     task.dry_run = dry_run;
 

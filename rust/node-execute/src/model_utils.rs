@@ -6,8 +6,8 @@ use common::{
 };
 use models::{ModelOutput, ModelOutputKind, ModelTask};
 use schema::{
-    Article, AudioObject, AuthorRole, Block, File, ImageObject, Inline, InstructionMessage, Link,
-    MessagePart, MessageRole, Node, Text, VideoObject, shortcuts::p,
+    Article, AudioObject, AuthorRole, Block, File, ImageObject, Inline, InstructionAttachment,
+    InstructionMessage, Link, MessagePart, MessageRole, Node, Text, VideoObject, shortcuts::p,
 };
 
 /// Render Stencila [`Block`] nodes to a "system prompt"
@@ -81,6 +81,38 @@ pub(super) fn file_to_message_part(file: &File) -> Option<MessagePart> {
             .as_ref()
             .and_then(|content| (!content.trim().is_empty()).then_some(content))
             .map(|content| MessagePart::Text(Text::from(content)))
+    }
+}
+
+pub(super) fn attachments_to_message_parts(
+    attachments: &[InstructionAttachment],
+) -> Vec<MessagePart> {
+    attachments
+        .iter()
+        .flat_map(attachment_to_message_parts)
+        .collect()
+}
+
+fn attachment_to_message_parts(attachment: &InstructionAttachment) -> Vec<MessagePart> {
+    let descriptor = format!(
+        "Attachment `{}` ({})",
+        attachment.alias, attachment.file.name
+    );
+
+    match file_to_message_part(&attachment.file) {
+        Some(MessagePart::Text(text)) => {
+            let mut value = descriptor;
+            let content = text.to_value_string();
+            if !content.trim().is_empty() {
+                value.push_str("\n\n");
+                value.push_str(&content);
+            }
+            vec![MessagePart::Text(Text::from(value))]
+        }
+        Some(part) => vec![MessagePart::Text(Text::from(descriptor)), part],
+        None => vec![MessagePart::Text(Text::from(format!(
+            "{descriptor} could not be included."
+        )))],
     }
 }
 
