@@ -20,6 +20,13 @@ For each `step_id, info`:
 - `info["notebook"]`: absolute filesystem path to the notebook/script inside `interface.crate`.
 - `info["exampleOfWork"]`: (optional) RO-Crate reference pointing at the nested notebook crate.
 - `info["notebook_crate"]`: (optional) summary of the nested RO-Crate (present for notebooks; absent for `make_xlsx.py`).
+- `info["inputs_detail"]` / `info["outputs_detail"]`: enriched metadata for each formal parameter (name, type, encoding format, SHA-256, etc.).
+- `info["linked_files"]`: grouped artefact references keyed by `inputs` / `outputs`, each containing the resolved files that reference the parameter.
+- `info["language"]` and `info["code_repository"]`: normalised values ready for rendering without additional processing.
+- `info["prompt_context"]`: aggregate summary string used as the LLM system context.
+- `info["stats"]`: dictionary of counts, example strings, and totals for inputs/outputs/linked files.
+- `info["tables"]["metadata"]`: Datatable structure (Field/Value columns) suitable for direct insertion into Stencila Markdown blocks.
+- `info["lineage_targets"]`: list of curated artefact summaries (≤25 files each) primed for data-lineage prompts.
 
 ## Nested Notebook Crate Summary
 

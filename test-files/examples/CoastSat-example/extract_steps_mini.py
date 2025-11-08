@@ -4,6 +4,7 @@ import json
 import sys
 from pathlib import Path
 from typing import Any, Optional
+from collections import OrderedDict
 
 from rocrate.model.contextentity import ContextEntity  # type: ignore[import]
 from rocrate.rocrate import ROCrate  # type: ignore[import]
@@ -54,6 +55,89 @@ def _resolve_crate(crate_or_path: str | Path | ROCrate) -> tuple[ROCrate, Path]:
         raise FileNotFoundError(f"Crate path does not exist: {crate_root}")
 
     return crate, crate_root
+
+
+def _load_crate_entities(crate_root: Path) -> dict[str, dict]:
+    """Load the root RO-Crate metadata into a dictionary keyed by @id."""
+    metadata_path = crate_root / "ro-crate-metadata.json"
+    if not metadata_path.exists():
+        raise FileNotFoundError(f"Root metadata not found at {metadata_path}")
+
+    with metadata_path.open("r", encoding="utf-8") as fh:
+        graph = json.load(fh).get("@graph", [])
+
+    return {
+        entity.get("@id", str(index)): entity
+        for index, entity in enumerate(graph)
+        if isinstance(entity, dict)
+    }
+
+
+def _entity_path(entity: dict, crate_root: Path) -> Optional[str]:
+    entity_id = entity.get("@id")
+    candidates = []
+
+    source = entity.get("source") or getattr(entity, "source", None)
+    if source:
+        candidates.append(Path(source))
+
+    content_url = entity.get("contentUrl") or entity.get("url")
+    if isinstance(content_url, str) and not content_url.startswith(("http://", "https://")):
+        candidates.append(crate_root / content_url)
+
+    if isinstance(entity_id, str) and not entity_id.startswith(("http://", "https://", "#")):
+        candidates.append(crate_root / entity_id)
+
+    for candidate in candidates:
+        try:
+            resolved = Path(candidate).resolve()
+        except OSError:
+            continue
+        if resolved.exists():
+            return resolved.as_posix()
+
+    return None
+
+
+def _clean_summary(summary: dict[str, Any]) -> dict[str, Any]:
+    return {key: value for key, value in summary.items() if value not in (None, "", [], {})}
+
+
+def _entity_summary(entity: Optional[dict], crate_root: Path) -> dict[str, Any]:
+    if not entity:
+        return {}
+
+    entity_id = entity.get("@id")
+    summary = {
+        "id": entity_id,
+        "name": entity.get("name"),
+        "type": entity.get("@type"),
+        "description": entity.get("description"),
+        "encodingFormat": entity.get("encodingFormat"),
+        "sha256": entity.get("sha256"),
+        "contentSize": entity.get("size") or entity.get("contentSize"),
+        "url": entity.get("contentUrl") or entity.get("url"),
+    }
+
+    path = _entity_path(entity, crate_root)
+    if path:
+        summary["path"] = path
+
+    return _clean_summary(summary)
+
+
+def _build_example_index(entities: dict[str, dict], crate_root: Path) -> dict[str, list[dict[str, Any]]]:
+    example_index: dict[str, list[dict[str, Any]]] = {}
+
+    for entity in entities.values():
+        example = entity.get("exampleOfWork")
+        if not example:
+            continue
+
+        for example_id in _normalize_ids(example):
+            example_index.setdefault(example_id, []).append(_entity_summary(entity, crate_root))
+
+    return example_index
 
 
 def _summarise_notebook(crate_root: Path, example_ref: dict) -> dict:
@@ -141,7 +225,13 @@ def _summarise_notebook(crate_root: Path, example_ref: dict) -> dict:
     }
 
 
-def _build_step(crate: ROCrate, crate_root: Path, step_id: str) -> dict:
+def _build_step(
+    crate: ROCrate,
+    crate_root: Path,
+    step_id: str,
+    entities: dict[str, dict],
+    example_index: dict[str, list[dict[str, Any]]],
+) -> dict:
     step = _require_entity(crate, step_id)
     data = dict(step.properties())
 
@@ -156,12 +246,45 @@ def _build_step(crate: ROCrate, crate_root: Path, step_id: str) -> dict:
     if isinstance(example, dict):
         data["notebook_crate"] = _summarise_notebook(crate_root, example)
 
+    input_ids = _normalize_ids(data.get("input", []))
+    output_ids = _normalize_ids(data.get("output", []))
+
+    data["inputs_detail"] = [
+        _entity_summary(entities.get(entity_id), crate_root) | {"id": entity_id}
+        for entity_id in input_ids
+    ]
+    data["outputs_detail"] = [
+        _entity_summary(entities.get(entity_id), crate_root) | {"id": entity_id}
+        for entity_id in output_ids
+    ]
+
+    def _links_for(ids: list[str]) -> list[dict[str, Any]]:
+        links = []
+        for entity_id in ids:
+            files = example_index.get(entity_id, [])
+            if files:
+                links.append({"parameter": entity_id, "files": files})
+        return links
+
+    linked_inputs = _links_for(input_ids)
+    linked_outputs = _links_for(output_ids)
+    data["linked_files"] = {}
+    if linked_inputs:
+        data["linked_files"]["inputs"] = linked_inputs
+    if linked_outputs:
+        data["linked_files"]["outputs"] = linked_outputs
+    if not data["linked_files"]:
+        data["linked_files"] = []
+
     return data
 
 
 def extract_steps(crate_dir: str | Path | ROCrate = "interface.crate", interface_id: str = "E2.2-wms") -> dict:
     crate, crate_root = _resolve_crate(crate_dir)
     interface = _require_entity(crate, interface_id)
+
+    entities = _load_crate_entities(crate_root)
+    example_index = _build_example_index(entities, crate_root)
 
     has_part = interface.properties().get("hasPart")
     workflow_ids = _normalize_ids(has_part)
@@ -175,7 +298,16 @@ def extract_steps(crate_dir: str | Path | ROCrate = "interface.crate", interface
 
     step_ids = _normalize_ids(step_refs)
     steps = sorted(
-        (_build_step(crate, crate_root, step_id) for step_id in step_ids),
+        (
+            _build_step(
+                crate,
+                crate_root,
+                step_id,
+                entities,
+                example_index,
+            )
+            for step_id in step_ids
+        ),
         key=lambda entry: entry["position"],
     )
 
@@ -251,8 +383,219 @@ def _programming_language(step: dict) -> Optional[str]:
     return None
 
 
+def _format_samples(entries, limit=3):
+    entries = entries or []
+    samples = []
+    for entry in entries:
+        if isinstance(entry, dict):
+            name = entry.get("name") or entry.get("id")
+            if not name:
+                continue
+            fmt = entry.get("encodingFormat")
+            samples.append(f"{name} ({fmt})" if fmt else name)
+            if len(samples) >= limit:
+                break
+        else:
+            samples.append(str(entry))
+            if len(samples) >= limit:
+                break
+    return samples
+
+
+def _summarise_io(entries, label):
+    entries = entries or []
+    summary = f"{label} count: {len(entries)}"
+    samples = _format_samples(entries)
+    if samples:
+        summary += f"; examples: {', '.join(samples)}"
+    return summary, samples
+
+
+def _summarise_linked(linked, kind):
+    if not isinstance(linked, dict):
+        return "", 0, 0, []
+
+    param_entries = linked.get(kind) or []
+    total_params = len(param_entries)
+    total_files = sum(len(entry.get("files") or []) for entry in param_entries)
+
+    if total_params == 0:
+        return "", 0, 0, []
+
+    examples = [
+        f"{entry.get('parameter')} ({len(entry.get('files') or [])} files)"
+        for entry in param_entries[:3]
+    ]
+    summary = (
+        f"{kind.title()} linked parameters: {total_params}; "
+        f"files referenced: {total_files}"
+    )
+    if examples:
+        summary += f"; examples: {', '.join(examples)}"
+
+    return summary, total_params, total_files, examples
+
+
+def _normalise_language(language):
+    if isinstance(language, dict):
+        return language.get("name") or language.get("@id") or language.get("value") or "Unknown"
+    if isinstance(language, str):
+        return language
+    return "Unknown"
+
+
+def _build_step_metadata_table(step, stats):
+    rows = OrderedDict([
+        ("Identifier", step.get("id")),
+        ("Position", step.get("position")),
+        ("Programming language", step.get("language")),
+        ("Code repository", step.get("code_repository")),
+        ("Inputs", stats["input_summary"]),
+        ("Outputs", stats["output_summary"]),
+        ("Linked inputs", stats["linked_input_summary"]),
+        ("Linked outputs", stats["linked_output_summary"]),
+    ])
+
+    if stats.get("input_examples_text"):
+        rows["Input examples"] = stats["input_examples_text"]
+    if stats.get("output_examples_text"):
+        rows["Output examples"] = stats["output_examples_text"]
+    if stats.get("linked_input_examples_text"):
+        rows["Linked input examples"] = stats["linked_input_examples_text"]
+    if stats.get("linked_output_examples_text"):
+        rows["Linked output examples"] = stats["linked_output_examples_text"]
+
+    def _fmt(value):
+        if value in (None, "", [], {}):
+            return "–"
+        if isinstance(value, (list, tuple)):
+            return ", ".join(str(item) for item in value if item)
+        return str(value)
+
+    columns = [
+        {
+            "type": "DatatableColumn",
+            "name": "Field",
+            "values": list(rows.keys()),
+        },
+        {
+            "type": "DatatableColumn",
+            "name": "Value",
+            "values": [_fmt(value) for value in rows.values()],
+        },
+    ]
+    return {"type": "Datatable", "columns": columns}
+
+
+def _build_lineage_targets(step, outputs_detail):
+    linked = step.get("linked_files") if isinstance(step.get("linked_files"), dict) else {}
+    output_entries = linked.get("outputs") or []
+    targets = []
+    for entry in output_entries:
+        files = entry.get("files") or []
+        total_files = len(files)
+        if total_files == 0 or total_files > 25:
+            continue
+        parameter_id = entry.get("parameter")
+        detail = next((d for d in outputs_detail if d.get("id") == parameter_id), {})
+        context_lines = [
+            f"Artefact parameter: {parameter_id}",
+            f"Produced by workflow step {step.get('name')} ({step.get('id')})",
+            f"Total files in crate: {total_files}",
+        ]
+        if detail:
+            metadata_parts = []
+            if detail.get("name"):
+                metadata_parts.append(f"name={detail.get('name')}")
+            if detail.get("type"):
+                metadata_parts.append(f"type={detail.get('type')}")
+            if detail.get("encodingFormat"):
+                metadata_parts.append(f"encodingFormat={detail.get('encodingFormat')}")
+            if detail.get("sha256"):
+                metadata_parts.append(f"sha256={detail.get('sha256')}")
+            if metadata_parts:
+                context_lines.append("Metadata: " + ", ".join(metadata_parts))
+        sample_files = []
+        for file_info in files[:3]:
+            if not isinstance(file_info, dict):
+                continue
+            fname = file_info.get("name") or file_info.get("id")
+            if not fname:
+                continue
+            size = file_info.get("contentSize")
+            descriptor = f"{fname} (size {size})" if size else fname
+            sample_files.append(descriptor)
+        if sample_files:
+            context_lines.append("Example files: " + "; ".join(sample_files))
+
+        targets.append(
+            {
+                "parameter": parameter_id,
+                "total_files": total_files,
+                "summary": f"{parameter_id} ({total_files} files)",
+                "context": "\n".join(context_lines),
+            }
+        )
+        if len(targets) >= 2:
+            break
+    return targets
+
+
 def _step_view(step: dict) -> dict:
-    return {
+    inputs_detail = step.get("inputs_detail")
+    outputs_detail = step.get("outputs_detail")
+    linked = step.get("linked_files")
+
+    language = _normalise_language(step.get("programmingLanguage"))
+    code_repo = step.get("codeRepository") or "Not specified"
+
+    input_summary, input_samples = _summarise_io(inputs_detail, "Input parameters")
+    output_summary, output_samples = _summarise_io(outputs_detail, "Output parameters")
+    (
+        linked_input_summary,
+        linked_input_params,
+        linked_input_files,
+        linked_input_examples,
+    ) = _summarise_linked(linked, "inputs")
+    (
+        linked_output_summary,
+        linked_output_params,
+        linked_output_files,
+        linked_output_examples,
+    ) = _summarise_linked(linked, "outputs")
+
+    prompt_lines = [
+        f"Step name: {step.get('name')}",
+        f"Step identifier: {step.get('id')}",
+        f"Workflow position: {step.get('position')}",
+        f"Programming language: {language}",
+        f"Code repository: {code_repo}",
+        input_summary,
+        output_summary,
+    ]
+    if linked_input_summary:
+        prompt_lines.append(linked_input_summary)
+    if linked_output_summary:
+        prompt_lines.append(linked_output_summary)
+
+    stats = {
+        "input_summary": input_summary,
+        "input_examples_text": ", ".join(input_samples),
+        "output_summary": output_summary,
+        "output_examples_text": ", ".join(output_samples),
+        "linked_input_summary": linked_input_summary or "No linked input artefacts referenced.",
+        "linked_input_examples_text": ", ".join(linked_input_examples),
+        "linked_output_summary": linked_output_summary or "No linked output artefacts referenced.",
+        "linked_output_examples_text": ", ".join(linked_output_examples),
+        "input_parameter_count": len(step.get("input") or []),
+        "output_parameter_count": len(step.get("output") or []),
+        "linked_input_parameter_count": linked_input_params,
+        "linked_input_file_count": linked_input_files,
+        "linked_output_parameter_count": linked_output_params,
+        "linked_output_file_count": linked_output_files,
+    }
+
+    result = {
         "id": step["@id"],
         "types": list(step.get("@type", [])),
         "name": step.get("name"),
@@ -261,12 +604,33 @@ def _step_view(step: dict) -> dict:
         "outputs": _normalize_ids(step.get("output", [])),
         "notebook": step["notebook"],
         "codeRepository": step.get("codeRepository"),
-        "programmingLanguage": _programming_language(step),
+        "programmingLanguage": step.get("programmingLanguage"),
         "encodingFormat": step.get("encodingFormat"),
         "sha256": step.get("sha256"),
         "notebook_crate": _to_notebook_crate_model(step.get("notebook_crate")),
+        "inputs_detail": inputs_detail,
+        "outputs_detail": outputs_detail,
+        "linked_files": linked,
         "raw": step,
+        "language": language,
+        "code_repository": code_repo,
+        "stats": stats,
+        "prompt_context": "\n".join(prompt_lines),
+        "tables": {
+            "metadata": _build_step_metadata_table(
+                {
+                    "id": step.get("@id"),
+                    "position": step.get("position"),
+                    "language": language,
+                    "code_repository": code_repo,
+                },
+                stats,
+            ),
+        },
+        "lineage_targets": _build_lineage_targets(step, outputs_detail or []),
     }
+
+    return result
 
 
 def extract_step_dicts(

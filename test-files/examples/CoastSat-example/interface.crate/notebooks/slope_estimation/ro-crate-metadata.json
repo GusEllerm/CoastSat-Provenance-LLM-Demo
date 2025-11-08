@@ -4,7 +4,7 @@
         {
             "@id": "./",
             "@type": "Dataset",
-            "datePublished": "2025-10-28T02:24:27+00:00",
+            "datePublished": "2025-10-28T20:22:28+00:00",
             "hasPart": [
                 {
                     "@id": "slope_estimation.ipynb"
