@@ -71,6 +71,12 @@ Summarise the findings from analysis and explain what chart illustrates.
 ## Model Adapter Changes
 
 - **OpenAI GPT-5 / GPT-4o**: migrate to the Responses API (supports text + file references). Upload attachments to `/v1/files`, include resulting file IDs in the request, and annotate user message with alias descriptions. Maintain compatibility with Chat Completions for models lacking file support.
+- **OpenAI migration notes**:
+  - Detect attachments in `ModelTask`; if present, switch from Chat Completions to the Responses API.
+  - Upload each attachment via `POST /v1/files` (purpose `assistants`) and capture the returned `file_id`.
+  - Build the `/v1/responses` payload using the existing message list plus one `input_file` / `input_image` entry per attachment (mapped by media type).
+  - Restrict file uploads to attachment-capable models (e.g. `gpt-5` family); emit a clear warning when a user selects another OpenAI model with attachments.
+  - Maintain the current Chat Completions flow when no attachments are present.
 - **Anthropic Claude 3.5**: supports images/base64 but not arbitrary documents. Continue base64 images; for text/PDF attachments emit warning or convert to inline text under a size cap.
 - **Google Gemini 2.0**: uses multi-part content; adapt adapter to send attachments via `Part::FileData` or fallback.
 - **Ollama / local models**: many accept only plain text; degrade by concatenating attachment snippets with alias headings.

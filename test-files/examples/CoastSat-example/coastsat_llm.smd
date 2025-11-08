@@ -1,5 +1,13 @@
 ```python exec
 # This code makes the micropublication aware of its interface data.
+import os
+import multiprocessing as _mp
+
+try:
+    _mp.set_start_method("spawn")
+except RuntimeError:
+    pass
+
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.linear_model import LinearRegression
 from typing import Optional, List, Dict, Any
@@ -14,11 +22,15 @@ from pathlib import Path
 from scipy import stats
 from math import sqrt
 
+os.environ.setdefault("PROJ_NETWORK", "OFF")
+os.environ.setdefault("PROJ_CACHE_PATH", str((Path.cwd() / ".proj_cache").resolve()))
+Path(os.environ["PROJ_CACHE_PATH"]).mkdir(parents=True, exist_ok=True)
+
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import plotly.express as px
 import geopandas as gpd
-import contextily as cx 
+import contextily as cx
 import pandas as pd
 import numpy as np
 import statistics
@@ -26,7 +38,6 @@ import requests
 import folium
 import json
 import sys
-import os
 import re
 
 # For this example, we'll use a fixed site_id
@@ -96,10 +107,274 @@ coastsat_commit_date = get_commit_date(coastsat_version)
 ```
 
 ```python exec
-module_dir = Path.cwd()  # this is the directory with extract_steps_mini.py
-sys.path.insert(0, str(module_dir))
-from extract_steps_mini import extract_step_dicts
-step_dicts = extract_step_dicts("interface.crate")
+MAX_INLINE_BYTES = 20_000
+
+
+def _normalize_ids(nodes):
+    if isinstance(nodes, dict):
+        nodes = [nodes]
+    elif not isinstance(nodes, (list, tuple)):
+        return []
+    return [node["@id"] for node in nodes if isinstance(node, dict) and "@id" in node]
+
+
+def _require_entity(crate: ROCrate, entity_id: str) -> ContextEntity:
+    entity = crate.get(entity_id)
+    if entity is None:
+        raise KeyError(f"Missing entity '{entity_id}' in crate.")
+    return entity
+
+
+def _step_path(step: ContextEntity, crate_root: Path, step_id: str) -> Path:
+    source = getattr(step, "source", None)
+    path = crate_root.parent / source if source else crate_root / step_id
+    path = path.resolve()
+    if not path.exists():
+        raise FileNotFoundError(f"Notebook for '{step_id}' not found at {path}")
+    return path
+
+
+def _resolve_crate(crate_or_path: str | Path | ROCrate) -> tuple[ROCrate, Path]:
+    if isinstance(crate_or_path, ROCrate):
+        crate = crate_or_path
+        source = getattr(crate, "source", None)
+        if source is None:
+            raise ValueError("Provided ROCrate instance does not expose a 'source' path.")
+        crate_root = Path(source).resolve()
+        if crate_root.is_file():
+            crate_root = crate_root.parent
+    else:
+        crate_root = Path(crate_or_path).resolve()
+        if not crate_root.is_dir():
+            raise FileNotFoundError(f"Crate directory not found: {crate_root}")
+        crate = ROCrate(str(crate_root))
+
+    if not crate_root.exists():
+        raise FileNotFoundError(f"Crate path does not exist: {crate_root}")
+
+    return crate, crate_root
+
+
+def _summarise_notebook(crate_root: Path, example_ref: dict) -> dict:
+    crate_id = example_ref.get("@id")
+    if not crate_id:
+        raise ValueError("exampleOfWork is missing an '@id'.")
+
+    crate_path = (crate_root / crate_id).resolve()
+    if not crate_path.exists():
+        raise FileNotFoundError(f"Notebook crate missing: {crate_path}")
+
+    with crate_path.open("r", encoding="utf-8") as fh:
+        graph = json.load(fh).get("@graph", [])
+
+    entities = {entity.get("@id", str(i)): entity for i, entity in enumerate(graph)}
+    dataset = entities.get("./", {})
+    main_entity = entities.get(dataset.get("mainEntity", {}).get("@id", ""), {})
+
+    steps = []
+    for step_id in _normalize_ids(main_entity.get("step", [])):
+        step = entities.get(step_id, {})
+        position = step.get("position")
+        try:
+            position = int(position)
+        except (TypeError, ValueError):
+            pass
+
+        work_example = step.get("workExample")
+        if isinstance(work_example, dict):
+            work_example_id = work_example.get("@id")
+        elif isinstance(work_example, str):
+            work_example_id = work_example
+        else:
+            work_example_id = None
+
+        work_example_data = None
+        if work_example_id:
+            we_path = (crate_path.parent / work_example_id).resolve()
+            if not we_path.exists():
+                raise FileNotFoundError(
+                    f"Work example '{work_example_id}' missing for notebook crate {crate_id}"
+                )
+            content = None
+            truncated = False
+            try:
+                content_text = we_path.read_text(encoding="utf-8")
+                encoded = content_text.encode("utf-8")
+                if len(encoded) > MAX_INLINE_BYTES:
+                    content = encoded[:MAX_INLINE_BYTES].decode("utf-8", errors="ignore")
+                    truncated = True
+                else:
+                    content = content_text
+            except Exception:
+                content = None
+            work_example_data = {
+                "@id": work_example_id,
+                "path": we_path.as_posix(),
+                "content": content,
+            }
+            if truncated:
+                work_example_data["content_truncated"] = True
+
+        steps.append(
+            {
+                "@id": step.get("@id", step_id),
+                "name": step.get("name"),
+                "position": position,
+                "workExample": work_example_data,
+            }
+        )
+
+    steps.sort(key=lambda entry: (entry["position"] is None, entry["position"]))
+
+    return {
+        "path": crate_path.as_posix(),
+        "dataset": {"@id": dataset.get("@id"), "name": dataset.get("name")},
+        "main_entity": {
+            "@id": main_entity.get("@id"),
+            "name": main_entity.get("name"),
+            "input": _normalize_ids(main_entity.get("input")),
+            "output": _normalize_ids(main_entity.get("output")),
+            "step_ids": _normalize_ids(main_entity.get("step")),
+        },
+        "steps": steps,
+    }
+
+
+def _build_step(crate: ROCrate, crate_root: Path, step_id: str) -> dict:
+    step = _require_entity(crate, step_id)
+    data = dict(step.properties())
+
+    try:
+        data["position"] = int(data["position"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError(f"Step '{step_id}' is missing a valid position.") from exc
+
+    data["notebook"] = _step_path(step, crate_root, step_id).as_posix()
+
+    example = data.get("exampleOfWork")
+    if isinstance(example, dict):
+        data["notebook_crate"] = _summarise_notebook(crate_root, example)
+
+    return data
+
+
+def extract_steps(crate_dir: str | Path | ROCrate = "interface.crate", interface_id: str = "E2.2-wms") -> dict:
+    crate, crate_root = _resolve_crate(crate_dir)
+    interface = _require_entity(crate, interface_id)
+
+    has_part = interface.properties().get("hasPart")
+    workflow_ids = _normalize_ids(has_part)
+    if len(workflow_ids) != 1:
+        raise ValueError(f"Expected a single workflow for '{interface_id}', got {workflow_ids!r}")
+
+    workflow = _require_entity(crate, workflow_ids[0])
+    step_refs = workflow.properties().get("step")
+    if not step_refs:
+        raise ValueError(f"Workflow '{workflow['@id']}' defines no steps.")
+
+    step_ids = _normalize_ids(step_refs)
+    steps = sorted(
+        (_build_step(crate, crate_root, step_id) for step_id in step_ids),
+        key=lambda entry: entry["position"],
+    )
+
+    return {step["@id"]: step for step in steps}
+
+
+def _to_notebook_cell(cell: dict) -> dict:
+    work_example = cell.get("workExample") or {}
+    work_example_id = work_example.get("@id")
+    work_example_path = work_example.get("path")
+    content = work_example.get("content")
+    truncated = bool(work_example.get("content_truncated"))
+    if work_example_path and content is None and work_example_id:
+        path_obj = Path(work_example_path)
+        if path_obj.exists():
+            try:
+                text = path_obj.read_text(encoding="utf-8")
+                encoded = text.encode("utf-8")
+                if len(encoded) > MAX_INLINE_BYTES:
+                    content = encoded[:MAX_INLINE_BYTES].decode("utf-8", errors="ignore")
+                    truncated = True
+                else:
+                    content = text
+            except Exception:
+                content = None
+
+    work_example_dict = None
+    if work_example_id or work_example_path or content is not None:
+        work_example_dict = {
+            "@id": work_example_id,
+            "path": work_example_path,
+            "content": content,
+        }
+        if truncated:
+            work_example_dict["content_truncated"] = True
+
+    return {
+        "id": cell.get("@id", ""),
+        "name": cell.get("name"),
+        "position": cell.get("position"),
+        "workExample": work_example_dict,
+    }
+
+
+def _to_notebook_crate_model(data: Optional[dict]) -> Optional[dict]:
+    if not data:
+        return None
+
+    dataset = data.get("dataset") or {}
+    main = data.get("main_entity") or {}
+    steps = [_to_notebook_cell(cell) for cell in data.get("steps", [])]
+
+    return {
+        "path": data.get("path"),
+        "dataset": {"@id": dataset.get("@id"), "name": dataset.get("name")},
+        "main_entity": {
+            "@id": main.get("@id"),
+            "name": main.get("name"),
+            "input": list(main.get("input", [])),
+            "output": list(main.get("output", [])),
+            "step_ids": list(main.get("step_ids", [])),
+        },
+        "steps": steps,
+    }
+
+
+def _programming_language(step: dict) -> Optional[str]:
+    value = step.get("programmingLanguage")
+    if isinstance(value, dict):
+        return value.get("@id") or value.get("name")
+    if isinstance(value, str):
+        return value
+    return None
+
+
+def _step_view(step: dict) -> dict:
+    return {
+        "id": step["@id"],
+        "types": list(step.get("@type", [])),
+        "name": step.get("name"),
+        "position": step["position"],
+        "inputs": _normalize_ids(step.get("input", [])),
+        "outputs": _normalize_ids(step.get("output", [])),
+        "notebook": step["notebook"],
+        "codeRepository": step.get("codeRepository"),
+        "programmingLanguage": _programming_language(step),
+        "encodingFormat": step.get("encodingFormat"),
+        "sha256": step.get("sha256"),
+        "notebook_crate": _to_notebook_crate_model(step.get("notebook_crate")),
+        "raw": step,
+    }
+
+
+def extract_step_dicts(
+    crate_dir: str | Path | ROCrate = "interface.crate", interface_id: str = "E2.2-wms"
+) -> list[dict]:
+    step_map = extract_steps(crate_dir, interface_id)
+    return [_step_view(step) for step in step_map.values()]
+
+step_dicts = extract_step_dicts('interface.crate')
 ```
 
 # Site Report: `site_id`{python exec}
@@ -108,6 +383,10 @@ step_dicts = extract_step_dicts("interface.crate")
 
 ### {{step.name}}
 
-::: template_describe [openai/gpt-5] Describe this step which was executed with a workflow. The step had these inputs: {{step.inputs}}, and these outputs: {{step.outputs}}. Was written in this programming language: {{step.programmingLanguage}}, and can be found at this code repository: {{step.codeRepository}}. For more context here is the raw metadata: {{step.raw}}. Describe it in two paragraphs. :::
+::::: template_describe [openai/gpt-5] Describe this step which was executed with a workflow. The step had these inputs: {{step.inputs}}, and these outputs: {{step.outputs}}. Was written in this programming language: {{step.programmingLanguage}}, and can be found at this code repository: {{step.codeRepository}}. For more context here is the raw metadata: {{step.raw}}. Describe it in two paragraphs. :::
 
 :::
+
+::: template_describe [openai/gpt-5] Describe this image. If no image has been provided, say so. >>>
+
+The image shows a bowl of mixed salad held by a person sitting down. The salad contains green leafy lettuce, chunks of cooked chicken breast, slices of cucumber, yellow bell pepper, cherry tomatoes, and what appears to be pieces of cheese or croutons scattered throughout. The ingredients look fresh and colorful, and there is a fork placed inside the bowl, ready for eating. The person is dressed in gray clothing, and the setting appears to be casual and comfortable, likely at home.
