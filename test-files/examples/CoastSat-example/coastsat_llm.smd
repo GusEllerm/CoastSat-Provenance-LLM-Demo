@@ -387,6 +387,4 @@ step_dicts = extract_step_dicts('interface.crate')
 
 :::
 
-::: template_describe [openai/gpt-5] Describe this image. If no image has been provided, say so. >>>
-
-The image shows a bowl of mixed salad held by a person sitting down. The salad contains green leafy lettuce, chunks of cooked chicken breast, slices of cucumber, yellow bell pepper, cherry tomatoes, and what appears to be pieces of cheese or croutons scattered throughout. The ingredients look fresh and colorful, and there is a fork placed inside the bowl, ready for eating. The person is dressed in gray clothing, and the setting appears to be casual and comfortable, likely at home.
+::: template_describe [openai/gpt-4.1-mini] [photo: /Users/eller/Projects/stencila_dev/test-files/examples/CoastSat-example/IMG_5062.jpeg] Describe this image. If no image has been provided, say so. :::
