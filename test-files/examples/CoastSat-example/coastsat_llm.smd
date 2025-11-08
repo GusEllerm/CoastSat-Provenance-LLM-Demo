@@ -5,8 +5,9 @@ from sklearn.linear_model import LinearRegression
 from typing import Optional, List, Dict, Any
 from plotly.subplots import make_subplots
 from shapely.geometry import LineString
-from rocrate.rocrate import ROCrate
+from rocrate.rocrate import ROCrate, ContextEntity
 from dataclasses import dataclass
+from pandas import json_normalize
 from types import SimpleNamespace
 from datetime import datetime
 from pathlib import Path
@@ -24,6 +25,7 @@ import statistics
 import requests
 import folium
 import json
+import sys
 import os
 import re
 
@@ -31,7 +33,7 @@ import re
 site_id = "nzd0001"
 ```
 
-```python exec 
+```python exec
 # Load the interface.crate and batch_processes.crate manifest files (if available)
 # For deployment, we primarily rely on cached data files
 interface_crate_path = Path.cwd() / "interface.crate" 
@@ -93,200 +95,19 @@ coastsat_version = interface_crate.mainEntity.get("version") if interface_crate 
 coastsat_commit_date = get_commit_date(coastsat_version)
 ```
 
-```python exec 
-# Before narrative content, some helper functions to interface with the crates:
-def query_by_link(crate, prop, target_id, match_substring=False):
-    """
-    Return entities (dict or ContextEntity) whose `prop` links to `target_id`.
-    If `match_substring` is True, will return entities whose link includes `target_id` as a substring.
-    """
-    is_rocrate = hasattr(crate, "get_entities")
-    entities = crate.get_entities() if is_rocrate else crate.get("@graph", [])
-    out = []
-
-    for e in entities:
-        val = (e.properties().get(prop) if is_rocrate else e.get(prop))
-        if val is None:
-            continue
-        vals = [val] if not isinstance(val, list) else val
-
-        ids = [
-            (x.id if hasattr(x, "id") else x.get("@id") if isinstance(x, dict) else x)
-            for x in vals
-        ]
-        if match_substring:
-            if any(target_id in _id for _id in ids if isinstance(_id, str)):
-                out.append(e)
-        else:
-            if target_id in ids:
-                out.append(e)
-    return out
-
-def filter_linked_entities_by_substring(crate, entities, prop, substring):
-    """
-    For a given list of entities, follow `prop` links (e.g., 'object') and return
-    all linked entities whose `@id` includes `substring`.
-    """
-    is_rocrate = hasattr(crate, "get_entities")
-    all_entities = crate.get_entities() if is_rocrate else crate.get("@graph", [])
-
-    # Index entities by ID for fast lookup
-    id_index = {
-        (e.id if hasattr(e, "id") else e.get("@id")): e
-        for e in all_entities
-    }
-    matched = []
-    for entity in entities:
-        val = entity.properties().get(prop) if is_rocrate else entity.get(prop)
-        if val is None:
-            continue
-
-        vals = [val] if not isinstance(val, list) else val
-
-        for v in vals:
-            target_id = (
-                v.id if hasattr(v, "id") else v.get("@id") if isinstance(v, dict) else v
-            )
-
-            if not isinstance(target_id, str):
-                continue
-
-            if substring in target_id:
-                linked_entity = id_index.get(target_id)
-                if linked_entity:
-                    matched.append(linked_entity)
-
-    return matched
-
-def resolve_linked_entity(crate, entity, prop):
-    """
-    Follow a single-valued property (like 'instrument') from an entity,
-    and return the linked entity (resolved from the crate).
-    Returns None if the property is missing or not resolvable.
-    """
-    is_rocrate = hasattr(crate, "get_entities")
-    all_entities = crate.get_entities() if is_rocrate else crate.get("@graph", [])
-
-    # Build a lookup of @id to entity
-    id_index = {
-        (e.id if hasattr(e, "id") else e.get("@id")): e
-        for e in all_entities
-    }
-
-    val = entity.properties().get(prop) if is_rocrate else entity.get(prop)
-    if val is None:
-        return None
-
-    # Normalize to string ID
-    if isinstance(val, list):
-        raise ValueError(f"Expected only one linked entity in property '{prop}', but found a list.")
-    
-    target_id = (
-        val.id if hasattr(val, "id") else val.get("@id") if isinstance(val, dict) else val
-    )
-
-    return id_index.get(target_id)
-
-def convert_to_raw_url(github_url: str) -> str:
-    """
-    Converts a GitHub blob URL to a raw.githubusercontent URL.
-    """
-    match = re.match(r"https://github\.com/(.+)/blob/([a-f0-9]+)/(.+)", github_url)
-    if not match:
-        raise ValueError("Invalid GitHub blob URL format.")
-    user_repo, commit_hash, path = match.groups()
-    return f"https://raw.githubusercontent.com/{user_repo}/{commit_hash}/{path}"
-
-def get_location_name(geometry):
-    """
-    Get a human-readable location name from a shapely geometry using reverse geocoding.
-    Uses the centroid of the geometry for the lookup.
-    """
-    try:
-        # Get the centroid of the geometry
-        centroid = geometry.centroid
-        lon, lat = centroid.x, centroid.y
-        
-        # Fix longitude coordinates that are in 0-360 range (convert to -180 to 180)
-        if lon > 180:
-            lon = lon - 360
-        
-        location = requests.get(
-            url="https://nominatim.openstreetmap.org/reverse",
-            params={
-                'lat': lat,
-                'lon': lon,
-                'format': 'json',
-                'zoom': 10,
-                'addressdetails': 1
-            },
-            headers={'User-Agent': 'CoastSat-shoreline-publication'}
-        ).json().get('display_name')
-        
-        return location
-    except Exception as e:
-        print(f"Error getting location name: {e}")
-        return "Unknown location"
-
-def get_appended_rows(
-    old_url: str,
-    new_url: str,
-    filter_column: str = None,
-    filter_value: str = None
-) -> pd.DataFrame:
-    raw_old_url = convert_to_raw_url(old_url)
-    raw_new_url = convert_to_raw_url(new_url)
-    
-    old_df = pd.read_csv(raw_old_url)
-    new_df = pd.read_csv(raw_new_url)
-    
-    appended_df = pd.concat([new_df, old_df]).drop_duplicates(keep=False)
-
-    # If you're looking for a particular transect column (e.g., 'sar0003-0003'),
-    # this assumes the filter_column is in the wide format as a column name.
-    if filter_column and filter_column in appended_df.columns:
-        # Only keep rows where that transect column is not NaN
-        appended_df = appended_df[~appended_df[filter_column].isna()]
-
-    return appended_df
-```
-
 ```python exec
-# Get data for the site report - use cached data files
-cached_shoreline_path = Path.cwd() / "cached_shoreline.geojson"
-if cached_shoreline_path.exists():
-    shoreline_gdf = gpd.read_file(cached_shoreline_path)
-else:
-    print("Error: No cached shoreline data found. Run publication_logic.py to cache data first.")
-    raise FileNotFoundError("Cached shoreline data not found")
-
-current_site_data = shoreline_gdf[shoreline_gdf['id'] == site_id] # Filter the shoreline data by the current site_id
-```
-
-```python exec
-# Get location name in a separate block to avoid serialization issues
-try:
-    if len(current_site_data) > 0:
-        geometry = current_site_data['geometry'].iloc[0]
-        location_name = get_location_name(geometry)
-    else:
-        location_name = "No data found for this site"
-except Exception as e:
-    print(f"Warning: Could not get location name: {e}")
-    location_name = "Unknown location"
-```
-
-```python exec
-# Get data for the site report - use cached primary result data
-cached_primary_result_path = Path.cwd() / "cached_primary_result.geojson"
-if cached_primary_result_path.exists():
-    primary_result_gdf = gpd.read_file(cached_primary_result_path)
-else:
-    print("Error: No cached primary result data found. Run publication_logic.py to cache data first.")
-    raise FileNotFoundError("Cached primary result data not found")
-
-site_primary_data = primary_result_gdf[primary_result_gdf['site_id'] == site_id]
+module_dir = Path.cwd()  # this is the directory with extract_steps_mini.py
+sys.path.insert(0, str(module_dir))
+from extract_steps_mini import extract_step_dicts
+step_dicts = extract_step_dicts("interface.crate")
 ```
 
 # Site Report: `site_id`{python exec}
-### Location: `location_name`{python exec}
+
+::: for step in step_dicts
+
+### {{step.name}}
+
+::: template_describe [openai/gpt-5] Describe this step which was executed with a workflow. The step had these inputs: {{step.inputs}}, and these outputs: {{step.outputs}}. Was written in this programming language: {{step.programmingLanguage}}, and can be found at this code repository: {{step.codeRepository}}. For more context here is the raw metadata: {{step.raw}}. Describe it in two paragraphs. :::
+
+:::
