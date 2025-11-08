@@ -1,0 +1,32 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/data
+title: CoastSat Data Lineage Summary
+description: Describe how a data artefact is produced and used within the CoastSat workflow.
+
+version: "0.1.0"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are explaining the provenance of a single data artefact inside the CoastSat workflow.
+
+Using the supplied metadata, produce one concise paragraph that:
+- Identifies which workflow steps generate the artefact and the operations that lead to it.
+- Summarises the main characteristics of the artefact (format, size, purpose) when given.
+- Describes how downstream steps consume or transform it, again using aggregate counts rather than exhaustive lists.
+- Notes any external repositories, APIs, or notebooks linked to the artefact.
+
+Do not speculate. Report only what is explicitly provided.
+
+# Artefact Metadata
+
+{{ instruction.target }}
+
+# Document Context
+
+:::: include ../../partials/context/document/metadata.smd
+:::: include ../../partials/context/document/paragraphs/previous.smd
+

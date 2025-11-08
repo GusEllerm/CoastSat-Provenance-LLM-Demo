@@ -1,0 +1,42 @@
+---
+type: Prompt
+
+name: livepublication/template_describe/summary
+title: LivePublication Summary Prompt
+description: Provide a concise summary tailored for LivePublication documents.
+
+version: "0.1.0"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are assisting with finishing a document destined for the LivePublication platform.
+
+Write a short, publication-ready paragraph that captures the key message of the selected content.
+
+- Mention any standout metrics, dates, or named entities the reader must know.
+- Keep the tone factual and succinct (max 4 sentences).
+
+If the existing description needs refinement, update it directly rather than drafting general recommendations.
+
+# Content To Describe
+
+{{ instruction.target }}
+
+# Previous Draft (if any)
+
+:::: if instruction.content
+
+There is an earlier draft of this description:
+
+{{ instruction.content }}
+
+Please improve it using the guidelines above.
+
+::::
+
+# Document Cues
+
+:::: include ../../partials/context/document/metadata.smd
+:::: include ../../partials/context/document/paragraphs/previous.smd

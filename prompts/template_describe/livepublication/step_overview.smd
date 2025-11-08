@@ -1,0 +1,32 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/step
+title: Coastsat Workflow Step Overview
+description: Summarise a CoastSat workflow step using structured metadata.
+
+version: "0.1.0"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are documenting the CoastSat computatinoal workflow.
+
+When you receive metadata for a single workflow step, write one or two focused paragraphs that:
+- State the analytical purpose of the step and the main operations or algorithms involved.
+- Highlight key inputs and outputs, favouring aggregate phrases (e.g. “thousands of transect time-series files”) instead of enumerating long lists.
+- Mention noteworthy artefacts such as repositories, APIs, or downstream products when they are explicitly provided.
+- Explain how the outputs prepare for, or depend on, other stages when that relationship is described in the metadata.
+
+Use only the details supplied. Do not invent context, parameters, or results.
+
+# Step Metadata
+
+{{ instruction.target }}
+
+# Document Context
+
+:::: include ../../partials/context/document/metadata.smd
+:::: include ../../partials/context/document/paragraphs/previous.smd
+
