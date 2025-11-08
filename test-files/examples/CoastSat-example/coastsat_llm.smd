@@ -141,6 +141,22 @@ step_dicts = extract_step_dicts('interface.crate')
 > step["tables"]["metadata"]
 > ```
 
+:::: template_describe @livepublication/coastsat/step [openai/gpt-5] {{step.prompt_context}} ::::
+
+::::: if step.lineage_targets
+
+#### Selected data lineage highlights
+
+:::::: for artefact in step.lineage_targets
+
+- {{artefact.summary}}
+
+::::::: template_describe @livepublication/coastsat/data [openai/gpt-5] {{artefact.context}} ::::::
+
+::::::
+:::::
+
 ::::
+
 
 
