@@ -36,16 +36,6 @@ This case study demonstrates how we transform provenance stored in `interface.cr
 - **Notebook integration:** Up to ten notebook cells per step surfaced via collapsible previews and referenced inside prompt outputs.
 - **Site-aware linking:** Payloads prioritise GitHub artefacts matching `site_id` (`nzd0001`) and annotate transient states when no files are captured.
 
-## Refinement Checklist
-
-- ✅ Deterministic prompt payloads (counts, summaries, sample links) minimise hallucination.
-- ✅ Prompt suite enforces consistent Markdown structure, numbered step headings, and repository hyperlinks.
-- ✅ Rendering scripts ensure the CLI uses the working-tree prompts (`STENCILA_PROMPTS_DIR`).
-- Pending improvements:
-  - Revisit artefact lineage prompts once the IO narratives settle.
-  - Watch for local path leakage in outputs; tighten sanitisation if observed.
-  - Expand to additional sites by parameterising `site_id` and re-running the pipeline.
-
 ## Maintenance Notes
 
 - Regenerate `example.html` after updating `interface.crate`, micro-prompts, or extractor logic.
