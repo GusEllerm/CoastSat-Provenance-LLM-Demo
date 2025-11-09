@@ -18,6 +18,9 @@ This directory contains all documentation for the Stencila development environme
 - **[Cursor Development](extension/CURSOR_DEVELOPMENT.md)** - Cursor IDE setup and usage
 - **[How Dev Mode Works](extension/HOW_DEV_MODE_WORKS.md)** - Understanding extension development mode
 
+### Examples
+- **[CoastSat LLM Methodology Example](examples/coastsat.md)** - Provenance-driven workflow narrative example
+
 ## Quick Navigation
 
 **New to the project?** Start with [Quick Start Guide](getting-started/QUICKSTART.md)
