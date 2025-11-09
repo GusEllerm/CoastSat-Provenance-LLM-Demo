@@ -1,0 +1,120 @@
+title: Executable
+'@id': stencila:Executable
+extends: Entity
+category: flow
+abstract: true
+description: Abstract base type for executable nodes (e.g. `CodeChunk`, `CodeExpression`, `Call`).
+core:
+  - executionMode
+properties:
+  executionMode:
+    '@id': stencila:executionMode
+    description: Under which circumstances the node should be executed.
+    $comment: |
+      This property is in the `code` strip scope, and is allowed to be patched by some formats,
+      because it is not a byproduct of execution and can be part of the source of the document.
+    $ref: ExecutionMode
+    strip: [code]
+    patch:
+      formats: [md, smd, myst, ipynb, qmd, latex]
+  compilationDigest:
+    '@id': stencila:compilationDigest
+    description: A digest of the content, semantics and dependencies of the node.
+    strip: [compilation]
+    $ref: CompilationDigest
+    dom:
+      skip: true
+  compilationMessages:
+    '@id': stencila:compilationMessages
+    description: Messages generated while compiling the code.
+    strip: [compilation]
+    type: array
+    items:
+      $ref: CompilationMessage
+    dom:
+      elem: span
+  executionDigest:
+    '@id': stencila:executionDigest
+    description: The `compilationDigest` of the node when it was last executed.
+    strip: [execution]
+    $ref: CompilationDigest
+    dom:
+      skip: true
+  executionDependencies:
+    '@id': stencila:executionDependencies
+    description: The upstream dependencies of this node.
+    strip: [execution]
+    type: array
+    items:
+      $ref: ExecutionDependency
+    dom:
+      elem: span
+  executionDependants:
+    '@id': stencila:executionDependants
+    description: The downstream dependants of this node.
+    strip: [execution]
+    type: array
+    items:
+      $ref: ExecutionDependant
+    dom:
+      elem: span
+  executionTags:
+    '@id': stencila:executionTags
+    description: Tags in the code which affect its execution.
+    strip: [execution]
+    type: array
+    items:
+      $ref: ExecutionTag
+    dom:
+      elem: span
+  executionCount:
+    '@id': stencila:executionCount
+    description: A count of the number of times that the node has been executed.
+    strip: [execution]
+    type: integer
+    minimum: 0
+    $comment: |
+      Intended to increment with each successive execution of the node, including across sessions.
+      Note that this differs to the `execution_count` in Jupyter Notebook format which is
+      the "code cell's prompt number" and which resets at the start of each new session.
+  executionRequired:
+    '@id': stencila:executionRequired
+    description: Whether, and why, the code requires execution or re-execution.
+    strip: [execution]
+    $ref: ExecutionRequired
+  executionStatus:
+    '@id': stencila:executionStatus
+    description: Status of the most recent, including any current, execution.
+    strip: [execution]
+    $ref: ExecutionStatus
+  executionInstance:
+    '@id': stencila:executionInstance
+    description: The id of the kernel instance that performed the last execution.
+    $comment: |
+      Used to help identify whether execution is required due to the last execution
+      being in a difference instance (e.g. after a kernel restart).
+    strip: [execution]
+    type: string
+  executionEnded:
+    '@id': stencila:executionEnded
+    description: The timestamp when the last execution ended.
+    strip: [execution, timestamps]
+    $ref: Timestamp
+    dom:
+      with: Timestamp::to_dom_attr
+  executionDuration:
+    '@id': stencila:executionDuration
+    description: Duration of the last execution.
+    strip: [execution]
+    $ref: Duration
+    dom:
+      with: Duration::to_dom_attr
+  executionMessages:
+    '@id': stencila:executionMessages
+    description: Messages emitted while executing the node.
+    strip: [execution]
+    type: array
+    items:
+      $ref: ExecutionMessage
+    dom:
+      elem: span

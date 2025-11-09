@@ -1,0 +1,208 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "@context": "https://stencila.org/context.jsonld",
+  "type": "Article",
+  "content": [
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A Bash code chunk that assigns the colour variable:"
+        }
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "code": "color=pink",
+      "programmingLanguage": "bash",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 6149006589777468474
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 6149006589777468474
+      },
+      "executionCount": 1,
+      "executionRequired": "No",
+      "executionStatus": "Succeeded",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644400494,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 19,
+        "timeUnit": "Millisecond"
+      }
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A Python code chunk that other variables:"
+        }
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "code": "styles = {\n  'bg': 100,\n  'txt': 800,\n  'pad': 1\n}",
+      "programmingLanguage": "py",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 8301707187779789424
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 8301707187779789424
+      },
+      "executionCount": 1,
+      "executionRequired": "No",
+      "executionStatus": "Succeeded",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644401066,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 572,
+        "timeUnit": "Millisecond"
+      }
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A paragraph with [some dynamically styled content]{bg-"
+        },
+        {
+          "type": "MathInline",
+          "code": "color-{{styles.bg}} text-",
+          "compilationDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 4971204706938646100
+          },
+          "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mi>c</mi><mi>o</mi><mi>l</mi><mi>o</mi><mi>r</mi><mo>-</mo><mrow><mi>s</mi><mi>t</mi><mi>y</mi><mi>l</mi><mi>e</mi><mi>s</mi><mo>.</mo><mi>b</mi><mi>g</mi></mrow><mi>t</mi><mi>e</mi><mi>x</mi><mi>t</mi><mo>-</mo></math>"
+        },
+        {
+          "type": "Text",
+          "value": "color-"
+        },
+        {
+          "type": "CodeExpression",
+          "code": "styles.txt",
+          "output": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mi>s</mi><mi>t</mi><mi>y</mi><mi>l</mi><mi>e</mi><mi>s</mi><mo>.</mo><mi>t</mi><mi>x</mi><mi>t</mi></math>",
+          "compilationDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 11107592414613827864
+          },
+          "executionDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 11107592414613827864
+          },
+          "executionCount": 1,
+          "executionRequired": "No",
+          "executionStatus": "Succeeded",
+          "executionEnded": {
+            "type": "Timestamp",
+            "value": 1714644401066,
+            "timeUnit": "Millisecond"
+          },
+          "executionDuration": {
+            "type": "Duration",
+            "value": 0,
+            "timeUnit": "Millisecond"
+          }
+        },
+        {
+          "type": "Text",
+          "value": " p-"
+        },
+        {
+          "type": "CodeExpression",
+          "code": "styles.pad",
+          "output": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mi>s</mi><mi>t</mi><mi>y</mi><mi>l</mi><mi>e</mi><mi>s</mi><mo>.</mo><mi>p</mi><mi>a</mi><mi>d</mi></math>",
+          "compilationDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 10996364422454020871
+          },
+          "executionDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 10996364422454020871
+          },
+          "executionCount": 1,
+          "executionRequired": "No",
+          "executionStatus": "Succeeded",
+          "executionEnded": {
+            "type": "Timestamp",
+            "value": 1714644401066,
+            "timeUnit": "Millisecond"
+          },
+          "executionDuration": {
+            "type": "Duration",
+            "value": 0,
+            "timeUnit": "Millisecond"
+          }
+        },
+        {
+          "type": "Text",
+          "value": "}."
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A paragraph with "
+        },
+        {
+          "type": "StyledInline",
+          "code": "bg-$foo-100",
+          "content": [
+            {
+              "type": "Text",
+              "value": "some content"
+            }
+          ],
+          "compilationDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 12976586113833083964
+          },
+          "compilationMessages": [
+            {
+              "type": "CompilationMessage",
+              "level": "Warning",
+              "message": "Warning on Line: 1, Col: 1 in file: ''; Could not match class 'bg--100', argument '-100' could not be found"
+            }
+          ],
+          "css": "",
+          "classList": "bg--100"
+        },
+        {
+          "type": "Text",
+          "value": " that attempts to use some non-existent variable."
+        }
+      ]
+    }
+  ],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1714644401070,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 596,
+    "timeUnit": "Millisecond"
+  }
+}

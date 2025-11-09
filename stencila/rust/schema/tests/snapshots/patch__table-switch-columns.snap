@@ -1,0 +1,632 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 46
+      characterPercent: 100
+  content:
+    - type: Table
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 46
+          characterPercent: 100
+      rows:
+        - type: TableRow
+          cells:
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Name
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 4
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 4
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Occupation
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 10
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 10
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Age
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 3
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 3
+                      characterPercent: 100
+          rowType: HeaderRow
+        - type: TableRow
+          cells:
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Alice
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 5
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 5
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Developer
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 9
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 9
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: "30"
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 2
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 2
+                      characterPercent: 100
+        - type: TableRow
+          cells:
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Bob
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 3
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 3
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Designer
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 8
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 8
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: "25"
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 2
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 2
+                      characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: Table
+      rows:
+        - type: TableRow
+          cells:
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Age
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Name
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Occupation
+          rowType: HeaderRow
+        - type: TableRow
+          cells:
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: "30"
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Alice
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Developer
+        - type: TableRow
+          cells:
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: "25"
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Bob
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Designer
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 25
+      characterPercent: 54
+    - type: ProvenanceCount
+      provenanceCategory: HwHe
+      characterCount: 21
+      characterPercent: 46
+  content:
+    - type: Table
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 25
+          characterPercent: 54
+        - type: ProvenanceCount
+          provenanceCategory: HwHe
+          characterCount: 21
+          characterPercent: 46
+      rows:
+        - type: TableRow
+          cells:
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Age
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 3
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 3
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Name
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 4
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 4
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Occupation
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 10
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 10
+                      characterPercent: 100
+          rowType: HeaderRow
+        - type: TableRow
+          cells:
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: "30"
+                        authorship:
+                          - - 2
+                            - 1
+                            - 2
+                            - 2
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: HwHe
+                      characterCount: 2
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Alice
+                        authorship:
+                          - - 2
+                            - 1
+                            - 2
+                            - 5
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: HwHe
+                      characterCount: 5
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Developer
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 2
+                          - - 2
+                            - 1
+                            - 2
+                            - 5
+                          - - 1
+                            - 0
+                            - 0
+                            - 2
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 4
+                      characterPercent: 44
+                    - type: ProvenanceCount
+                      provenanceCategory: HwHe
+                      characterCount: 5
+                      characterPercent: 56
+        - type: TableRow
+          cells:
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: "25"
+                        authorship:
+                          - - 2
+                            - 1
+                            - 2
+                            - 2
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: HwHe
+                      characterCount: 2
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Bob
+                        authorship:
+                          - - 2
+                            - 1
+                            - 2
+                            - 3
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: HwHe
+                      characterCount: 3
+                      characterPercent: 100
+            - type: TableCell
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: Designer
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 2
+                          - - 2
+                            - 1
+                            - 2
+                            - 4
+                          - - 1
+                            - 0
+                            - 0
+                            - 2
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 4
+                      characterPercent: 50
+                    - type: ProvenanceCount
+                      provenanceCategory: HwHe
+                      characterCount: 4
+                      characterPercent: 50
+ops:
+  - - - content
+      - 0
+      - rows
+    - Move:
+        - - 2
+          - 1
+  - - - content
+      - 0
+      - rows
+      - 0
+      - cells
+    - Move:
+        - - 0
+          - 1
+        - - 0
+          - 2
+        - - 1
+          - 0
+  - - - content
+      - 0
+      - rows
+      - 1
+      - cells
+    - Move:
+        - - 1
+          - 2
+  - - - content
+      - 0
+      - rows
+      - 1
+      - cells
+      - 2
+      - content
+      - 0
+      - content
+      - 0
+      - value
+    - Apply:
+        - Replace:
+            - start: 2
+              end: 6
+            - velop
+  - - - content
+      - 0
+      - rows
+      - 1
+      - cells
+      - 0
+      - content
+      - 0
+      - content
+      - 0
+      - value
+    - Apply:
+        - Replace:
+            - start: 0
+              end: 3
+            - "30"
+  - - - content
+      - 0
+      - rows
+      - 1
+      - cells
+      - 1
+      - content
+      - 0
+      - content
+      - 0
+      - value
+    - Apply:
+        - Replace:
+            - start: 0
+              end: 2
+            - Alice
+  - - - content
+      - 0
+      - rows
+      - 2
+      - cells
+    - Move:
+        - - 1
+          - 2
+  - - - content
+      - 0
+      - rows
+      - 2
+      - cells
+      - 2
+      - content
+      - 0
+      - content
+      - 0
+      - value
+    - Apply:
+        - Replace:
+            - start: 2
+              end: 7
+            - sign
+  - - - content
+      - 0
+      - rows
+      - 2
+      - cells
+      - 0
+      - content
+      - 0
+      - content
+      - 0
+      - value
+    - Apply:
+        - Replace:
+            - start: 0
+              end: 5
+            - "25"
+  - - - content
+      - 0
+      - rows
+      - 2
+      - cells
+      - 1
+      - content
+      - 0
+      - content
+      - 0
+      - value
+    - Apply:
+        - Replace:
+            - start: 0
+              end: 2
+            - Bob

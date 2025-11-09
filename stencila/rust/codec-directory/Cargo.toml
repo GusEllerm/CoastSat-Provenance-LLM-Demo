@@ -1,0 +1,12 @@
+[package]
+name = "codec-directory"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+codec = { path = "../codec" }
+ignore = "0.4.22"
+mime_guess = { workspace = true }
+
+[lints]
+workspace = true

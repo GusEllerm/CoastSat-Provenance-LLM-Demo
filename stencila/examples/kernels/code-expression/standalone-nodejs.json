@@ -1,0 +1,60 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "@context": "https://stencila.org/context.jsonld",
+  "type": "Article",
+  "content": [
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "CodeExpression",
+          "code": "1 + 2 + 3",
+          "programmingLanguage": "node",
+          "output": null,
+          "compilationDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 9695321780275120580
+          },
+          "executionDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 9695321780275120580
+          },
+          "executionCount": 1,
+          "executionRequired": "ExecutionFailed",
+          "executionStatus": "Errors",
+          "executionEnded": {
+            "type": "Timestamp",
+            "value": 1714644379078,
+            "timeUnit": "Millisecond"
+          },
+          "executionDuration": {
+            "type": "Duration",
+            "value": 3,
+            "timeUnit": "Millisecond"
+          },
+          "executionMessages": [
+            {
+              "type": "ExecutionMessage",
+              "level": "Error",
+              "message": "No kernel available with name, or that supports language, `node`",
+              "stackTrace": "While evaluating expression"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1714644379078,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 3,
+    "timeUnit": "Millisecond"
+  }
+}

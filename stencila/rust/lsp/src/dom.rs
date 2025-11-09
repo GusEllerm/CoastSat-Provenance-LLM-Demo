@@ -1,0 +1,169 @@
+//! Handling of custom requests and notifications related to
+//! the DOM HTML representation of a document
+
+use std::{collections::HashMap, sync::Arc};
+
+use async_lsp::{
+    ClientSocket, ErrorCode, ResponseError,
+    lsp_types::{notification::Notification, request::Request},
+};
+
+use common::{
+    once_cell::sync::Lazy,
+    reqwest::Url,
+    serde::{Deserialize, Serialize},
+    tokio::{
+        self,
+        sync::{
+            Mutex, RwLock,
+            mpsc::{self, Sender},
+        },
+        task::JoinHandle,
+    },
+    tracing,
+    uuid::Uuid,
+};
+use document::{Document, DomPatch};
+use schema::NodeId;
+
+pub struct SubscribeDom;
+
+impl Request for SubscribeDom {
+    const METHOD: &'static str = "stencila/subscribeDom";
+    type Params = SubscribeDomParams;
+    type Result = (String, String, String);
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(crate = "common::serde")]
+pub struct SubscribeDomParams {
+    // The URI of the document for which the DOM is desired
+    pub uri: Url,
+}
+
+pub struct ResetDom;
+
+impl Request for ResetDom {
+    const METHOD: &'static str = "stencila/resetDom";
+    type Params = ResetDomParams;
+    type Result = ();
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", crate = "common::serde")]
+pub struct ResetDomParams {
+    // The id of the subscription
+    pub subscription_id: String,
+}
+
+pub struct UnsubscribeDom;
+
+impl Request for UnsubscribeDom {
+    const METHOD: &'static str = "stencila/unsubscribeDom";
+    type Params = UnsubscribeDomParams;
+    type Result = ();
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", crate = "common::serde")]
+pub struct UnsubscribeDomParams {
+    // The id of the subscription
+    pub subscription_id: String,
+}
+
+struct PublishDom;
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", crate = "common::serde")]
+pub struct PublishDomParams {
+    // The id of the subscription
+    subscription_id: String,
+
+    // The DOM patch
+    patch: DomPatch,
+}
+
+impl Notification for PublishDom {
+    const METHOD: &'static str = "stencila/publishDom";
+    type Params = PublishDomParams;
+}
+
+/// A map of subscriptions to document DOMs
+#[allow(clippy::type_complexity)]
+static SUBSCRIPTIONS: Lazy<Mutex<HashMap<String, (Sender<DomPatch>, JoinHandle<()>)>>> =
+    Lazy::new(Mutex::default);
+
+/// Handle a request to subscribe to DOM HTML updates for a document
+pub async fn subscribe(
+    doc: Arc<RwLock<Document>>,
+    node_id: Option<NodeId>,
+    client: ClientSocket,
+) -> Result<(String, String, String), ResponseError> {
+    let (in_sender, in_receiver) = mpsc::channel(256);
+    let (out_sender, mut out_receiver) = mpsc::channel(256);
+
+    let subscription_id = Uuid::new_v4().to_string();
+
+    tracing::debug!("Starting subscription `{subscription_id}`");
+
+    // Start task to send patches to the client
+    let sub_id = subscription_id.clone();
+    let task = tokio::spawn(async move {
+        while let Some(patch) = out_receiver.recv().await {
+            if let Err(error) = client.notify::<PublishDom>(PublishDomParams {
+                subscription_id: sub_id.clone(),
+                patch,
+            }) {
+                tracing::error!("While publishing DOM patch: {error}");
+            };
+        }
+    });
+
+    SUBSCRIPTIONS
+        .lock()
+        .await
+        .insert(subscription_id.clone(), (in_sender, task));
+
+    let doc = doc.read().await;
+
+    // Get the document theme
+    let theme = doc
+        .config()
+        .await
+        .map_err(|error| ResponseError::new(ErrorCode::INTERNAL_ERROR, error.to_string()))?
+        .theme
+        .unwrap_or_else(|| "default".into());
+
+    // Start the DOM syncing task and the initial HTML content
+    let html = doc
+        .sync_dom(node_id, in_receiver, out_sender)
+        .await
+        .map_err(|error| ResponseError::new(ErrorCode::INTERNAL_ERROR, error.to_string()))?;
+
+    Ok((subscription_id, theme, html))
+}
+
+/// Handle a request to reset the DOM HTML for a document
+pub async fn reset(subscription_id: String) -> Result<(), ResponseError> {
+    tracing::debug!("Resetting subscription `{subscription_id}`");
+
+    if let Some((sender, ..)) = SUBSCRIPTIONS.lock().await.get(&subscription_id) {
+        sender
+            .send(DomPatch::reset_request())
+            .await
+            .map_err(|error| ResponseError::new(ErrorCode::INTERNAL_ERROR, error.to_string()))?;
+    }
+
+    Ok(())
+}
+
+/// Handle a request to unsubscribe from DOM HTML updates for a document
+pub async fn unsubscribe(subscription_id: String) -> Result<(), ResponseError> {
+    tracing::debug!("Stopping subscription `{subscription_id}`");
+
+    if let Some((.., task)) = SUBSCRIPTIONS.lock().await.remove(&subscription_id) {
+        task.abort();
+    }
+
+    Ok(())
+}

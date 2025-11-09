@@ -1,0 +1,62 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "@context": "https://stencila.org/context.jsonld",
+  "type": "Article",
+  "content": [
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A simple math block:"
+        }
+      ]
+    },
+    {
+      "type": "MathBlock",
+      "code": "a = \\pi r^2",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 4713797695762587193
+      },
+      "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mi>a</mi><mo>=</mo><mi>π</mi><msup><mi>r</mi><mn>2</mn></msup></math>"
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A math block with an error:"
+        }
+      ]
+    },
+    {
+      "type": "MathBlock",
+      "code": "\\foo",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 1725569055879263474
+      },
+      "compilationMessages": [
+        {
+          "type": "CompilationMessage",
+          "level": "Error",
+          "message": "Expected a string"
+        }
+      ]
+    }
+  ],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1714644398329,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 0,
+    "timeUnit": "Millisecond"
+  }
+}

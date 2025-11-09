@@ -1,0 +1,26 @@
+# Workflow for triggering various release workflows when a version tag is created
+
+name: Version
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        # Needed only because `gh` errors if not in a repo
+        uses: actions/checkout@v4
+
+      - name: Trigger CLI release workflow
+        run: gh workflow run release-cli.yml -f tag=${{ github.ref_name }}
+
+      - name: Trigger Web distribution publishing workflow
+        run: gh workflow run release-web.yml -f tag=${{ github.ref_name }}

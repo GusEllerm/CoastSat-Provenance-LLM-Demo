@@ -1,0 +1,36 @@
+{
+  type: "Article",
+  content: [
+    {
+      type: "Paragraph",
+      content: [
+        {
+          type: "Text",
+          value: { string: "A paragraph before first thematic break." }
+        }
+      ]
+    },
+    { type: "ThematicBreak" },
+    {
+      type: "Paragraph",
+      content: [
+        {
+          type: "Text",
+          value: { string: "A paragraph after first thematic break." }
+        }
+      ]
+    },
+    { type: "ThematicBreak" },
+    {
+      type: "Paragraph",
+      content: [
+        {
+          type: "Text",
+          value: { string: "Two consecutive thematic breaks follow this paragraph." }
+        }
+      ]
+    },
+    { type: "ThematicBreak" },
+    { type: "ThematicBreak" }
+  ]
+}

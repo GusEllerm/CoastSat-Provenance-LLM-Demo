@@ -1,0 +1,36 @@
+[package]
+name = "document"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+ask = { path = "../ask" }
+cli-utils = { path = "../cli-utils" }
+codec-json = { path = "../codec-json" }
+codec-text = { path = "../codec-text" }
+codecs = { path = "../codecs" }
+common = { path = "../common" }
+dirs = { path = "../dirs" }
+format = { path = "../format" }
+kernels = { path = "../kernels" }
+json-patch = "1.2.0"
+node-canonicalize = { path = "../node-canonicalize" }
+node-db = { path = "../node-db" }
+node-diagnostics = { path = "../node-diagnostics" }
+node-execute = { path = "../node-execute" }
+node-find = { path = "../node-find" }
+node-first = { path = "../node-first" }
+node-map = { path = "../node-map" }
+node-sentencize = { path = "../node-sentencize" }
+node-strip = { path = "../node-strip" }
+notify = { version = "8.2.0", default-features = false, features = ["macos_kqueue"] }
+rand = { workspace = true }
+schema = { path = "../schema" }
+tools = { path = "../tools" }
+url = { workspace = true }
+
+[dev-dependencies]
+common-dev = { path = "../common-dev" }
+
+[lints]
+workspace = true

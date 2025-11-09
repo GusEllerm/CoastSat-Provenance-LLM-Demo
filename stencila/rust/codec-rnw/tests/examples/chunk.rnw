@@ -1,0 +1,20 @@
+Chunk name, no options, no code:
+
+<<chunkname>>=
+@
+
+No chunk name, options and code:
+
+<<echo=FALSE>>=
+# Some code
+@
+
+All:
+
+<<chunkname, echo=FALSE, hide=TRUE>>=
+# Some code
+@
+
+<<chunkname,fig.height=6, fig.width=12>>=
+plot(1:10)
+@

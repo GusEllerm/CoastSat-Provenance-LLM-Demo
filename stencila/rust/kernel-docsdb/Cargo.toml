@@ -1,0 +1,18 @@
+[package]
+name = "kernel-docsdb"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+codec-json = { path = "../codec-json" }
+codec-markdown = { path = "../codec-markdown" }
+codecs = { path = "../codecs" }
+dirs = { path = "../dirs"}
+kernel-kuzu = { path = "../kernel-kuzu"}
+node-canonicalize = { path = "../node-canonicalize" }
+node-db = { path = "../node-db"}
+node-sentencize = { path = "../node-sentencize" }
+lru = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,17 @@
+title: Superscript
+'@id': stencila:Superscript
+extends: Mark
+category: prose
+description: Superscripted content.
+dom:
+  elem: sup
+html:
+  elem: sup
+jats:
+  elem: sup
+latex:
+  command: textsuperscript
+markdown:
+  template: '^{{content}}^'
+  escape: '^'
+proptest: {}

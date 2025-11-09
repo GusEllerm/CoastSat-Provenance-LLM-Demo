@@ -1,0 +1,23 @@
+title: Emphasis
+'@id': stencila:Emphasis
+extends: Mark
+category: prose
+description: Emphasized content.
+$comment: |
+  Analogues of `Emphasis` in other schema include:
+    - HTML [`<em>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/em)
+    - JATS XML [`<italic>`](https://jats.nlm.nih.gov/archiving/tag-library/1.1/element/italic.html)
+    - MDAST [`Emphasis`](https://github.com/syntax-tree/mdast#emphasis)
+    - Pandoc [`Emph`](https://github.com/jgm/pandoc-types/blob/1.17.5.4/Text/Pandoc/Definition.hs#L256)
+dom:
+  elem: em
+html:
+  elem: em
+jats:
+  elem: italic
+latex:
+  command: emph
+markdown:
+  template: '_{{content}}_'
+  escape: '_'
+proptest: {}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/AppendixBreak.schema.json",
+  "@id": "stencila:AppendixBreak",
+  "title": "AppendixBreak",
+  "nick": "apb",
+  "extends": [
+    "Entity"
+  ],
+  "category": "prose",
+  "description": "A break in a document indicating the start one or more appendices.",
+  "$comment": "Similar to a LaTeX `\\appendix` command, this node causes level one headings to\nhave an appendix label and figure and table numbering to switch to be prefixed\nby 'A' (for the first appendix), 'B', and so on. A document should only have\none `AppendixBreak`.\n",
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "compilationMessages": {
+      "@id": "stencila:compilationMessages",
+      "description": "Messages generated while compiling the appendix break.",
+      "aliases": [
+        "compilation-messages",
+        "compilation_messages",
+        "compilationMessage",
+        "compilation-message",
+        "compilation_message"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "CompilationMessage.schema.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,114 @@
+use codec_info::{lost_exec_options, lost_options};
+
+use crate::{PromptBlock, prelude::*};
+
+impl PromptBlock {
+    /// Custom implementation of [`PatchNode::apply`]
+    pub fn apply_patch_op(
+        &mut self,
+        path: &mut NodePath,
+        op: &PatchOp,
+        context: &mut PatchContext,
+    ) -> Result<bool> {
+        if context.format_is_lossy() {
+            if let (
+                Some(NodeSlot::Property(NodeProperty::Target)),
+                PatchOp::Set(PatchValue::None),
+            ) = (path.front(), op)
+            {
+                // Ignore attempt to clear inferred target
+                if self
+                    .target
+                    .as_ref()
+                    .map(|target| target.ends_with("?"))
+                    .unwrap_or_default()
+                {
+                    return Ok(true);
+                }
+            } else if let (
+                Some(NodeSlot::Property(NodeProperty::Query)),
+                PatchOp::Set(PatchValue::None),
+            ) = (path.front(), op)
+            {
+                // Ignore attempt to clear implied query
+                if self
+                    .query
+                    .as_ref()
+                    .map(|query| query.ends_with("   "))
+                    .unwrap_or_default()
+                {
+                    return Ok(true);
+                }
+            }
+        }
+
+        Ok(false)
+    }
+}
+
+impl MarkdownCodec for PromptBlock {
+    fn to_markdown(&self, context: &mut MarkdownEncodeContext) {
+        if matches!(context.format, Format::Llmd) {
+            // Do not encode at all
+            return;
+        }
+
+        context
+            .enter_node(self.node_type(), self.node_id())
+            .merge_losses(lost_options!(self, id))
+            .merge_losses(lost_exec_options!(self));
+
+        if matches!(context.format, Format::Myst) {
+            context
+                .myst_directive(
+                    '`',
+                    "prompt",
+                    |context| {
+                        if let Some(target) = &self.target {
+                            context.space().push_prop_str(NodeProperty::Target, target);
+                        }
+                    },
+                    |_| {},
+                    |_| {},
+                )
+                .exit_node()
+                .newline();
+        } else {
+            context.push_colons().push_str(" prompt");
+
+            if let Some(instruction_type) = &self.instruction_type {
+                context.space().push_prop_str(
+                    NodeProperty::InstructionType,
+                    &instruction_type.to_string().to_lowercase(),
+                );
+            }
+
+            if let Some(value) = &self.relative_position {
+                context.space().push_prop_str(
+                    NodeProperty::RelativePosition,
+                    &value.to_string().to_lowercase(),
+                );
+            }
+
+            if let Some(value) = self.node_types.iter().flatten().next() {
+                context
+                    .space()
+                    .push_prop_str(NodeProperty::NodeTypes, &value.to_string().to_lowercase());
+            }
+
+            if let Some(target) = &self.target
+                && !target.ends_with("?")
+            {
+                context
+                    .push_str(" @")
+                    .push_prop_str(NodeProperty::Target, target);
+            }
+
+            if let Some(query) = &self.query {
+                context.space().push_prop_str(NodeProperty::Query, query);
+            }
+
+            context.newline().exit_node().newline();
+        }
+    }
+}

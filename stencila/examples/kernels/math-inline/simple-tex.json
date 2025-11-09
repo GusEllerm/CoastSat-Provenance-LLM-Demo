@@ -1,0 +1,72 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "@context": "https://stencila.org/context.jsonld",
+  "type": "Article",
+  "content": [
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A simple math inline "
+        },
+        {
+          "type": "MathInline",
+          "code": "\\pi r^2",
+          "compilationDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 9630638750169303087
+          },
+          "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mi>π</mi><msup><mi>r</mi><mn>2</mn></msup></math>"
+        },
+        {
+          "type": "Text",
+          "value": "."
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A math inline with an error "
+        },
+        {
+          "type": "MathInline",
+          "code": "\\foo",
+          "compilationDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 1725569055879263474
+          },
+          "compilationMessages": [
+            {
+              "type": "CompilationMessage",
+              "level": "Exception",
+              "message": "Undefined(\"Command(\\\"foo\\\")\")",
+              "errorType": "Syntax error"
+            }
+          ],
+          "mathml": ""
+        },
+        {
+          "type": "Text",
+          "value": "."
+        }
+      ]
+    }
+  ],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1714644398710,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 0,
+    "timeUnit": "Millisecond"
+  }
+}

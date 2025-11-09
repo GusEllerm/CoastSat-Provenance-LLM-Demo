@@ -1,0 +1,42 @@
+title: VideoObject
+'@id': schema:VideoObject
+extends: MediaObject
+category: works
+description: A video file.
+$comment: |
+  The `VideoObject` type allows you to provide details such as caption and transcript,
+  and the details which are included in [`MediaObject`](./MediaObject)
+  which `VideoObject` extends.
+dom:
+  derive: false
+html:
+  elem: video
+  special: true
+jats:
+  elem: inline-media
+  special: true
+markdown:
+  derive: false
+proptest: {}
+core:
+  - caption
+  - title
+properties:
+  caption:
+    '@id': schema:caption
+    description: The caption for this video recording.
+    type: array
+    items:
+      $ref: Inline
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    html:
+      attr: alt
+  thumbnail:
+    '@id': schema:thumbnail
+    description: Thumbnail image of this video recording.
+    $ref: ImageObject
+  transcript:
+    '@id': schema:transcript
+    description: The transcript of this video recording.
+    type: string

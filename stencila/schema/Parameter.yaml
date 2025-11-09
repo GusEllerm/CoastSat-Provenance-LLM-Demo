@@ -1,0 +1,79 @@
+title: Parameter
+'@id': stencila:Parameter
+extends: Executable
+category: flow
+status: under-development
+description: A parameter of a document.
+jats:
+  elem: parameter
+html:
+  special: true
+markdown:
+  derive: false
+proptest: {}
+required:
+  - name
+core:
+  - value
+properties:
+  name:
+    '@id': schema:name
+    description: The name of the parameter.
+    type: string
+    pattern: '[a-zA-Z][a-zA-Z0-9_]*'
+    $comment: |
+      This regex allows for snake_case and camelCase names but excludes
+      PascalCase for names.
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    jats:
+      attr: name
+    proptest:
+      min:
+        description: Generate a fixed name.
+        value: String::from("name")
+      low:
+        description: |
+          Generate a random string of up to 10 alphanumeric characters (and at most one underscore to avoid
+          a clash with Markdown emphasis).
+        regex: '[a-zA-Z_][a-zA-Z0-9]{0,9}'
+      high:
+        description: |
+          Generate a random string of up to 100 characters (excluding control characters).
+        regex: '[^\p{C}]{1,100}'
+      max:
+        description: Generate an arbitrary string.
+        strategy: String::arbitrary()
+  label:
+    '@id': stencila:label
+    description: A short label for the parameter.
+    type: string
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+  value:
+    '@id': schema:value
+    description: The current value of the parameter.
+    $ref: Node
+  default:
+    '@id': schema:defaultValue
+    description: The default value of the parameter.
+    $ref: Node
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+  validator:
+    '@id': stencila:validator
+    description: The validator that the value is validated against.
+    $comment: |
+      This property is large (in terms of bytes) so is best kept as a non-core
+      property, so as not to inflate the size of the `Inline` enum in Rust.
+    $ref: Validator
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    dom:
+      elem: span
+    html:
+      content: true
+  derivedFrom:
+    '@id': stencila:derivedFrom
+    description: The dotted path to the object (e.g. a database table column) that the parameter should be derived from
+    type: string

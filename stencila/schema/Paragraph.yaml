@@ -1,0 +1,69 @@
+title: Paragraph
+'@id': stencila:Paragraph
+nick: pgh
+extends: Entity
+category: prose
+description: A paragraph.
+$comment: |
+  Analogues of `Paragraph` in other schema include:
+    - HTML [`<p>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/p)
+    - JATS XML [`<p>`](https://jats.nlm.nih.gov/articleauthoring/tag-library/1.2/element/p.html)
+    - MDAST [`Paragraph`](https://github.com/syntax-tree/mdast#Paragraph)
+    - OpenDocument [`<text:p>`](http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#__RefHeading__1415138_253892949)
+    - Pandoc [`Para`](https://github.com/jgm/pandoc-types/blob/1.17.5.4/Text/Pandoc/Definition.hs#L220)
+html:
+  elem: p
+jats:
+  elem: p
+latex:
+  derive: false
+markdown:
+  template: '{{content}}\n\n'
+proptest: {}
+required:
+  - content
+core:
+  - authors
+  - provenance
+properties:
+  content:
+    '@id': stencila:content
+    description: The contents of the paragraph.
+    type: array
+    items:
+      $ref: Inline
+    dom:
+      elem: p
+    proptest:
+      min:
+        description: Generate a single arbitrary inline node
+        strategy: vec_inlines(1)
+      low:
+        description: Generate up to two arbitrary inline nodes
+        strategy: vec_inlines(2)
+      high:
+        description: Generate up to four arbitrary inline nodes
+        strategy: vec_inlines(4)
+      max:
+        description: Generate up to eight arbitrary inline nodes without restrictions on their order
+        strategy: vec(Inline::arbitrary(), size_range(0..=8))
+  authors:
+    '@id': schema:author
+    description: The authors of the paragraph.
+    type: array
+    items:
+      $ref: Author
+    strip: [authors]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+    dom:
+      elem: div
+  provenance:
+    '@id': stencila:provenance
+    description: A summary of the provenance of content within the paragraph.
+    type: array
+    items:
+      $ref: ProvenanceCount
+    strip: [provenance]
+    dom:
+      elem: div

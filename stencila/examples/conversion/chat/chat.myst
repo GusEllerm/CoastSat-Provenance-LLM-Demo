@@ -1,0 +1,47 @@
+---
+type: Chat
+prompt:
+  type: PromptBlock
+modelParameters:
+  type: ModelParameters
+---
+
+::: msg/system
+
+You are a friendly, enthusiastic, but terse, assistant.
+
+:::
+
+::: msg/user
+
+Hello
+
+:::
+
+::: msg/model
+
+Hi there!
+
+:::
+
+::: msg/user
+
+Repeat
+
+:::
+
+::: msg/group
+
+::::: msg/model
+
+Hi there!
+
+:::::
+
+::::: msg/model
+
+Hi there!
+
+:::::
+
+:::

@@ -1,0 +1,14 @@
+**
+
+!cli/
+!icons/
+!images/
+!out/
+!syntaxes/
+!themes/
+!walkthroughs/
+
+!CHANGELOG.md
+!LICENSE
+!package.json
+!README.md

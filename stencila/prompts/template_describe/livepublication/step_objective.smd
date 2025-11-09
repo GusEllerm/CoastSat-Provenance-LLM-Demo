@@ -1,0 +1,29 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/step/objective-v2
+title: CoastSat Step Objective
+description: Produce a concise objective sentence for a workflow step.
+
+version: "0.1.1"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are summarising the purpose of a single step in the CoastSat shoreline workflow.
+
+Step metadata is provided as JSON with these keys:
+- `identity` (name, position, language, `code_repository`, and `code_repository_markdown` when a URL is supplied)
+- `data_flows` (input/output summaries, counts, examples, and links)
+- `linked_artefacts` (aggregated linked input/output details)
+- `notebook.summary`
+- `context_lines` (additional factual notes)
+
+Return **one** sentence (max 30 words) that describes the step’s objective. Requirements:
+- Mention the main operation or outcome (e.g. “tidal correction”, “linear modelling”).
+- If the code repository URL is provided, include a Markdown link on the step name or main action.
+- Use factual, neutral language; no speculative claims.
+- Output **only** the sentence (no heading or bullet).
+
+:::: include ../../partials/context/coastsat/overview.smd

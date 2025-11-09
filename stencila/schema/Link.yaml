@@ -1,0 +1,105 @@
+title: Link
+'@id': stencila:Link
+extends: Entity
+category: prose
+description: A hyperlink to other pages, sections within the same document, resources, or any URL.
+dom:
+  derive: false  
+html:
+  elem: a
+jats:
+  elem: ext-link
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}
+required:
+  - content
+  - target
+core:
+  - title
+  - rel
+  - labelOnly
+  - compilationMessages
+properties:
+  content:
+    '@id': stencila:content
+    description: The textual content of the link.
+    type: array
+    items:
+      $ref: Inline
+    patch:
+      formats: [md, smd, myst, ipynb, qmd, lexical, koenig]
+    dom:
+      elem: span
+    proptest:
+      min:
+        description: Generate a single fixed text value.
+        value: vec![t("text")]
+      low:
+        description: Generate a single arbitrary, non-recursive, inline node
+        strategy: vec_inlines_non_recursive(1)
+      high:
+        description: Generate up to two arbitrary, non-recursive, inline nodes
+        strategy: vec_inlines_non_recursive(2)
+      max:
+        description: Generate up to four arbitrary, non-recursive, inline nodes
+        strategy: vec_inlines_non_recursive(4)
+  target:
+    '@id': schema:target
+    description: The target of the link.
+    $comment: |
+      Note that this is equivalent to the `href` attribute on a HTML `<a>` element,
+      not the `target` attribute (which is used to defined where to display the linked content,
+      e.g. in a new browser window). May be the `id` of another node in the document (e.g a table or figure)
+    type: string
+    # See http://json-schema.org/draft-06/json-schema-release-notes.html#formats-uri-vs-uri-reference
+    # for the difference between `uri` and `uri-reference`. The latter is more permissive, and is
+    # used here because it allows for intra-doc links using a #fragment only.
+    format: uri-reference
+    patch:
+      formats: [md, smd, myst, ipynb, qmd, lexical, koenig]
+    html:
+      attr: href
+    jats:
+      attr: xlink:href
+  title:
+    '@id': schema:headline
+    description: A title for the link.
+    $comment: |
+      This property is analogous to the HTML `title` global attribute which
+      represents ["advisory information related to the element"](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/title)
+    type: string
+    patch:
+      formats: [md, smd, myst, ipynb, qmd, lexical, koenig]
+    html:
+      attr: title
+    jats:
+      attr: xlink:title
+  rel:
+    '@id': schema:linkRelationship
+    description:
+      The relation between the target and the current thing.
+      # See https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types
+    patch:
+      formats: [md, smd, myst, ipynb, qmd, lexical, koenig]
+    type: string
+    html:
+      attr: rel
+  labelOnly:
+    '@id': stencila:labelOnly
+    description: Only show the label of the internal target (e.g. "2"), rather than both the label type and label (e.g. "Figure 2"). 
+    $comment: |
+      This property allows for internal cross links like "Tables 8, 9 and 10" rather than "Table 8, Table 9, and Table 10".
+      A `Link` with `labelOnly: true` is equivalent to a LaTeX `\ref` whereas the default is equivalent to a `\autoref`.
+    type: boolean
+    patch:
+      formats: [latex]
+  compilationMessages:
+    "@id": stencila:compilationMessages
+    description: Messages generated while compiling the link (e.g. missing internal link or invalid external link).
+    strip: [compilation]
+    type: array
+    items:
+      $ref: CompilationMessage

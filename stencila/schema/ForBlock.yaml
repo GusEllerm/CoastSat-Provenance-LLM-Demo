@@ -1,0 +1,99 @@
+title: ForBlock
+'@id': stencila:ForBlock
+nick: frb
+extends: CodeExecutable
+category: flow
+description: Repeat a block content for each item in an array.
+status: beta
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}
+required:
+  - variable
+  - content
+core:
+  - otherwise
+  - iterations
+properties:
+  variable:
+    '@id': stencila:variable
+    description: The name to give to the variable representing each item in the iterated array
+    type: string
+    strip: [code]
+    patch:
+      formats: [md, smd, myst, ipynb, qmd, latex]
+    proptest:
+      min:
+        description: Generate a fixed variable name.
+        value: String::from("item")
+      low:
+        description: |
+          Generate a random string of up to 10 alphanumeric characters (and at most one underscore to avoid
+          a clash with Markdown emphasis).
+        regex: '[a-zA-Z_][a-zA-Z0-9]{0,9}'
+      high:
+        description: |
+          Generate a random string of up to 100 characters (excluding control characters).
+        regex: '[^\p{C}]{1,100}'
+      max:
+        description: Generate an arbitrary string.
+        strategy: String::arbitrary()
+  content:
+    '@id': stencila:content
+    description: The content to repeat for each item
+    type: array
+    items:
+      $ref: Block
+    strip: [code]
+    walk: true
+    patch:
+      formats: [md, smd, myst, ipynb, qmd, latex]
+    dom:
+      elem: div
+    proptest:
+      min:
+        description: A single simple paragraph.
+        value: vec![p([t("For content")])]
+      low:
+        description: Generate up to four arbitrary, non-recursive, block nodes.
+        strategy: vec_blocks_non_recursive(4)
+      max:
+        description: Generate up to eight arbitrary, non-recursive, block nodes.
+        strategy: vec_blocks_non_recursive(8)
+  otherwise:
+    '@id': stencila:otherwise
+    description: The content to render if there are no items
+    type: array
+    items:
+      $ref: Block
+    strip: [code]
+    walk: true
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    dom:
+      elem: div
+    proptest:
+      min:
+        description: No otherwise clause.
+        value: None
+      low:
+        description: Generate up to two arbitrary, non-recursive, block nodes.
+        strategy: option::of(vec_blocks_non_recursive(2))
+      max:
+        description: Generate up to four arbitrary, non-recursive, block nodes.
+        strategy: option::of(vec_blocks_non_recursive(4))
+  iterations:
+    '@id': stencila:iterations
+    description: The content repeated for each iteration
+    $comment: |
+      Usually each item in `iterations` will be a `Section` with `SectionType: Iteration`
+      but it could be another `Block` type depending upon the implementation.
+    type: array
+    items:
+      $ref: Block
+    strip: [output]
+    walk: true
+    dom:
+      elem: div

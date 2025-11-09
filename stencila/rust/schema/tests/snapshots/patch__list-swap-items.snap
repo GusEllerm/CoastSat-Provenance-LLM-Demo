@@ -1,0 +1,343 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 77
+      characterPercent: 100
+  content:
+    - type: List
+      items:
+        - type: ListItem
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "an item with an image "
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 22
+                - type: ImageObject
+                  contentUrl: image.png
+                  authors:
+                    - type: AuthorRole
+                      author:
+                        type: Person
+                        givenNames:
+                          - Alice
+                      roleName: Importer
+                - type: Text
+                  value:
+                    string: ", see!"
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 6
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 28
+                  characterPercent: 100
+        - type: ListItem
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "an item with "
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 13
+                - type: Emphasis
+                  content:
+                    - type: Text
+                      value:
+                        string: emphasis
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 8
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 21
+                  characterPercent: 100
+        - type: ListItem
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "an item with HTML "
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 18
+                - type: Underline
+                  content:
+                    - type: Text
+                      value:
+                        string: underlined
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 10
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 28
+                  characterPercent: 100
+      order: Unordered
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 77
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: List
+      items:
+        - type: ListItem
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "an item with "
+                - type: Emphasis
+                  content:
+                    - type: Text
+                      value:
+                        string: emphasis
+        - type: ListItem
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "an item with an image "
+                - type: ImageObject
+                  contentUrl: image.png
+                - type: Text
+                  value:
+                    string: ", see!"
+        - type: ListItem
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "an item with HTML "
+                - type: Underline
+                  content:
+                    - type: Text
+                      value:
+                        string: underlined
+      order: Unordered
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 77
+      characterPercent: 100
+  content:
+    - type: List
+      items:
+        - type: ListItem
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "an item with "
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 13
+                - type: Emphasis
+                  content:
+                    - type: Text
+                      value:
+                        string: emphasis
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 8
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 21
+                  characterPercent: 100
+        - type: ListItem
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "an item with an image "
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 22
+                - type: ImageObject
+                  contentUrl: image.png
+                  authors:
+                    - type: AuthorRole
+                      author:
+                        type: Person
+                        givenNames:
+                          - Alice
+                      roleName: Importer
+                - type: Text
+                  value:
+                    string: ", see!"
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 6
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 28
+                  characterPercent: 100
+        - type: ListItem
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "an item with HTML "
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 18
+                - type: Underline
+                  content:
+                    - type: Text
+                      value:
+                        string: underlined
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 10
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 28
+                  characterPercent: 100
+      order: Unordered
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 77
+          characterPercent: 100
+ops:
+  - - - content
+      - 0
+      - items
+    - Move:
+        - - 0
+          - 1

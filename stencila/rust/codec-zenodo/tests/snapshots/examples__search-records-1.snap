@@ -1,0 +1,486 @@
+---
+source: rust/codec-zenodo/tests/examples.rs
+expression: node
+---
+{
+  "type": "Article",
+  "doi": "10.5281/zenodo.15308198",
+  "abstract": [
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Emphasis",
+          "content": [
+            {
+              "type": "Text",
+              "value": {
+                "string": "Car price prediction is a critical task in the automotive industry, enabling buyers, sellers, and financial institutions to make informed and objective decisions. This research focuses on applying machine learning techniques, specifically Linear Regression and Lasso Regression to predict used car prices based on multiple factors including fuel type, transmission, seller type, vehicle age, and kilometers driven. The dataset was carefully preprocessed to handle missing values and encode categorical variables, ensuring the data was suitable for model training. Both models were evaluated using R&sup2; scores, with Linear Regression achieving high accuracy and Lasso Regression providing a more simplified model by reducing overfitting. The findings demonstrate that even basic regression models can deliver reliable predictions, highlighting the potential of machine learning to improve transparency and efficiency in car pricing within real-world applications."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "authors": [
+    {
+      "type": "Person",
+      "familyNames": [
+        "Fathima"
+      ],
+      "givenNames": [
+        "Hafsa"
+      ],
+      "name": "Hafsa Fathima"
+    },
+    {
+      "type": "Person",
+      "familyNames": [
+        "Juveria"
+      ],
+      "givenNames": [
+        "Soha"
+      ],
+      "name": "Soha Juveria"
+    },
+    {
+      "type": "Person",
+      "familyNames": [
+        "Fathima"
+      ],
+      "givenNames": [
+        "Rida"
+      ],
+      "name": "Rida Fathima"
+    },
+    {
+      "type": "Person",
+      "familyNames": [
+        "Naaz"
+      ],
+      "givenNames": [
+        "Syeda",
+        "Hifsa"
+      ],
+      "name": "Syeda Hifsa Naaz"
+    }
+  ],
+  "datePublished": {
+    "type": "Date",
+    "value": "2025-04-30"
+  },
+  "keywords": [
+    "Linear Regression, Lasso Regression",
+    "community:compub"
+  ],
+  "references": [
+    {
+      "type": "Reference",
+      "id": "birla-2019",
+      "workType": "WebPage",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Birla"
+          ],
+          "givenNames": [
+            "N."
+          ]
+        }
+      ],
+      "date": {
+        "type": "Date",
+        "value": "2019"
+      },
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Vehicle Dataset from CarDekho"
+          }
+        }
+      ],
+      "url": "https://www.kaggle.com/datasets/nehalbirla/vehicle-dataset-from-cardekho"
+    },
+    {
+      "type": "Reference",
+      "id": "pedregosa-et-al-2011",
+      "workType": "Article",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Pedregosa"
+          ],
+          "givenNames": [
+            "F."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Varoquaux"
+          ],
+          "givenNames": [
+            "G."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Gramfort"
+          ],
+          "givenNames": [
+            "A."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Michel"
+          ],
+          "givenNames": [
+            "V."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Thirion"
+          ],
+          "givenNames": [
+            "B."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Grisel"
+          ],
+          "givenNames": [
+            "O."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Duchesnay"
+          ],
+          "givenNames": [
+            "E."
+          ]
+        }
+      ],
+      "date": {
+        "type": "Date",
+        "value": "2011"
+      },
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Scikit-learn: Machine learning in Python"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "Journal of Machine Learning Research"
+            }
+          }
+        ],
+        "volumeNumber": 12
+      },
+      "pageStart": 2825,
+      "pageEnd": 2830
+    },
+    {
+      "type": "Reference",
+      "id": "mckinney-2010",
+      "workType": "Chapter",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "McKinney"
+          ],
+          "givenNames": [
+            "W."
+          ]
+        }
+      ],
+      "date": {
+        "type": "Date",
+        "value": "2010"
+      },
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Data structures for statistical computing in Python"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "Proceedings of the 9th Python in Science Conference"
+            }
+          }
+        ]
+      },
+      "pageStart": 51,
+      "pageEnd": 56
+    },
+    {
+      "type": "Reference",
+      "id": "hunter-2007",
+      "workType": "Article",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Hunter"
+          ],
+          "givenNames": [
+            "J.",
+            "D."
+          ]
+        }
+      ],
+      "date": {
+        "type": "Date",
+        "value": "2007"
+      },
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Matplotlib: A 2D graphics environment"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "Computing in Science & Engineering"
+            }
+          }
+        ],
+        "volumeNumber": 9,
+        "issueNumber": 3
+      },
+      "pageStart": 90,
+      "pageEnd": 95
+    },
+    {
+      "type": "Reference",
+      "id": "waskom-2021",
+      "workType": "Article",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Waskom"
+          ],
+          "givenNames": [
+            "M."
+          ]
+        }
+      ],
+      "date": {
+        "type": "Date",
+        "value": "2021"
+      },
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Seaborn: statistical data visualization"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "Journal of Open Source Software"
+            }
+          }
+        ],
+        "volumeNumber": 6,
+        "issueNumber": 60
+      },
+      "pageStart": 3021
+    },
+    {
+      "type": "Reference",
+      "id": "james-et-al-2013",
+      "workType": "Book",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "James"
+          ],
+          "givenNames": [
+            "G."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Witten"
+          ],
+          "givenNames": [
+            "D."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Hastie"
+          ],
+          "givenNames": [
+            "T."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Tibshirani"
+          ],
+          "givenNames": [
+            "R."
+          ]
+        }
+      ],
+      "publisher": {
+        "type": "Organization",
+        "name": "Springer"
+      },
+      "date": {
+        "type": "Date",
+        "value": "2013"
+      },
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "An Introduction to Statistical Learning: with Applications in R"
+          }
+        }
+      ]
+    },
+    {
+      "type": "Reference",
+      "id": "tibshirani-1996",
+      "workType": "Article",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Tibshirani"
+          ],
+          "givenNames": [
+            "R."
+          ]
+        }
+      ],
+      "date": {
+        "type": "Date",
+        "value": "1996"
+      },
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Regression shrinkage and selection via the Lasso"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "Journal of the Royal Statistical Society: Series B (Methodological)"
+            }
+          }
+        ],
+        "volumeNumber": 58,
+        "issueNumber": 1
+      },
+      "pageStart": 267,
+      "pageEnd": 288
+    },
+    {
+      "type": "Reference",
+      "id": "raschka-and-mirjalili-2017",
+      "workType": "Book",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Raschka"
+          ],
+          "givenNames": [
+            "S."
+          ]
+        },
+        {
+          "type": "Person",
+          "familyNames": [
+            "Mirjalili"
+          ],
+          "givenNames": [
+            "V."
+          ]
+        }
+      ],
+      "publisher": {
+        "type": "Organization",
+        "name": "Packt Publishing Ltd"
+      },
+      "date": {
+        "type": "Date",
+        "value": "2017"
+      },
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Python Machine Learning: Machine Learning and Deep Learning with Python, scikit-learn, and TensorFlow 2"
+          }
+        }
+      ]
+    }
+  ],
+  "title": [
+    {
+      "type": "Text",
+      "value": {
+        "string": "An Analysis of Car Price Prediction Using Machine Learning"
+      }
+    }
+  ],
+  "content": [],
+  "licenses": [
+    "cc-by-4.0"
+  ]
+}

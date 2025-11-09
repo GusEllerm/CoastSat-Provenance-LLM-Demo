@@ -1,0 +1,224 @@
+<stencila-article id=xxx depth=0 ancestors='' root>
+  <section slot=content>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>An insert instruction with no prompt:</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-instruction-block id=xxx depth=1 ancestors=Article instruction-type=Create>
+      <div slot=prompt>
+        <stencila-prompt-block id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-prompt-block>
+      </div>
+      <div slot=message>
+        <stencila-instruction-message id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <div slot=parts>
+            <stencila-message-part type=text value='a 4x10 table'>
+            </stencila-message-part>
+          </div>
+        </stencila-instruction-message>
+      </div>
+      <div slot=model-parameters>
+        <stencila-model-parameters id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-model-parameters>
+      </div>
+    </stencila-instruction-block>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>An insert instruction with a prompt:</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-instruction-block id=xxx depth=1 ancestors=Article instruction-type=Create>
+      <div slot=prompt>
+        <stencila-prompt-block id=xxx depth=2 ancestors=Article.InstructionBlock target=table>
+        </stencila-prompt-block>
+      </div>
+      <div slot=message>
+        <stencila-instruction-message id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <div slot=parts>
+            <stencila-message-part type=text value='top five highest mountains, with height in metres'>
+            </stencila-message-part>
+          </div>
+        </stencila-instruction-message>
+      </div>
+      <div slot=model-parameters>
+        <stencila-model-parameters id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-model-parameters>
+      </div>
+    </stencila-instruction-block>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>An insert instruction with a prompt but a blank instruction</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-instruction-block id=xxx depth=1 ancestors=Article instruction-type=Create>
+      <div slot=prompt>
+        <stencila-prompt-block id=xxx depth=2 ancestors=Article.InstructionBlock target=code-chunk>
+        </stencila-prompt-block>
+      </div>
+      <div slot=message>
+        <stencila-instruction-message id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-instruction-message>
+      </div>
+      <div slot=model-parameters>
+        <stencila-model-parameters id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-model-parameters>
+      </div>
+    </stencila-instruction-block>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>An edit instruction (has content) with no prompt:</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-instruction-block id=xxx depth=1 ancestors=Article instruction-type=Edit>
+      <div slot=prompt>
+        <stencila-prompt-block id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-prompt-block>
+      </div>
+      <div slot=message>
+        <stencila-instruction-message id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <div slot=parts>
+            <stencila-message-part type=text value='improve this paragraph'>
+            </stencila-message-part>
+          </div>
+        </stencila-instruction-message>
+      </div>
+      <div slot=model-parameters>
+        <stencila-model-parameters id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-model-parameters>
+      </div>
+      <div slot=content>
+        <stencila-paragraph id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <p slot=content>
+            <stencila-text id=xxx depth=3 ancestors=Article.InstructionBlock.Paragraph>The paragraph to be improved.</stencila-text>
+          </p>
+        </stencila-paragraph>
+      </div>
+    </stencila-instruction-block>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>An edit instruction with a prompt:</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-instruction-block id=xxx depth=1 ancestors=Article instruction-type=Edit>
+      <div slot=prompt>
+        <stencila-prompt-block id=xxx depth=2 ancestors=Article.InstructionBlock target=para>
+        </stencila-prompt-block>
+      </div>
+      <div slot=message>
+        <stencila-instruction-message id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <div slot=parts>
+            <stencila-message-part type=text value='please improve this paragraph'>
+            </stencila-message-part>
+          </div>
+        </stencila-instruction-message>
+      </div>
+      <div slot=model-parameters>
+        <stencila-model-parameters id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-model-parameters>
+      </div>
+      <div slot=content>
+        <stencila-paragraph id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <p slot=content>
+            <stencila-text id=xxx depth=3 ancestors=Article.InstructionBlock.Paragraph>Another paragraph to be improved.</stencila-text>
+          </p>
+        </stencila-paragraph>
+      </div>
+    </stencila-instruction-block>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>An insert instruction with a prompt and a suggestion:</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-instruction-block id=xxx depth=1 ancestors=Article instruction-type=Create active-suggestion=0>
+      <div slot=prompt>
+        <stencila-prompt-block id=xxx depth=2 ancestors=Article.InstructionBlock target=code-chunk>
+        </stencila-prompt-block>
+      </div>
+      <div slot=message>
+        <stencila-instruction-message id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <div slot=parts>
+            <stencila-message-part type=text value='analyze data'>
+            </stencila-message-part>
+          </div>
+        </stencila-instruction-message>
+      </div>
+      <div slot=model-parameters>
+        <stencila-model-parameters id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-model-parameters>
+      </div>
+      <div slot=suggestions>
+        <stencila-suggestion-block id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <div slot=content>
+            <stencila-code-chunk id=xxx depth=3 ancestors=Article.InstructionBlock.SuggestionBlock code='some code'>
+            </stencila-code-chunk>
+          </div>
+        </stencila-suggestion-block>
+      </div>
+    </stencila-instruction-block>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>An edit instruction with a suggestion:</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-instruction-block id=xxx depth=1 ancestors=Article instruction-type=Edit active-suggestion=0>
+      <div slot=prompt>
+        <stencila-prompt-block id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-prompt-block>
+      </div>
+      <div slot=message>
+        <stencila-instruction-message id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <div slot=parts>
+            <stencila-message-part type=text value='more succinct'>
+            </stencila-message-part>
+          </div>
+        </stencila-instruction-message>
+      </div>
+      <div slot=model-parameters>
+        <stencila-model-parameters id=xxx depth=2 ancestors=Article.InstructionBlock>
+        </stencila-model-parameters>
+      </div>
+      <div slot=content>
+        <stencila-paragraph id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <p slot=content>
+            <stencila-text id=xxx depth=3 ancestors=Article.InstructionBlock.Paragraph>A rather long winded paragraph.</stencila-text>
+          </p>
+        </stencila-paragraph>
+      </div>
+      <div slot=suggestions>
+        <stencila-suggestion-block id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <div slot=content>
+            <stencila-paragraph id=xxx depth=3 ancestors=Article.InstructionBlock.SuggestionBlock>
+              <p slot=content>
+                <stencila-text id=xxx depth=4 ancestors=Article.InstructionBlock.SuggestionBlock.Paragraph>A paragraph.</stencila-text>
+              </p>
+            </stencila-paragraph>
+          </div>
+        </stencila-suggestion-block>
+      </div>
+    </stencila-instruction-block>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>With prompt and model parameters specified:</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-instruction-block id=xxx depth=1 ancestors=Article instruction-type=Create>
+      <div slot=prompt>
+        <stencila-prompt-block id=xxx depth=2 ancestors=Article.InstructionBlock target=prompt>
+        </stencila-prompt-block>
+      </div>
+      <div slot=message>
+        <stencila-instruction-message id=xxx depth=2 ancestors=Article.InstructionBlock>
+          <div slot=parts>
+            <stencila-message-part type=text value=message>
+            </stencila-message-part>
+          </div>
+        </stencila-instruction-message>
+      </div>
+      <div slot=model-parameters>
+        <stencila-model-parameters id=xxx depth=2 ancestors=Article.InstructionBlock model-ids='["model1","model2"]' replicates=3 quality-weight=10 cost-weight=10 speed-weight=10 minimum-score=40 temperature=10 random-seed=123>
+        </stencila-model-parameters>
+      </div>
+    </stencila-instruction-block>
+  </section>
+</stencila-article>

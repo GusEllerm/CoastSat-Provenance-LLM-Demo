@@ -1,0 +1,12 @@
+[package]
+name = "models-stencila"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+cached = { workspace = true }
+cloud = { path = "../cloud" }
+model = { path = "../model" }
+
+[lints]
+workspace = true

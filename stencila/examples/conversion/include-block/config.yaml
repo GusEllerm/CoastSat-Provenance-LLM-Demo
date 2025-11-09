@@ -1,0 +1,11 @@
+compact.jats.xml:
+  decode:
+    strip-types:
+      # TODO: Implement encoding and decoding `IncludeBlock`
+      - IncludeBlock
+
+qmd:
+  decode:
+    strip-types:
+      # Not supported in QMD
+      - IncludeBlock

@@ -1,0 +1,149 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Section.schema.json",
+  "@id": "stencila:Section",
+  "title": "Section",
+  "extends": [
+    "Entity"
+  ],
+  "category": "prose",
+  "description": "A section of a document.",
+  "html": {
+    "elem": "section",
+    "special": true
+  },
+  "jats": {
+    "elem": "sec"
+  },
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "content"
+  ],
+  "core": [
+    "id",
+    "sectionType",
+    "authors",
+    "provenance"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "sectionType": {
+      "@id": "stencila:sectionType",
+      "description": "The type of section.",
+      "aliases": [
+        "section-type",
+        "section_type"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "jats": {
+        "attr": "sec-type"
+      },
+      "proptest": {
+        "min": {
+          "description": "No type.",
+          "value": "None"
+        },
+        "low": {
+          "description": "Generate an arbitrary section type.",
+          "strategy": "option::of(SectionType::arbitrary())"
+        }
+      },
+      "$ref": "SectionType.schema.json"
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "The content within the section.",
+      "dom": {
+        "elem": "section"
+      },
+      "proptest": {
+        "min": {
+          "description": "An empty vector",
+          "value": "Vec::new()"
+        },
+        "low": {
+          "description": "Generate an arbitrary heading and an arbitrary paragraph.",
+          "strategy": "vec_heading_paragraph()"
+        },
+        "high": {
+          "description": "Generate up to four arbitrary, non-recursive, block nodes.",
+          "strategy": "vec_blocks_non_recursive(4)"
+        },
+        "max": {
+          "description": "Generate up to eight arbitrary, non-recursive, block nodes.",
+          "strategy": "vec_blocks_non_recursive(8)"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Block.schema.json"
+      }
+    },
+    "authors": {
+      "@id": "schema:author",
+      "description": "The authors of the section.",
+      "aliases": [
+        "author"
+      ],
+      "strip": [
+        "authors"
+      ],
+      "serde": {
+        "deserializeWith": "option_one_or_many_string_or_object"
+      },
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Author.schema.json"
+      }
+    },
+    "provenance": {
+      "@id": "stencila:provenance",
+      "description": "A summary of the provenance of the content within the section.",
+      "strip": [
+        "provenance"
+      ],
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ProvenanceCount.schema.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+# Default configuration for Stencila workspaces
+
+models:
+  executeContent: true
+  executionBounds: Box
+  maximumRetries: 2

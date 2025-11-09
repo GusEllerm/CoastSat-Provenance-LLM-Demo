@@ -1,0 +1,42 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/step/operations-v3
+title: CoastSat Step Key Operations
+description: Produce a short bullet list of key operations for a CoastSat workflow step.
+
+version: "0.1.1"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are outlining the major operations carried out in a CoastSat workflow step.
+
+Step metadata is provided as JSON with these keys:
+- `identity` (name, position, language, `code_repository`, `code_repository_markdown` when present)
+- `data_flows` (input/output summaries, counts, examples, links)
+- `linked_artefacts` (linked input/output aggregates)
+- `context_lines` (additional factual notes)
+- `notebook` (overall summary plus `cells`, each with `name`, `position`, and full `content` when available)
+
+Return a Markdown bullet list with **two to four** items. Requirements:
+- Each bullet should start with a verb phrase (e.g., “Download NIWA tide observations”).
+- Each bullet should be in order of execution within the notebook.
+- Reference notable inputs/outputs or notebook cells when they are provided; use Markdown links as supplied.
+- Keep each bullet under 20 words.
+- If a notebook cell would help describe the operation, include it by following the instructions below:
+
+If a bulletpoint references a notebook cell, reference the cell name after the fullstop of the bulletpoint. For example: A bulletpoint point about something. Reference: [Code cell 3].
+Next, include the cell content using the following syntax:
+
+> [!note]- [CELL NAME HERE]
+> ```
+> {{cell content, with each line prefixed by "> " and any backticks (\`) replaced with &#96;}}
+> ```
+
+Note the use of > which will be rendered into a collapsible callout. 
+Make sure there are no syntax errors in the formatting of the cell content -- note the "-" directly after [!note]. This must be present.
+Only reference a maxium of one notebook cell per bulletpoint.
+
+:::: include ../../partials/context/coastsat/overview.smd

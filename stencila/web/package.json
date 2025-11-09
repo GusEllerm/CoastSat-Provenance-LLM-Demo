@@ -1,0 +1,125 @@
+{
+  "name": "@stencila/web",
+  "version": "2.0.0-beta.1",
+  "description": "Web Components for types in the Stencila Schema",
+  "license": "Apache-2.0",
+  "author": "Nokome Bentley <nokome@stencila.io>",
+  "bugs": {
+    "url": "https://github.com/stencila/stencila/issues"
+  },
+  "homepage": "https://github.com/stencila/stencila/tree/main/web#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stencila/stencila.git"
+  },
+  "keywords": [
+    "types",
+    "programmable",
+    "executable",
+    "reproducible",
+    "interactive",
+    "documents"
+  ],
+  "type": "module",
+  "targets": {
+    "default": {
+      "source": [
+        "src/images/favicon.png",
+        "src/themes/default.css",
+        "src/themes/stencila.css",
+        "src/views/dynamic.ts",
+        "src/views/print.ts"
+      ],
+      "distDir": "./dist"
+    },
+    "ghost": {
+      "source": [
+        "src/views/ghost.ts"
+      ],
+      "distDir": "../ghost/assets/built/stencila-web"
+    },
+    "vscode": {
+      "source": [
+        "src/themes/default.css",
+        "src/themes/stencila.css",
+        "src/views/vscode.ts"
+      ],
+      "distDir": "../vscode/out/web"
+    }
+  },
+  "browserslist": [
+    "fully supports es6-class"
+  ],
+  "scripts": {
+    "audit": "better-npm-audit audit",
+    "fix": "eslint --fix \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "cover": "vitest run --coverage",
+    "typecheck": "../node_modules/.bin/tsc --skipLibCheck --noEmit",
+    "e2e": "playwright test",
+    "start": "parcel watch",
+    "build": "cross-env NODE_ENV=production parcel build --target default --no-scope-hoist",
+    "build:vscode": "cross-env NODE_ENV=production parcel build --target vscode --config .parcelrc-vscode --no-source-maps --no-cache",
+    "build:ghost": "cross-env NODE_ENV=production parcel build --target ghost --no-source-maps --no-cache",
+    "export:vscode": "tsx scripts/export-to-vscode.ts",
+    "unused": "depcheck --quiet --ignores '@parcel/*,parcel-*,postcss-*' --ignore-patterns 'vitest.config.ts,**/*.test.ts'"
+  },
+  "dependencies": {
+    "@codemirror/commands": "6.8.1",
+    "@codemirror/lang-css": "6.3.1",
+    "@codemirror/lang-html": "6.4.9",
+    "@codemirror/lang-javascript": "6.2.4",
+    "@codemirror/lang-json": "6.0.2",
+    "@codemirror/lang-python": "6.2.1",
+    "@codemirror/lang-sql": "6.9.1",
+    "@codemirror/lang-xml": "6.1.0",
+    "@codemirror/lang-yaml": "6.1.2",
+    "@codemirror/language": "6.11.3",
+    "@codemirror/legacy-modes": "6.5.1",
+    "@codemirror/lint": "6.8.5",
+    "@codemirror/state": "6.5.2",
+    "@codemirror/view": "6.38.1",
+    "@lit-labs/observers": "2.0.6",
+    "@lit/context": "1.1.6",
+    "@shoelace-style/shoelace": "2.20.1",
+    "@stencila/types": "2.0.0-alpha.26",
+    "@tailwindcss/container-queries": "0.1.1",
+    "@tailwindcss/typography": "0.5.16",
+    "@twind/core": "1.1.3",
+    "@twind/preset-autoprefix": "1.0.7",
+    "@twind/preset-container-queries": "1.0.7",
+    "@twind/preset-tailwind": "1.1.4",
+    "@twind/preset-typography": "1.0.7",
+    "@twind/with-web-components": "1.1.3",
+    "@viz-js/lang-dot": "1.0.5",
+    "codemirror-lang-mermaid": "0.5.0",
+    "codemirror-lang-r": "0.1.1",
+    "cytoscape": "3.33.1",
+    "idiomorph": "0.7.3",
+    "just-diff-apply": "5.5.0",
+    "katex": "0.16.22",
+    "lit": "3.3.1",
+    "mermaid": "11.10.0",
+    "moment": "2.30.1",
+    "pagedjs": "0.4.3",
+    "plotly.js-dist-min": "3.1.0",
+    "pretty-ms": "9.2.0",
+    "tailwindcss": "3.4.17",
+    "vega-embed": "6.29.0"
+  },
+  "devDependencies": {
+    "@argos-ci/playwright": "4.1.0",
+    "@parcel/compressor-brotli": "2.15.4",
+    "@parcel/transformer-inline-string": "2.15.4",
+    "@parcel/transformer-typescript-tsc": "2.15.4",
+    "@playwright/test": "1.55.0",
+    "@types/katex": "0.16.7",
+    "@types/plotly.js-dist-min": "2.3.4",
+    "glob": "11.0.3",
+    "parcel": "2.15.4",
+    "postcss-import": "16.1.1",
+    "tsx": "4.20.4"
+  }
+}

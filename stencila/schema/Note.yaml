@@ -1,0 +1,57 @@
+title: Note
+'@id': stencila:Note
+extends: Entity
+category: prose
+description: Additional content which is not part of the main content of a document.
+$comment: |
+  A note is usually associated with a word or paragraph using a number or other symbol. 
+  It can be displayed as a footnote, endnote, or side note, or in interactive elements.
+  For analogues, see 
+  - [JATS `<fn>`](https://jats.nlm.nih.gov/publishing/tag-library/1.2/element/fn.html)
+  - [Pandoc footnotes](https://pandoc.org/MANUAL.html#footnotes)
+  - [HTML `<aside>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/aside)
+jats:
+  elem: fn
+  attrs:
+    # Use the `custom-type` attribute to encode the `noteType`
+    # See https://jats.nlm.nih.gov/articleauthoring/tag-library/1.3/attribute/fn-type.html
+    fn-type: custom
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}
+required:
+  - noteType
+  - content
+properties:
+  noteType:
+    '@id': stencila:noteType
+    description: Determines where the note content is displayed within the document.
+    $ref: NoteType
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    jats:
+      attr: custom-type
+    proptest:
+      min:
+        description: Fixed footnote type.
+        value: NoteType::Footnote
+      high:
+        description: Generate an arbitrary note type.
+        strategy: NoteType::arbitrary()
+  content:
+    '@id': stencila:content
+    description: Content of the note, usually a paragraph.
+    $comment: |
+      Most notes will have a single paragraph but could have multiple
+      paragraphs, tables and even figures.
+    type: array
+    items:
+      $ref: Block
+    dom:
+      elem: aside
+    proptest:
+      min:
+        description: Generate a single paragraph (with no `Note` to avoid recursion).
+        value: vec![p([t("Note paragraph")])]

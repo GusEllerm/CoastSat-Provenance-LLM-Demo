@@ -1,0 +1,68 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Date.schema.json",
+  "@id": "schema:Date",
+  "title": "Date",
+  "nick": "dae",
+  "extends": [
+    "Entity"
+  ],
+  "category": "data",
+  "description": "A calendar date encoded as a ISO 8601 string.",
+  "jats": {
+    "elem": "date",
+    "special": true
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "value"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "value": {
+      "@id": "schema:value",
+      "description": "The date as an ISO 8601 string.",
+      "proptest": {
+        "min": {
+          "description": "Generate a fixed date string.",
+          "value": "String::from(\"2022-02-22\")"
+        },
+        "low": {
+          "description": "Generate a random date string.",
+          "regex": "[0-9]{4}-[01][0-9]-[0-3][1-9]"
+        },
+        "high": {
+          "description": "Generate a random string of up to 10 alphanumeric characters & hyphens.",
+          "regex": "[a-zA-Z0-9\\-]{1,10}"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "String::arbitrary()"
+        }
+      },
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

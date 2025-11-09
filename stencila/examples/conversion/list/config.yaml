@@ -1,0 +1,11 @@
+compact.jats.xml:
+  decode:
+    strip-props:
+      # Checked list items are not currently supported in JATS
+      - ListItem.is_checked
+
+pandoc:
+  decode:
+    strip-props:
+      # Checked list items not currently supported in Pandoc
+      - ListItem.is_checked

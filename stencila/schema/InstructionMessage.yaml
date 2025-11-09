@@ -1,0 +1,49 @@
+title: InstructionMessage
+'@id': stencila:InstructionMessage
+nick: ime
+extends: Entity
+category: edits
+description: A message within an `Instruction`.
+markdown:
+  derive: false
+required:
+  - parts
+core:
+  - role
+  - authors
+  - provenance
+properties:
+  role:
+    '@id': stencila:role
+    description: The role of the message in the conversation.
+    $ref: MessageRole
+  parts:
+    '@id': schema:hasParts
+    description: Parts of the message.
+    type: array
+    items:
+      $ref: MessagePart
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    serde:
+      default: true
+    dom:
+      elem: div
+  authors:
+    '@id': schema:author
+    description: The authors of the message.
+    type: array
+    items:
+      $ref: Author
+    strip: [authors]
+    dom:
+      elem: span
+  provenance:
+    '@id': stencila:provenance
+    description: A summary of the provenance of the messages and content within the instruction.
+    type: array
+    items:
+      $ref: ProvenanceCount
+    strip: [provenance]
+    dom:
+      elem: span

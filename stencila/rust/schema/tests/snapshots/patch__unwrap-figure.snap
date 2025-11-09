@@ -1,0 +1,140 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 8
+      characterPercent: 100
+  content:
+    - type: Figure
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 8
+          characterPercent: 100
+      caption:
+        - type: Paragraph
+          content:
+            - type: Text
+              value:
+                string: Caption.
+                authorship:
+                  - - 1
+                    - 0
+                    - 0
+                    - 8
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Alice
+              roleName: Importer
+          provenance:
+            - type: ProvenanceCount
+              provenanceCategory: Hw
+              characterCount: 8
+              characterPercent: 100
+      content:
+        - type: ImageObject
+          contentUrl: "https://example.org/cat.jpg"
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Alice
+              roleName: Importer
+new:
+  type: Article
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: Caption.
+    - type: ImageObject
+      contentUrl: "https://example.org/cat.jpg"
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 8
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: Caption.
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 8
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 8
+          characterPercent: 100
+    - type: ImageObject
+      contentUrl: "https://example.org/cat.jpg"
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+ops:
+  - - - content
+    - Push:
+        type: ImageObject
+        contentUrl: "https://example.org/cat.jpg"
+  - - - content
+    - Replace:
+        - - 0
+          - type: Paragraph
+            content:
+              - type: Text
+                value:
+                  string: Caption.

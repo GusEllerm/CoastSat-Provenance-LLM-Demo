@@ -1,0 +1,31 @@
+title: Time
+'@id': schema:Time
+nick: tme
+extends: Entity
+category: data
+description: A point in time recurring on multiple days.
+jats:
+  elem: time
+  special: true
+proptest: {}
+required:
+  - value
+properties:
+  value:
+    '@id': 'schema:value'
+    description: The time of day as a string in format `hh:mm:ss[Z|(+|-)hh:mm]`.
+    type: string
+    format: time
+    proptest:
+      min:
+        description: Generate a fixed date-time string.
+        value: String::from("2022-02-22T22:22:22")
+      low:
+        description: Generate a random date-time string.
+        regex: '[0-2][0-9]:[0-5][0-9]:[0-5][0-9]\.[0-9]+([+-][0-2][0-9]:[0-5][0-9]|Z)'
+      high:
+        description: Generate a random string of up to 20 alphanumeric characters, colons & hyphens.
+        regex: '[a-zA-Z0-9\-:]{1,20}'
+      max:
+        description: Generate an arbitrary string.
+        strategy: String::arbitrary()

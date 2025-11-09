@@ -1,0 +1,26 @@
+\documentclass{article}
+
+\begin{document}
+
+\title{Knitting LaTeX and code with Stencila}
+
+One plus two equals \expr{1 + 2}.
+
+No language or other options:
+
+\begin{chunk}
+3 + 1
+\end{chunk}
+
+With lang and options:
+
+\begin{chunk}[r,hide,echo]
+x <- 3
+3 + 2
+\end{chunk}
+
+\begin{chunk}[r,fig.height=6,fig.width=12]
+plot(1:10)
+\end{chunk}
+
+\end{document}

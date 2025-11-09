@@ -1,0 +1,110 @@
+{
+  "@id": "https://stencila.org/Directory",
+  "name": "Directory",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "https://schema.org/",
+    "stencila": "https://stencila.org/"
+  },
+  "@graph": [
+    {
+      "@id": "stencila:Directory",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Directory",
+      "rdfs:comment": "A directory on the file system.",
+      "rdfs:subClassOf": {
+        "@id": "stencila:Entity"
+      }
+    },
+    {
+      "@id": "schema:name",
+      "@type": "rdfs:Property",
+      "rdfs:label": "name",
+      "rdfs:comment": "The name of the directory.",
+      "schema:domainIncludes": [
+        {
+          "@id": "schema:Thing"
+        },
+        {
+          "@id": "stencila:Button"
+        },
+        {
+          "@id": "stencila:DatatableColumn"
+        },
+        {
+          "@id": "stencila:DatatableColumnHint"
+        },
+        {
+          "@id": "stencila:Directory"
+        },
+        {
+          "@id": "stencila:ExecutionTag"
+        },
+        {
+          "@id": "stencila:File"
+        },
+        {
+          "@id": "stencila:Function"
+        },
+        {
+          "@id": "stencila:Parameter"
+        },
+        {
+          "@id": "stencila:TableCell"
+        },
+        {
+          "@id": "stencila:Variable"
+        }
+      ],
+      "schema:rangeIncludes": {
+        "@id": "schema:Text"
+      }
+    },
+    {
+      "@id": "stencila:path",
+      "@type": "rdfs:Property",
+      "rdfs:label": "path",
+      "rdfs:comment": "The path (absolute or relative) of the file on the file system.",
+      "schema:domainIncludes": [
+        {
+          "@id": "schema:CreativeWork"
+        },
+        {
+          "@id": "stencila:Directory"
+        },
+        {
+          "@id": "stencila:File"
+        }
+      ],
+      "schema:rangeIncludes": {
+        "@id": "schema:Text"
+      }
+    },
+    {
+      "@id": "schema:hasParts",
+      "@type": "rdfs:Property",
+      "rdfs:label": "parts",
+      "rdfs:comment": "The files and other directories within this directory.",
+      "schema:domainIncludes": [
+        {
+          "@id": "schema:CreativeWork"
+        },
+        {
+          "@id": "stencila:Directory"
+        },
+        {
+          "@id": "stencila:InstructionMessage"
+        }
+      ],
+      "schema:rangeIncludes": [
+        {
+          "@id": "stencila:File"
+        },
+        {
+          "@id": "stencila:Directory"
+        }
+      ]
+    }
+  ]
+}

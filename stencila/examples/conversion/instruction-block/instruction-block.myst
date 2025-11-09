@@ -1,0 +1,70 @@
+An insert instruction with no prompt:
+
+:::{create} a 4x10 table
+
+:::
+
+An insert instruction with a prompt:
+
+:::{create} top five highest mountains, with height in metres
+:prompt: table
+
+:::
+
+An insert instruction with a prompt but a blank instruction
+
+:::{create} 
+:prompt: code-chunk
+
+:::
+
+An edit instruction (has content) with no prompt:
+
+:::{edit} improve this paragraph
+
+The paragraph to be improved.
+
+:::
+
+An edit instruction with a prompt:
+
+:::{edit} please improve this paragraph
+:prompt: para
+
+Another paragraph to be improved.
+
+:::
+
+An insert instruction with a prompt and a suggestion:
+
+:::{create} analyze data
+:prompt: code-chunk
+
+````{code-cell}
+some code
+````
+
+:::
+
+An edit instruction with a suggestion:
+
+:::{edit} more succinct
+
+A paragraph.
+
+:::
+
+With prompt and model parameters specified:
+
+:::{create} message
+:prompt: prompt
+:models: model1, model2
+:quality: 10
+:cost: 10
+:speed: 10
+:min-score: 40
+:temp: 10
+:seed: 123
+:reps: 3
+
+:::

@@ -1,0 +1,82 @@
+<stencila-article id=xxx depth=0 ancestors='' root>
+  <section slot=content>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>With a number output</stencila-text>
+        <stencila-code-expression id=xxx depth=2 ancestors=Article.Paragraph code='6 * 7' programming-language=python>
+          <span slot=output>
+            <stencila-integer>42</stencila-integer>
+          </span>
+        </stencila-code-expression>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>.</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>With a string output</stencila-text>
+        <stencila-code-expression id=xxx depth=2 ancestors=Article.Paragraph code='&#x27;a string&#x27;' programming-language=python>
+          <span slot=output>
+            <stencila-string>a string</stencila-string>
+          </span>
+        </stencila-code-expression>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>.</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>With an array output</stencila-text>
+        <stencila-code-expression id=xxx depth=2 ancestors=Article.Paragraph code='[1, 2, 3]' programming-language=python>
+          <span slot=output>
+            <stencila-array>
+              <stencila-array-item index=0>
+                <stencila-integer>1</stencila-integer>
+              </stencila-array-item>
+              <stencila-array-item index=1>
+                <stencila-integer>2</stencila-integer>
+              </stencila-array-item>
+              <stencila-array-item index=2>
+                <stencila-integer>3</stencila-integer>
+              </stencila-array-item>
+            </stencila-array>
+          </span>
+        </stencila-code-expression>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>.</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>With an object output</stencila-text>
+        <stencila-code-expression id=xxx depth=2 ancestors=Article.Paragraph code='dict(a=1,b=dict())' programming-language=python>
+          <span slot=output>
+            <stencila-object>
+              <stencila-object-item key=a>
+                <stencila-integer>1</stencila-integer>
+              </stencila-object-item>
+              <stencila-object-item key=b>
+                <stencila-object>
+                </stencila-object>
+              </stencila-object-item>
+            </stencila-object>
+          </span>
+        </stencila-code-expression>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>.</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>With no language specified and no output</stencila-text>
+        <stencila-code-expression id=xxx depth=2 ancestors=Article.Paragraph code='a + b'>
+        </stencila-code-expression>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>.</stencila-text>
+      </p>
+    </stencila-paragraph>
+    <stencila-paragraph id=xxx depth=1 ancestors=Article>
+      <p slot=content>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>With execution mode specified and no output</stencila-text>
+        <stencila-code-expression id=xxx depth=2 ancestors=Article.Paragraph execution-mode=Lock code='c * d' programming-language=javascript>
+        </stencila-code-expression>
+        <stencila-text id=xxx depth=2 ancestors=Article.Paragraph>.</stencila-text>
+      </p>
+    </stencila-paragraph>
+  </section>
+</stencila-article>

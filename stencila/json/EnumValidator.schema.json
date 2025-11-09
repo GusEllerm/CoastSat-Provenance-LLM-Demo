@@ -1,0 +1,66 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/EnumValidator.schema.json",
+  "@id": "stencila:EnumValidator",
+  "title": "EnumValidator",
+  "nick": "env",
+  "extends": [
+    "Entity"
+  ],
+  "category": "data",
+  "description": "A schema specifying that a node must be one of several values.",
+  "$comment": "Analogous to the JSON Schema [`enum` keyword](https://json-schema.org/draft/2019-09/json-schema-validation.html#rfc.section.6.1.2).",
+  "markdown": {
+    "derive": false
+  },
+  "required": [
+    "type",
+    "values"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "values": {
+      "@id": "stencila:values",
+      "description": "A node is valid if it is equal to any of these values.",
+      "aliases": [
+        "value"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "serde": {
+        "deserializeWith": "none"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Node.schema.json"
+      }
+    }
+  }
+}

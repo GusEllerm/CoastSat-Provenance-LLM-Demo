@@ -1,0 +1,19 @@
+[package]
+name = "schema-gen"
+version = "0.0.0"
+edition = "2024"
+
+[features]
+default = ["docs"]
+docs = ["codecs", "schema"]
+
+[dependencies]
+codecs = { path = "../codecs", optional = true }
+common = { path = "../common" }
+schema = { path = "../schema", optional = true }
+schemars = { version = "1.0.4", features = ["indexmap2"] }
+status = { path = "../status" }
+topological-sort = "0.2.2"
+
+[lints]
+workspace = true

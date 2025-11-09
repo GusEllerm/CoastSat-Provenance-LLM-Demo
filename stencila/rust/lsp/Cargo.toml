@@ -1,0 +1,27 @@
+[package]
+name = "lsp"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+ask = { path = "../ask" }
+async-lsp = { version = "0.2.2", features = ["tokio"] }
+codec-markdown-trait = { path = "../codec-markdown-trait" }
+codec-text-trait = { path = "../codec-text-trait" }
+codec-utils = { path = "../codec-utils" }
+codecs = { path = "../codecs" }
+common = { path = "../common" }
+document = { path = "../document" }
+kernels = { path = "../kernels" }
+models = { path = "../models" }
+node-execute = { path = "../node-execute" }
+node-find = { path = "../node-find" }
+percent-encoding = "2.3.1"
+prompts = { path = "../prompts" }
+schema = { path = "../schema" }
+tokio-util = { version = "0.7.16", features = ["compat"] }
+tower = "0.5.2"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter", "json"] }
+
+[lints]
+workspace = true

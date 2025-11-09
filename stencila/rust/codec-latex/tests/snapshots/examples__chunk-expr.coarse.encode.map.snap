@@ -1,0 +1,29 @@
+---
+source: rust/codec-latex/tests/examples.rs
+expression: info.mapping
+---
+start     end        offsets   node_type+property                   authorship
+     0    110       (0, 110)   RawBlock.content
+     0    110         (0, 0)   RawBlock
+   116    121      (116, 11)   CodeExpression.code
+   110    122        (-6, 1)   CodeExpression
+   110    122         (0, 0)   InlinesBlock.content
+   110    122         (0, 0)   InlinesBlock
+   122    156       (12, 34)   RawBlock.content
+   122    155        (0, -1)   RawBlock
+   170    176       (48, 21)   CodeChunk.code
+   156    187      (-14, 11)   CodeChunk
+   188    213       (32, 26)   RawBlock.content
+   188    212        (0, -1)   RawBlock
+   227    228       (39, 16)   CodeChunk.programmingLanguage
+   230    243        (3, 15)   CodeChunk.code
+   213    254      (-17, 11)   CodeChunk
+   255    256        (42, 2)   RawBlock.content
+   255    255        (0, -1)   RawBlock
+   270    271       (15, 16)   CodeChunk.programmingLanguage
+   273    318        (3, 47)   CodeChunk.code
+   256    329      (-17, 11)   CodeChunk
+   330    346       (74, 17)   RawBlock.content
+   330    346         (0, 0)   RawBlock
+     0    346      (-330, 0)   Article.content
+     0    346         (0, 0)   Article

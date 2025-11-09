@@ -1,0 +1,212 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/ListItem.schema.json",
+  "@id": "schema:ListItem",
+  "title": "ListItem",
+  "nick": "lsi",
+  "extends": [
+    "Thing"
+  ],
+  "category": "prose",
+  "description": "A single item in a list.",
+  "$comment": "This is an implementation, and extension, of schema.org [`ListItem`](https://schema.org/ListItem).\nIt extends schema.ord `ListItem` by adding `content` and `isChecked` properties.\n\nAnalogues of `ListItem` in other schema include:\n  - JATS XML `<list-item>`](https://jats.nlm.nih.gov/articleauthoring/tag-library/1.2/element/list-item.html)\n  - HTML [`<li>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li)\n  - MDAST [`ListItem`](https://github.com/syntax-tree/mdast#listitem)\n  - OpenDocument [`<text:list-item>`](http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#__RefHeading__1415154_253892949)\n",
+  "html": {
+    "elem": "li"
+  },
+  "jats": {
+    "elem": "list-item"
+  },
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "content"
+  ],
+  "core": [
+    "id",
+    "item",
+    "isChecked",
+    "position"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "alternateNames": {
+      "@id": "schema:alternateName",
+      "description": "Alternate names (aliases) for the item.",
+      "aliases": [
+        "alternate-names",
+        "alternate_names",
+        "alternateName",
+        "alternate-name",
+        "alternate_name"
+      ],
+      "strip": [
+        "metadata"
+      ],
+      "serde": {
+        "deserializeWith": "option_csv_or_array"
+      },
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "@id": "schema:description",
+      "description": "A description of the item.",
+      "strip": [
+        "metadata"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "type": "string"
+    },
+    "identifiers": {
+      "@id": "schema:identifier",
+      "description": "Any kind of identifier for any kind of Thing.",
+      "$comment": "Some identifiers have specific properties e.g the `issn` property for\nthe `Periodical` type. These should be used in preference to this\nproperty which is intended for identifiers that do not yet have a\nspecific property. Identifiers can be represented as strings, but\nusing a `PropertyValue` will usually be better because it allows\nfor `propertyID` (i.e. the type of identifier).\n",
+      "aliases": [
+        "identifier"
+      ],
+      "strip": [
+        "metadata"
+      ],
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "PropertyValue.schema.json"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "images": {
+      "@id": "schema:image",
+      "description": "Images of the item.",
+      "aliases": [
+        "image"
+      ],
+      "strip": [
+        "metadata"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "ImageObject.schema.json"
+      }
+    },
+    "name": {
+      "@id": "schema:name",
+      "description": "The name of the item.",
+      "strip": [
+        "metadata"
+      ],
+      "type": "string"
+    },
+    "url": {
+      "@id": "schema:url",
+      "description": "The URL of the item.",
+      "strip": [
+        "metadata"
+      ],
+      "type": "string",
+      "format": "uri"
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "The content of the list item.",
+      "$comment": "Use either `content` or `item`, not both.",
+      "dom": {
+        "elem": "li"
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a single, arbitrary, paragraph",
+          "strategy": "vec_paragraphs(1)"
+        },
+        "low": {
+          "description": "Generate one, arbitrary, non-list block",
+          "strategy": "vec_blocks_list_item(1)"
+        },
+        "high": {
+          "description": "Generate up to two, arbitrary, non-list blocks",
+          "strategy": "vec_blocks_list_item(2)"
+        },
+        "max": {
+          "description": "Generate up to four, arbitrary, non-list blocks",
+          "strategy": "vec_blocks_list_item(4)"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Block.schema.json"
+      }
+    },
+    "item": {
+      "@id": "schema:item",
+      "description": "The item represented by this list item.",
+      "$comment": "Use either `item` or `content`, not both.",
+      "$ref": "Node.schema.json"
+    },
+    "isChecked": {
+      "@id": "stencila:isChecked",
+      "description": "A flag to indicate if this list item is checked.",
+      "aliases": [
+        "is-checked",
+        "is_checked"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "jats": {
+        "attr": "is-checked"
+      },
+      "type": "boolean"
+    },
+    "position": {
+      "@id": "schema:position",
+      "description": "The position of the item in a series or sequence of items.",
+      "jats": {
+        "attr": "position"
+      },
+      "type": "integer"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "name": "@stencila/types",
+  "version": "2.0.0-alpha.26",
+  "description": "JavaScript classes and TypeScript types for the Stencila Schema",
+  "license": "Apache-2.0",
+  "author": "Nokome Bentley <nokome@stencila.io>",
+  "bugs": {
+    "url": "https://github.com/stencila/stencila/issues"
+  },
+  "homepage": "https://github.com/stencila/stencila/tree/main/ts#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stencila/stencila.git"
+  },
+  "keywords": [
+    "types",
+    "programmable",
+    "executable",
+    "reproducible",
+    "interactive",
+    "documents"
+  ],
+  "type": "module",
+  "files": [
+    "dist",
+    "src/*.ts",
+    "src/types/*.ts"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.cts",
+  "scripts": {
+    "fix": "eslint --fix \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "vitest run",
+    "build": "tsup",
+    "pubcheck": "attw --pack . && publint",
+    "unused": "depcheck --quiet --ignore-patterns 'eslint.config.js,vitest.config.ts,**/*.test.ts'"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "format": [
+      "esm",
+      "cjs"
+    ],
+    "splitting": false,
+    "dts": true,
+    "sourcemap": true,
+    "minify": true,
+    "clean": true
+  }
+}

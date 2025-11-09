@@ -1,0 +1,187 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 99
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "..................................................................................................."
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 99
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 99
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "..................................................................................................."
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "................................................................................................xxx"
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "..............................................................................................zzzzz"
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 294
+      characterPercent: 99
+    - type: ProvenanceCount
+      provenanceCategory: HwHe
+      characterCount: 3
+      characterPercent: 1
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "..................................................................................................."
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 99
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 99
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "................................................................................................xxx"
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 96
+              - - 2
+                - 1
+                - 2
+                - 3
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 96
+          characterPercent: 97
+        - type: ProvenanceCount
+          provenanceCategory: HwHe
+          characterCount: 3
+          characterPercent: 3
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "..............................................................................................zzzzz"
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 99
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 99
+          characterPercent: 100
+ops:
+  - - - content
+    - Copy:
+        0:
+          - 1
+  - - - content
+      - 1
+      - content
+      - 0
+      - value
+    - Apply:
+        - Replace:
+            - start: 96
+              end: 99
+            - xxx
+  - - - content
+    - Insert:
+        - - 2
+          - type: Paragraph
+            content:
+              - type: Text
+                value:
+                  string: "..............................................................................................zzzzz"

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Timestamp.schema.json",
+  "@id": "schema:Timestamp",
+  "title": "Timestamp",
+  "nick": "tst",
+  "extends": [
+    "Entity"
+  ],
+  "category": "data",
+  "description": "A value that represents a point in time.",
+  "jats": {
+    "elem": "timestamp",
+    "special": true
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "value",
+    "timeUnit"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "value": {
+      "@id": "schema:value",
+      "description": "The time, in `timeUnit`s, before or after the Unix Epoch (1970-01-01T00:00:00Z).",
+      "type": "integer"
+    },
+    "timeUnit": {
+      "@id": "stencila:timeUnit",
+      "description": "The time unit that the `value` represents.",
+      "aliases": [
+        "time-unit",
+        "time_unit"
+      ],
+      "$ref": "TimeUnit.schema.json"
+    }
+  }
+}

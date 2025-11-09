@@ -1,0 +1,13 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Object.schema.json",
+  "@id": "stencila:Object",
+  "title": "Object",
+  "category": "data",
+  "description": "A value comprised of keyed primitive nodes.",
+  "$comment": "Note that keys are strings and values are restricted to primitive node\ntypes including `Object` (ie. an `Object` as a value of another `Object`) and `Array`.\n",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "Primitive.schema.json"
+  }
+}

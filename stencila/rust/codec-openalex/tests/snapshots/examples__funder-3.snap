@@ -1,0 +1,27 @@
+---
+source: rust/codec-openalex/tests/examples.rs
+expression: node
+---
+{
+  "type": "Organization",
+  "id": "https://openalex.org/F4320330868",
+  "name": "Kerry Group Kuok Foundation",
+  "alternateNames": [
+    "KGKF",
+    "嘉里集团郭氏基金会（香港）有限公司",
+    "Kerry Group Kuok Foundation Ltd",
+    "Kerry Group Kuok Foundation Ltd.",
+    "嘉里集团郭氏基金会",
+    "Kerry Group Kuok Foundation (Hong Kong) Limited",
+    "Kerry Group Kuok Foundation (Hong Kong) Co., Ltd."
+  ],
+  "identifiers": [
+    "https://openalex.org/F4320330868",
+    {
+      "type": "PropertyValue",
+      "propertyId": "crossref",
+      "value": "501100020393"
+    },
+    "https://doi.org/10.13039/501100020393"
+  ]
+}

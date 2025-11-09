@@ -1,0 +1,213 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 85
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "An insert instruction with a prompt:"
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 36
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 36
+          characterPercent: 100
+    - type: InstructionBlock
+      instructionType: Create
+      prompt:
+        type: PromptBlock
+        instructionType: Create
+        query: "top five highest mountains, with height in metres"
+        target: table
+      message:
+        type: InstructionMessage
+        parts:
+          - type: Text
+            value:
+              string: "top five highest mountains, with height in metres"
+              authorship:
+                - - 1
+                  - 0
+                  - 0
+                  - 49
+        authors:
+          - type: AuthorRole
+            author:
+              type: Person
+              givenNames:
+                - Alice
+            roleName: Importer
+        provenance:
+          - type: ProvenanceCount
+            provenanceCategory: Hw
+            characterCount: 49
+            characterPercent: 100
+      modelParameters:
+        type: ModelParameters
+new:
+  type: Article
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "An insert instruction with a prompt:"
+    - type: InstructionBlock
+      instructionType: Create
+      prompt:
+        type: PromptBlock
+        instructionType: Create
+        query: "top five highest mountains, with height in feet"
+        target: table
+      message:
+        type: InstructionMessage
+        parts:
+          - type: Text
+            value:
+              string: "top five highest mountains, with height in feet"
+      modelParameters:
+        type: ModelParameters
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 81
+      characterPercent: 98
+    - type: ProvenanceCount
+      provenanceCategory: HwHe
+      characterCount: 2
+      characterPercent: 2
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "An insert instruction with a prompt:"
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 36
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 36
+          characterPercent: 100
+    - type: InstructionBlock
+      instructionType: Create
+      prompt:
+        type: PromptBlock
+        instructionType: Create
+        query: "top five highest mountains, with height in feet"
+        target: table
+      message:
+        type: InstructionMessage
+        parts:
+          - type: Text
+            value:
+              string: "top five highest mountains, with height in feet"
+              authorship:
+                - - 1
+                  - 0
+                  - 0
+                  - 43
+                - - 2
+                  - 1
+                  - 2
+                  - 2
+                - - 1
+                  - 0
+                  - 0
+                  - 2
+        authors:
+          - type: AuthorRole
+            author:
+              type: Person
+              givenNames:
+                - Alice
+            roleName: Importer
+          - type: AuthorRole
+            author:
+              type: Person
+              givenNames:
+                - Bob
+            roleName: Writer
+        provenance:
+          - type: ProvenanceCount
+            provenanceCategory: Hw
+            characterCount: 45
+            characterPercent: 96
+          - type: ProvenanceCount
+            provenanceCategory: HwHe
+            characterCount: 2
+            characterPercent: 4
+      modelParameters:
+        type: ModelParameters
+ops:
+  - - - content
+      - 1
+      - prompt
+      - query
+    - Set: "top five highest mountains, with height in feet"
+  - - - content
+      - 1
+      - message
+      - parts
+      - 0
+      - value
+    - Apply:
+        - Replace:
+            - start: 43
+              end: 44
+            - fe
+        - Delete:
+            start: 47
+            end: 50

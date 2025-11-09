@@ -1,0 +1,27 @@
+title: MessageLevel
+'@id': stencila:MessageLevel
+extends: Enumeration
+description: The severity level of a message.
+anyOf:
+  - const: Trace
+    '@id': stencila:Trace
+    description: A tracing message
+  - const: Debug
+    '@id': stencila:Debug
+    description: A debug message
+  - const: Info
+    '@id': stencila:Info
+    description: An information message
+  - const: Warning
+    '@id': stencila:Warning
+    description: A warning message
+  - const: Error
+    '@id': stencila:Error
+    description: An error message
+  - const: Exception
+    '@id': stencila:Exception
+    description: An exception message
+    $comment: |
+      Differs from an error in that it causes execution to be interrupted.
+      In contrast, an error message can arise from a source, a log emitter for example,
+      which does not interrupt execution.

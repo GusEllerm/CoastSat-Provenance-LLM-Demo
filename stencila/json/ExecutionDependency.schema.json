@@ -1,0 +1,68 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/ExecutionDependency.schema.json",
+  "@id": "stencila:ExecutionDependency",
+  "title": "ExecutionDependency",
+  "nick": "exy",
+  "extends": [
+    "Entity"
+  ],
+  "category": "flow",
+  "description": "An upstream execution dependency of a node.",
+  "required": [
+    "type",
+    "dependencyRelation",
+    "dependencyNode"
+  ],
+  "core": [
+    "id",
+    "codeLocation"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "dependencyRelation": {
+      "@id": "stencila:dependencyRelation",
+      "description": "The relation to the dependency.",
+      "aliases": [
+        "dependency-relation",
+        "dependency_relation"
+      ],
+      "$ref": "ExecutionDependencyRelation.schema.json"
+    },
+    "dependencyNode": {
+      "@id": "stencila:dependencyNode",
+      "description": "The node that is the dependency.",
+      "aliases": [
+        "dependency-node",
+        "dependency_node"
+      ],
+      "$ref": "ExecutionDependencyNode.schema.json"
+    },
+    "codeLocation": {
+      "@id": "stencila:codeLocation",
+      "description": "The location that the dependency is defined.",
+      "aliases": [
+        "code-location",
+        "code_location"
+      ],
+      "$ref": "CodeLocation.schema.json"
+    }
+  }
+}

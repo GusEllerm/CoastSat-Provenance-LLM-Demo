@@ -1,0 +1,185 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Heading.schema.json",
+  "@id": "stencila:Heading",
+  "title": "Heading",
+  "extends": [
+    "Entity"
+  ],
+  "category": "prose",
+  "description": "A heading.",
+  "$comment": "Analogues of `Heading` in other schemas include:\n  - HTML [`<h1>` to `<h6>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/h1)\n  - JATS XML [`<title>`](https://jats.nlm.nih.gov/archiving/tag-library/1.1/element/title.html)\n  - Pandoc [`Header`](https://github.com/jgm/pandoc-types/blob/1.17.5.4/Text/Pandoc/Definition.hs#L233)\n",
+  "dom": {
+    "derive": false
+  },
+  "html": {
+    "special": true
+  },
+  "jats": {
+    "elem": "title",
+    "special": true
+  },
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "level",
+    "content"
+  ],
+  "core": [
+    "id",
+    "labelType",
+    "label",
+    "authors",
+    "provenance"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "labelType": {
+      "@id": "stencila:labelType",
+      "description": "The type of the label for the appendix (if present, should be `AppendixLabel`).",
+      "aliases": [
+        "label-type",
+        "label_type"
+      ],
+      "proptest": {
+        "min": {
+          "description": "No label type",
+          "value": "None"
+        }
+      },
+      "$ref": "LabelType.schema.json"
+    },
+    "label": {
+      "@id": "stencila:label",
+      "description": "A short label for the heading.",
+      "proptest": {
+        "min": {
+          "description": "No label",
+          "value": "None"
+        }
+      },
+      "type": "string"
+    },
+    "level": {
+      "@id": "stencila:level",
+      "description": "The level of the heading.",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex",
+          "lexical",
+          "koenig"
+        ]
+      },
+      "proptest": {
+        "min": {
+          "description": "Fixed value of 1",
+          "value": "1"
+        },
+        "low": {
+          "description": "Generate values between 1 and 6",
+          "strategy": "1..=6i64"
+        },
+        "high": {
+          "description": "Generate values between 0 and 6",
+          "strategy": "0..=6i64"
+        },
+        "max": {
+          "description": "Generate an arbitrary value",
+          "strategy": "i64::arbitrary()"
+        }
+      },
+      "type": "integer",
+      "minimum": 0.0,
+      "maximum": 6.0,
+      "default": 0.0
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "Content of the heading.",
+      "proptest": {
+        "min": {
+          "description": "Generate a single arbitrary inline node",
+          "strategy": "vec_inlines(1)"
+        },
+        "low": {
+          "description": "Generate up to two arbitrary inline nodes",
+          "strategy": "vec_inlines(2)"
+        },
+        "high": {
+          "description": "Generate up to four arbitrary inline nodes",
+          "strategy": "vec_inlines(4)"
+        },
+        "max": {
+          "description": "Generate up to eight arbitrary inline nodes without restrictions on their order",
+          "strategy": "vec(Inline::arbitrary(), size_range(0..=8))"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Inline.schema.json"
+      }
+    },
+    "authors": {
+      "@id": "schema:author",
+      "description": "The authors of the heading.",
+      "aliases": [
+        "author"
+      ],
+      "strip": [
+        "authors"
+      ],
+      "serde": {
+        "deserializeWith": "option_one_or_many_string_or_object"
+      },
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Author.schema.json"
+      }
+    },
+    "provenance": {
+      "@id": "stencila:provenance",
+      "description": "A summary of the provenance of the content within the heading.",
+      "strip": [
+        "provenance"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ProvenanceCount.schema.json"
+      }
+    }
+  }
+}

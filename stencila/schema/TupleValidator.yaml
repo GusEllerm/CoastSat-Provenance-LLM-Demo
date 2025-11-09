@@ -1,0 +1,19 @@
+title: TupleValidator
+'@id': stencila:TupleValidator
+nick: tuv
+extends: Entity
+category: data
+description: A validator specifying constraints on an array of heterogeneous items.
+markdown:
+  derive: false
+core:
+  - items
+properties:
+  items:
+    '@id': schema:itemListElement
+    description: An array of validators specifying the constraints on each successive item in the array.
+    type: array
+    items:
+      $ref: Validator
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]

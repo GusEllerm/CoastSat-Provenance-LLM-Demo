@@ -1,0 +1,7 @@
+name = "links"
+compatibility_date = "2023-10-16"
+
+main = "links.ts"
+
+observability = { enabled = true }
+send_metrics = false

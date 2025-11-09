@@ -1,0 +1,14 @@
+[package]
+name = "codec-swb"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+codec = { path = "../codec" }
+codec-jsonld = { path = "../codec-jsonld" }
+codec-dom = { path = "../codec-dom" }
+codec-markdown = { path = "../codec-markdown" }
+flate2 = { workspace = true }
+
+[lints]
+workspace = true

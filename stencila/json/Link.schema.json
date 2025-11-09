@@ -1,0 +1,198 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Link.schema.json",
+  "@id": "stencila:Link",
+  "title": "Link",
+  "extends": [
+    "Entity"
+  ],
+  "category": "prose",
+  "description": "A hyperlink to other pages, sections within the same document, resources, or any URL.",
+  "dom": {
+    "derive": false
+  },
+  "html": {
+    "elem": "a"
+  },
+  "jats": {
+    "elem": "ext-link"
+  },
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "content",
+    "target"
+  ],
+  "core": [
+    "id",
+    "title",
+    "rel",
+    "labelOnly",
+    "compilationMessages"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "The textual content of the link.",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "lexical",
+          "koenig"
+        ]
+      },
+      "dom": {
+        "elem": "span"
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a single fixed text value.",
+          "value": "vec![t(\"text\")]"
+        },
+        "low": {
+          "description": "Generate a single arbitrary, non-recursive, inline node",
+          "strategy": "vec_inlines_non_recursive(1)"
+        },
+        "high": {
+          "description": "Generate up to two arbitrary, non-recursive, inline nodes",
+          "strategy": "vec_inlines_non_recursive(2)"
+        },
+        "max": {
+          "description": "Generate up to four arbitrary, non-recursive, inline nodes",
+          "strategy": "vec_inlines_non_recursive(4)"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Inline.schema.json"
+      }
+    },
+    "target": {
+      "@id": "schema:target",
+      "description": "The target of the link.",
+      "$comment": "Note that this is equivalent to the `href` attribute on a HTML `<a>` element,\nnot the `target` attribute (which is used to defined where to display the linked content,\ne.g. in a new browser window). May be the `id` of another node in the document (e.g a table or figure)\n",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "lexical",
+          "koenig"
+        ]
+      },
+      "html": {
+        "attr": "href"
+      },
+      "jats": {
+        "attr": "xlink:href"
+      },
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "title": {
+      "@id": "schema:headline",
+      "description": "A title for the link.",
+      "$comment": "This property is analogous to the HTML `title` global attribute which\nrepresents [\"advisory information related to the element\"](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/title)\n",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "lexical",
+          "koenig"
+        ]
+      },
+      "html": {
+        "attr": "title"
+      },
+      "jats": {
+        "attr": "xlink:title"
+      },
+      "type": "string"
+    },
+    "rel": {
+      "@id": "schema:linkRelationship",
+      "description": "The relation between the target and the current thing.",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "lexical",
+          "koenig"
+        ]
+      },
+      "html": {
+        "attr": "rel"
+      },
+      "type": "string"
+    },
+    "labelOnly": {
+      "@id": "stencila:labelOnly",
+      "description": "Only show the label of the internal target (e.g. \"2\"), rather than both the label type and label (e.g. \"Figure 2\").",
+      "$comment": "This property allows for internal cross links like \"Tables 8, 9 and 10\" rather than \"Table 8, Table 9, and Table 10\".\nA `Link` with `labelOnly: true` is equivalent to a LaTeX `\\ref` whereas the default is equivalent to a `\\autoref`.\n",
+      "aliases": [
+        "label-only",
+        "label_only"
+      ],
+      "patch": {
+        "formats": [
+          "latex"
+        ]
+      },
+      "type": "boolean"
+    },
+    "compilationMessages": {
+      "@id": "stencila:compilationMessages",
+      "description": "Messages generated while compiling the link (e.g. missing internal link or invalid external link).",
+      "aliases": [
+        "compilation-messages",
+        "compilation_messages",
+        "compilationMessage",
+        "compilation-message",
+        "compilation_message"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "CompilationMessage.schema.json"
+      }
+    }
+  }
+}

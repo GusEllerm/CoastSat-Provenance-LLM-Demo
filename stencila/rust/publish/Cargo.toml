@@ -1,0 +1,13 @@
+[package]
+name = "publish"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+common = { "path" = "../common" }
+publish-ghost = { "path" = "../publish-ghost" }
+publish-stencila = { "path" = "../publish-stencila" }
+publish-zenodo = { path = "../publish-zenodo" }
+
+[lints]
+workspace = true

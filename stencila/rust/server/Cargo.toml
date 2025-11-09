@@ -1,0 +1,25 @@
+[package]
+name = "server"
+version = "0.0.0"
+authors = ["Nokome Bentley <nokome@stencila.io"]
+edition = "2024"
+
+[dependencies]
+axum = { version = "0.8.4", features = ["ws"] }
+cloud = { path = "../cloud" }
+codecs = { path = "../codecs" }
+common = { path = "../common" }
+document = { path = "../document" }
+format = { path = "../format" }
+mime_guess = { workspace = true }
+rand = { workspace = true }
+tower-cookies = "0.11.0"
+tower-http = { version = "0.6.6", features = ["trace", "cors"] }
+version = { path = "../version" }
+web-dist = { path = "../web-dist" }
+
+[dev-dependencies]
+common-dev = { path = "../common-dev" }
+
+[lints]
+workspace = true

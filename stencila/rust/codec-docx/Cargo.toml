@@ -1,0 +1,23 @@
+[package]
+name = "codec-docx"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+codec = { path = "../codec" }
+codec-json = { path = "../codec-json" }
+codec-pandoc = { path = "../codec-pandoc" }
+codec-utils = { path = "../codec-utils" }
+dirs = { path = "../dirs" }
+media-embed = { path = "../media-embed" }
+node-reconstitute = { path = "../node-reconstitute" }
+roxmltree = "0.20.0"
+rust-embed = { version = "8.7.2", features = ["interpolate-folder-path", "include-exclude"] }
+version = { path = "../version" }
+zip = { workspace = true }
+
+[dev-dependencies]
+common-dev = { path = "../common-dev" }
+
+[lints]
+workspace = true

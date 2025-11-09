@@ -1,0 +1,212 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Admonition.schema.json",
+  "@id": "stencila:Admonition",
+  "title": "Admonition",
+  "extends": [
+    "Entity"
+  ],
+  "category": "prose",
+  "description": "A admonition within a document.",
+  "html": {
+    "elem": "aside"
+  },
+  "jats": {
+    "elem": "boxed-text"
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "admonitionType",
+    "content"
+  ],
+  "core": [
+    "id",
+    "title",
+    "isFolded",
+    "authors",
+    "provenance"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "admonitionType": {
+      "@id": "stencila:admonitionType",
+      "description": "The type of admonition.",
+      "aliases": [
+        "admonition-type",
+        "admonition_type"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "jats": {
+        "attr": "content-type"
+      },
+      "proptest": {
+        "min": {
+          "description": "Fixed admonition type.",
+          "value": "AdmonitionType::Info"
+        },
+        "low": {
+          "description": "Generate an arbitrary admonition type.",
+          "strategy": "AdmonitionType::arbitrary()"
+        }
+      },
+      "$ref": "AdmonitionType.schema.json"
+    },
+    "title": {
+      "@id": "schema:headline",
+      "description": "The title of the admonition.",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "dom": {
+        "elem": "p"
+      },
+      "jats": {
+        "elem": "caption"
+      },
+      "proptest": {
+        "min": {
+          "description": "No title.",
+          "value": "None"
+        },
+        "low": {
+          "description": "Generate up to two arbitrary, non-recursive, inline nodes.",
+          "strategy": "option::of(vec_inlines_non_recursive(2))"
+        },
+        "high": {
+          "description": "Generate up to four arbitrary, non-recursive, inline nodes.",
+          "strategy": "option::of(vec_inlines_non_recursive(4))"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Inline.schema.json"
+      }
+    },
+    "isFolded": {
+      "@id": "stencila:isFolded",
+      "description": "Whether the admonition is folded.",
+      "$comment": "When an admonition is folded, its `content` is hidden by default, but\ncan be toggled to be visible or hidden.\n",
+      "aliases": [
+        "is-folded",
+        "is_folded"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "jats": {
+        "attr": "is-folded"
+      },
+      "proptest": {
+        "min": {
+          "description": "Not foldable.",
+          "value": "None"
+        },
+        "low": {
+          "description": "Arbitrarily, un-foldable, folded, or unfolded.",
+          "strategy": "option::of(bool::arbitrary())"
+        }
+      },
+      "type": "boolean"
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "The content within the section.",
+      "dom": {
+        "elem": "aside"
+      },
+      "proptest": {
+        "min": {
+          "description": "A single, simple paragraph.",
+          "value": "vec![p([t(\"Admonition content\")])]"
+        },
+        "low": {
+          "description": "Generate up to two arbitrary paragraphs.",
+          "strategy": "vec_paragraphs(2)"
+        },
+        "high": {
+          "description": "Generate up to four arbitrary, non-recursive, block nodes.",
+          "strategy": "vec_blocks_non_recursive(4)"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Block.schema.json"
+      }
+    },
+    "authors": {
+      "@id": "schema:author",
+      "description": "The authors of the admonition.",
+      "aliases": [
+        "author"
+      ],
+      "strip": [
+        "authors"
+      ],
+      "serde": {
+        "deserializeWith": "option_one_or_many_string_or_object"
+      },
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Author.schema.json"
+      }
+    },
+    "provenance": {
+      "@id": "stencila:provenance",
+      "description": "A summary of the provenance of the content within the admonition.",
+      "strip": [
+        "provenance"
+      ],
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ProvenanceCount.schema.json"
+      }
+    }
+  }
+}

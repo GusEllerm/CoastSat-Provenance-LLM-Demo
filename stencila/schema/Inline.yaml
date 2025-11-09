@@ -1,0 +1,221 @@
+title: Inline
+"@id": stencila:Inline
+category: prose
+description: Union type for valid inline content.
+default: Text
+proptest: {}
+anyOf:
+  - $ref: Annotation
+    proptest:
+      min:
+        description: Do not generate `Annotation` nodes in inline content.
+        skip: true
+
+  - $ref: AudioObject
+    proptest:
+      min:
+        description: Do not generate `AudioObject` nodes in inline content.
+        skip: true
+      high:
+        description: Generate `AudioObject` nodes in inline content.
+        skip: false
+
+  - $ref: Button
+    proptest:
+      min:
+        description: Do not generate `Button` nodes in inline content.
+        skip: true
+
+  - $ref: Citation
+    proptest:
+      min:
+        description: Do not generate `Citation` nodes in inline content.
+        skip: true
+
+  - $ref: CitationGroup
+    proptest:
+      min:
+        description: Do not generate `CitationGroup` nodes in inline content.
+        skip: true
+
+  - $ref: CodeExpression
+    proptest:
+      min:
+        description: Do not generate `CodeExpression` nodes in inline content.
+        skip: true
+      low:
+        description: Generate `CodeExpression` nodes in inline content.
+        skip: false
+
+  - $ref: CodeInline
+
+  - $ref: Date
+    proptest:
+      min:
+        description: Do not generate `Date` nodes in inline content.
+        skip: true
+      high:
+        description: Generate `Date` nodes in inline content.
+        skip: false
+
+  - $ref: DateTime
+    proptest:
+      min:
+        description: Do not generate `DateTime` nodes in inline content.
+        skip: true
+      high:
+        description: Generate `DateTime` nodes in inline content.
+        skip: false
+
+  - $ref: Duration
+    proptest:
+      min:
+        description: Do not generate `Duration` nodes in inline content.
+        skip: true
+      high:
+        description: Generate `Duration` nodes in inline content.
+        skip: false
+
+  - $ref: Emphasis
+
+  - $ref: ImageObject
+
+  - $ref: InstructionInline
+    proptest:
+      min:
+        description: Do not generate `InstructionInline` nodes in inline content.
+        skip: true
+      max:
+        description: Generate `InstructionInline` nodes in inline content.
+        skip: false
+
+  - $ref: Link
+
+  - $ref: MathInline
+
+  - $ref: MediaObject
+    proptest:
+      min:
+        description: Do not generate `MediaObject` nodes in inline content.
+        skip: true
+
+  - $ref: Note
+    proptest:
+      min:
+        description: Do not generate `Note` nodes in inline content.
+        skip: true
+      low:
+        description: Generate `Note` nodes in inline content.
+        skip: false
+
+  - $ref: Parameter
+    proptest:
+      min:
+        description: Do not generate `Parameter` nodes in inline content.
+        skip: true
+      low:
+        description: Generate `Parameter` nodes in inline content.
+        skip: false
+
+  - $ref: QuoteInline
+
+  - $ref: Sentence
+    proptest:
+      min:
+        description: Do not generate `Sentence` nodes in inline content.
+        skip: true
+
+  - $ref: StyledInline
+
+  - $ref: Strikeout
+
+  - $ref: Strong
+
+  - $ref: Subscript
+
+  - $ref: SuggestionInline
+    proptest:
+      min:
+        description: Do not generate `SuggestionInline` nodes in inline content.
+        skip: true
+
+  - $ref: Superscript
+
+  - $ref: Text
+
+  - $ref: Time
+    proptest:
+      min:
+        description: Do not generate `Time` nodes in inline content.
+        skip: true
+      high:
+        description: Generate `Time` nodes in inline content.
+        skip: false
+
+  - $ref: Timestamp
+    proptest:
+      min:
+        description: Do not generate `Timestamp` nodes in inline content.
+        skip: true
+      high:
+        description: Generate `Timestamp` nodes in inline content.
+        skip: false
+
+  - $ref: Underline
+
+  - $ref: VideoObject
+    proptest:
+      min:
+        description: Do not generate `VideoObject` nodes in inline content.
+        skip: true
+      high:
+        description: Generate `VideoObject` nodes in inline content.
+        skip: false
+
+  # Primitive types (do not have a "type" property to differentiate them)
+
+  - $ref: "Null"
+    proptest:
+      min:
+        description: Do not generate `Null` nodes in inline content.
+        skip: true
+      max:
+        description: Generate a null value.
+        value: Inline::Null(Null)
+
+  - $ref: Boolean
+    proptest:
+      min:
+        description: Do not generate `Boolean` nodes in inline content.
+        skip: true
+      max:
+        description: Generate an arbitrary boolean value.
+        strategy: Boolean::arbitrary().prop_map(Inline::Boolean)
+
+  - $ref: Integer
+    proptest:
+      min:
+        description: Do not generate `Integer` nodes in inline content.
+        skip: true
+      max:
+        description: Generate an arbitrary integer value.
+        strategy: Integer::arbitrary().prop_map(Inline::Integer)
+
+  - $ref: UnsignedInteger
+    proptest:
+      min:
+        description: |
+          Do not generate `UnsignedInteger` nodes in inline content (since roundtrip
+          conversion can not differentiate it from an `Integer`).
+        skip: true
+
+  - $ref: Number
+    proptest:
+      min:
+        description: Do not generate `Number` nodes in inline content.
+        skip: true
+      max:
+        description: |
+          Generate a fixed number. Used at all levels because even with JSON (and other data serialization formats)
+          round trip conversions can fail in the last significant digit of random numbers.
+        value: Inline::Number(1.23)

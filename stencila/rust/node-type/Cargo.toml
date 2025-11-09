@@ -1,0 +1,11 @@
+[package]
+name = "node-type"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+common = { path = "../common" }
+node-id = { path = "../node-id" }
+
+[lints]
+workspace = true

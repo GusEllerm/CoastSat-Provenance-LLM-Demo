@@ -1,0 +1,33 @@
+---
+description: |-
+  A prompt partial which provides guidelines on how to write content
+  within the current section (if any) of the document.
+---
+
+::: if document.sections.current
+
+## Guidelines for current section
+
+::::: if document.sections.current === "Abstract"
+
+::::::: include guidelines/abstract.smd
+
+::::: elif document.sections.current === "Introduction"
+
+::::::: include guidelines/introduction.smd
+
+::::: elif document.sections.current === "Methods"
+
+::::::: include guidelines/methods.smd
+
+::::: elif document.sections.current === "Results"
+
+::::::: include guidelines/results.smd
+
+::::: elif document.sections.current === "Discussion"
+
+::::::: include guidelines/discussion.smd
+
+:::::
+
+:::

@@ -1,0 +1,179 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/RawBlock.schema.json",
+  "@id": "stencila:RawBlock",
+  "title": "RawBlock",
+  "extends": [
+    "Entity"
+  ],
+  "description": "Document content in a specific format",
+  "$comment": "The content of the block is not decoded by any codecs and is output when the encoding format\nmatches that of the raw block and the `render` option is used.\nAnalogous to node types in [Pandoc](https://github.com/jgm/pandoc-types/blob/1cf21a602535b6b263fef9548521353912115d87/src/Text/Pandoc/Definition.hs#L284) and [MultiMarkdown](https://fletcher.github.io/MultiMarkdown-6/syntax/raw.html).\n",
+  "dom": {
+    "derive": false
+  },
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "format",
+    "content"
+  ],
+  "core": [
+    "id",
+    "compilationDigest",
+    "compilationMessages",
+    "css",
+    "authors",
+    "provenance"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "format": {
+      "@id": "stencila:format",
+      "description": "The format of the raw content.",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "proptest": {
+        "min": {
+          "description": "Fixed as Markdown",
+          "value": "String::from(\"markdown\")"
+        },
+        "high": {
+          "description": "Generate a random string of up to 10 alphanumeric characters.",
+          "strategy": "r\"[a-zA-Z0-9]{1,10}\""
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "String::arbitrary()"
+        }
+      },
+      "type": "string"
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "The raw content.",
+      "proptest": {
+        "min": {
+          "description": "Generate a simple fixed string.",
+          "value": "Cord::from(\"content\")"
+        },
+        "low": {
+          "description": "Generate a random string of up to 10 alphanumeric characters (exclude whitespace which \nwhen leading or trailing causes issues for Markdown).\n",
+          "strategy": "r\"[a-zA-Z0-9]{1,10}\".prop_map(Cord::from)"
+        },
+        "high": {
+          "description": "Generate a random string of up to 100 characters (excluding control characters).\n",
+          "strategy": "r\"[^\\p{C}]{1,100}\".prop_map(Cord::from)"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "String::arbitrary().prop_map(Cord::from)"
+        }
+      },
+      "$ref": "Cord.schema.json"
+    },
+    "compilationDigest": {
+      "@id": "stencila:compilationDigest",
+      "description": "A digest of the `format` and `content` properties.",
+      "$comment": "Used to avoid unnecessary parsing and transpiling of the `content`.",
+      "aliases": [
+        "compilation-digest",
+        "compilation_digest"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "$ref": "CompilationDigest.schema.json"
+    },
+    "compilationMessages": {
+      "@id": "stencila:compilationMessages",
+      "description": "Messages generated while parsing and transpiling the `content` into the `css` property.",
+      "aliases": [
+        "compilation-messages",
+        "compilation_messages",
+        "compilationMessage",
+        "compilation-message",
+        "compilation_message"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "CompilationMessage.schema.json"
+      }
+    },
+    "css": {
+      "@id": "stencila:css",
+      "description": "A Cascading Style Sheet (CSS) generated from the `content`.",
+      "$comment": "When the format is HTML, this property is the CSS generated for any Tailwind classes in\n\"class\" attributes. When the format is CSS, this property is the CSS transpiled to support\nmodern features such as nesting and custom media queries and minified.\n",
+      "strip": [
+        "output"
+      ],
+      "type": "string"
+    },
+    "authors": {
+      "@id": "schema:author",
+      "description": "The authors of the content.",
+      "aliases": [
+        "author"
+      ],
+      "strip": [
+        "authors"
+      ],
+      "serde": {
+        "deserializeWith": "option_one_or_many_string_or_object"
+      },
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Author.schema.json"
+      }
+    },
+    "provenance": {
+      "@id": "stencila:provenance",
+      "description": "A summary of the provenance of the content.",
+      "strip": [
+        "provenance"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ProvenanceCount.schema.json"
+      }
+    }
+  }
+}

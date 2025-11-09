@@ -1,0 +1,15 @@
+title: MessagePart
+"@id": stencila:MessagePart
+nick: msp
+category: edits
+description: A union type for a part of a message.
+$comment: |
+  This union type uses `Text`, instead of `string`, so that each type of part
+  is an entity with a type and node id.
+dom:
+  derive: false
+anyOf:
+  - $ref: Text
+  - $ref: ImageObject
+  - $ref: AudioObject
+  - $ref: VideoObject

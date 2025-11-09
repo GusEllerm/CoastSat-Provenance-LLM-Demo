@@ -1,0 +1,38 @@
+{
+  "@id": "https://stencila.org/EnumValidator",
+  "name": "EnumValidator",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "https://schema.org/",
+    "stencila": "https://stencila.org/"
+  },
+  "@graph": [
+    {
+      "@id": "stencila:EnumValidator",
+      "@type": "rdfs:Class",
+      "rdfs:label": "EnumValidator",
+      "rdfs:comment": "A schema specifying that a node must be one of several values.",
+      "rdfs:subClassOf": {
+        "@id": "stencila:Entity"
+      }
+    },
+    {
+      "@id": "stencila:values",
+      "@type": "rdfs:Property",
+      "rdfs:label": "values",
+      "rdfs:comment": "A node is valid if it is equal to any of these values.",
+      "schema:domainIncludes": [
+        {
+          "@id": "stencila:DatatableColumn"
+        },
+        {
+          "@id": "stencila:EnumValidator"
+        },
+        {
+          "@id": "stencila:ObjectHint"
+        }
+      ]
+    }
+  ]
+}

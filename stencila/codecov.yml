@@ -1,0 +1,59 @@
+comment:
+  layout: "header, flags, diff, components"
+
+component_management:
+  individual_components:
+    - component_id: codec_cbor
+      name: CBOR
+      paths:
+        - rust/codec-cbor/src/*
+
+    - component_id: codec_html
+      name: HTML
+      paths:
+        - rust/codec-html*/src/*
+
+    - component_id: codec_jats
+      name: JATS
+      paths:
+        - rust/codec-jats*/src/*
+
+    - component_id: codec_json
+      name: JSON
+      paths:
+        - rust/codec-json/src/*
+
+    - component_id: codec_json5
+      name: JSON5
+      paths:
+        - rust/codec-json5*/src/*
+
+    - component_id: codec_jsonld
+      name: JSON-LD
+      paths:
+        - rust/codec-jsonld/src/*
+
+    - component_id: codec_markdown
+      name: Markdown
+      paths:
+        - rust/codec-markdown*/src/*
+
+    - component_id: codec_text
+      name: Text
+      paths:
+        - rust/codec-text*/src/*
+
+    - component_id: codec_yaml
+      name: YAML
+      paths:
+        - rust/codec-yaml/src/*
+
+    - component_id: sdk_node
+      name: Node.js SDK
+      paths:
+        - node/stencila-node/src/*.ts
+
+    - component_id: sdk_python
+      name: Python SDK
+      paths:
+        - python/stencila/python/stencila/*.py

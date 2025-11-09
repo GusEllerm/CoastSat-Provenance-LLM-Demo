@@ -1,0 +1,40 @@
+{
+  type: "Article",
+  content: [
+    {
+      type: "Paragraph",
+      content: [
+        {
+          type: "Text",
+          value: { string: "A code fragment: " }
+        },
+        {
+          type: "CodeInline",
+          code: { string: "2 * pi * r^2" }
+        },
+        {
+          type: "Text",
+          value: { string: "." }
+        }
+      ]
+    },
+    {
+      type: "Paragraph",
+      content: [
+        {
+          type: "Text",
+          value: { string: "With language: " }
+        },
+        {
+          type: "CodeInline",
+          code: { string: "6 * 7" },
+          programmingLanguage: "python"
+        },
+        {
+          type: "Text",
+          value: { string: "." }
+        }
+      ]
+    }
+  ]
+}

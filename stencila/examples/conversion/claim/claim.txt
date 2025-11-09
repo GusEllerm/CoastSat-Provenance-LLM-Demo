@@ -1,0 +1,3 @@
+A theorem
+
+A proposition with a label

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/DurationValidator.schema.json",
+  "@id": "stencila:DurationValidator",
+  "title": "DurationValidator",
+  "nick": "duv",
+  "extends": [
+    "Entity"
+  ],
+  "category": "data",
+  "description": "A validator specifying the constraints on a duration.",
+  "markdown": {
+    "derive": false
+  },
+  "required": [
+    "type"
+  ],
+  "core": [
+    "id",
+    "timeUnits",
+    "minimum",
+    "maximum"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "timeUnits": {
+      "@id": "stencila:timeUnits",
+      "description": "The time units that the duration can have.",
+      "$comment": "A duration is valid if its `timeUnit` is amongst the `timeUnits` of the validator.\n",
+      "aliases": [
+        "time-units",
+        "time_units",
+        "timeUnit",
+        "time-unit",
+        "time_unit"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "type": "array",
+      "items": {
+        "$ref": "TimeUnit.schema.json"
+      }
+    },
+    "minimum": {
+      "@id": "stencila:minimum",
+      "description": "The inclusive lower limit for a duration.",
+      "$comment": "A duration is valid if it is greater than, or exactly equal to, `minimum`.\n",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "$ref": "Duration.schema.json"
+    },
+    "maximum": {
+      "@id": "stencila:maximum",
+      "description": "The inclusive upper limit for a duration.",
+      "$comment": "A duration is valid if it is less than, or exactly equal to, `maximum`.\n",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "$ref": "Duration.schema.json"
+    }
+  }
+}

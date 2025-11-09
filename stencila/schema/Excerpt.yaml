@@ -1,0 +1,45 @@
+title: Excerpt
+"@id": stencila:Excerpt
+nick: exc
+extends: Entity
+description: An excerpt from a `CreativeWork`.
+markdown:
+  derive: false
+required:
+  - source
+  - nodePath
+  - nodeAncestors
+  - nodeType
+  - content
+properties:
+  source:
+    "@id": stencila:source
+    description: A `Reference` to the `CreativeWork` that the excerpt was taken from.
+    $ref: Reference
+    strip: [metadata]
+    dom:
+      elem: div
+  nodePath:
+    "@id": stencila:nodePath
+    description: A `Reference` to the `CreativeWork` that the excerpt was taken from.
+    type: string
+    strip: [metadata]
+  nodeAncestors:
+    "@id": stencila:nodeAncestors
+    description: The route to the node that was excerpted including the .
+    type: string
+    strip: [metadata]
+  nodeType:
+    "@id": stencila:nodeType
+    description: The type of the node that was excerpted.
+    type: string
+    strip: [metadata]
+  content:
+    "@id": stencila:content
+    description: The excerpted content.
+    type: array
+    items:
+      $ref: Block
+    strip: [content]
+    dom:
+      elem: div

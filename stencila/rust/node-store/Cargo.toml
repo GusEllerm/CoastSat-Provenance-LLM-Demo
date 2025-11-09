@@ -1,0 +1,25 @@
+[package]
+name = "node-store"
+version = "0.0.0"
+edition = "2024"
+
+[features]
+proptest-min = ["schema/proptest-min"]
+proptest-low = ["schema/proptest-low"]
+proptest-high = ["schema/proptest-high"]
+proptest-max = ["schema/proptest-max"]
+
+[dependencies]
+automerge = "0.6.1"
+common = { path = "../common" }
+node-store-derive = { path = "../node-store-derive" }
+node-strip = { path = "../node-strip" }
+node-type = { path = "../node-type" }
+
+[dev-dependencies]
+codecs = { path = "../codecs" }
+common-dev = { path = "../common-dev" }
+schema = { path = "../schema" }
+
+[lints]
+workspace = true

@@ -1,0 +1,60 @@
+title: Text
+"@id": schema:Text
+nick: txt
+extends: Entity
+category: prose
+description: Textual content.
+$comment: |
+  Intended mostly for use for inline text e.g. the text in a paragraph.
+
+  Differs from the primitive `String` type in that it has a `type` and `id` property.
+  The `id` property allows use to identify text nodes with a sequence of inline nodes
+  for better diffing.
+
+  Also, in Rust, the `value` property is implemented as a CRDT.
+dom:
+  derive: false
+html:
+  elem: span
+jats:
+  special: true
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}
+required:
+  - value
+core:
+  - compilationMessages
+properties:
+  value:
+    "@id": "schema:value"
+    description: The value of the text content
+    $ref: Cord
+    patch:
+      formats: [all]
+    dom:
+      elem: none
+    html:
+      content: true
+    proptest:
+      min:
+        description: Generate a fixed string of text.
+        value: Cord::from("text")
+      low:
+        description: Generate a random string of up to 10 alphanumeric characters.
+        strategy: r"[a-zA-Z0-9]{1,10}".prop_map(Cord::from)
+      high:
+        description: Generate a random string of up to 100 alphanumeric characters, some special characters commonly used in prose, and whitespace.
+        strategy: r"[a-zA-Z0-9 \t\-_.!?*+-/()'<>=]{1,100}".prop_map(Cord::from)
+      max:
+        description: Generate an arbitrary string.
+        strategy: String::arbitrary().prop_map(Cord::from)
+  compilationMessages:
+    "@id": stencila:compilationMessages
+    description: Messages generated while compiling the text.
+    strip: [compilation]
+    type: array
+    items:
+      $ref: CompilationMessage

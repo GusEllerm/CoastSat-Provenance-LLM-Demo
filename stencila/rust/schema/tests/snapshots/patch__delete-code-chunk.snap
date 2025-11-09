@@ -1,0 +1,166 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 15
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para1
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+    - type: CodeChunk
+      code:
+        string: 1 + 2
+        authorship:
+          - - 1
+            - 0
+            - 0
+            - 5
+      programmingLanguage: python
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para2
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para1
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para2
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 10
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para1
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para2
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+ops:
+  - - - content
+    - Remove:
+        - 1

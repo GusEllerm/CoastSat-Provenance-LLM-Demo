@@ -1,0 +1,8 @@
+---
+source: rust/codec-arxiv/tests/examples.rs
+expression: info.losses
+---
+"<br class=\"ltx_break\">": 2
+"<div class=\"ltx_flex_break\">": 5
+"<div class=\"ltx_flex_cell ltx_flex_size_1\">": 8
+"<div class=\"ltx_pagination ltx_role_newpage\">": 1

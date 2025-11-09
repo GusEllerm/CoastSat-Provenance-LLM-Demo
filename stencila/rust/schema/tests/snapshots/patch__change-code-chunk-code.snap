@@ -1,0 +1,116 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 5
+      characterPercent: 100
+  content:
+    - type: CodeChunk
+      code:
+        string: 1 + 2
+        authorship:
+          - - 1
+            - 0
+            - 0
+            - 5
+      programmingLanguage: python
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: CodeChunk
+      code:
+        string: 1 + 3
+      programmingLanguage: python
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 4
+      characterPercent: 80
+    - type: ProvenanceCount
+      provenanceCategory: HwHe
+      characterCount: 1
+      characterPercent: 20
+  content:
+    - type: CodeChunk
+      code:
+        string: 1 + 3
+        authorship:
+          - - 1
+            - 0
+            - 0
+            - 4
+          - - 2
+            - 1
+            - 2
+            - 1
+      programmingLanguage: python
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 4
+          characterPercent: 80
+        - type: ProvenanceCount
+          provenanceCategory: HwHe
+          characterCount: 1
+          characterPercent: 20
+ops:
+  - - - content
+      - 0
+      - code
+    - Apply:
+        - Replace:
+            - start: 4
+              end: 5
+            - "3"

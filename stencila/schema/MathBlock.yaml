@@ -1,0 +1,32 @@
+title: MathBlock
+'@id': stencila:MathBlock
+nick: mtb
+extends: Math
+category: math
+description: A block of math, e.g an equation, to be treated as block content.
+dom:
+  derive: false
+html:
+  elem: math
+jats:
+  elem: disp-formula
+  special: true
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}
+core:
+  - label
+  - labelAutomatically
+properties:
+  label:
+    '@id': stencila:label
+    description: A short label for the math block.
+    type: string
+  labelAutomatically:
+    '@id': stencila:labelAutomatically
+    description: Whether the label should be automatically updated.
+    type: boolean
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]

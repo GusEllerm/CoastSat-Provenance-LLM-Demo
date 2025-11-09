@@ -1,0 +1,17 @@
+[package]
+name = "kernel-graphviz"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+kernel = { path = "../kernel" }
+layout-rs = { git = "https://github.com/nadavrot/layout", rev = "9ff0d4976df64b9dc5684db7088e73499d1243d1" }
+
+[dev-dependencies]
+common-dev = { path = "../common-dev" }
+
+[package.metadata.cargo-machete]
+ignored = ["layout-rs"]
+
+[lints]
+workspace = true

@@ -1,0 +1,326 @@
+use std::{collections::HashMap, str::FromStr};
+
+use async_lsp::{
+    ErrorCode, MainLoop, ResponseError,
+    client_monitor::ClientProcessMonitorLayer,
+    concurrency::ConcurrencyLayer,
+    lsp_types::{notification, request},
+    panic::CatchUnwindLayer,
+    router::Router,
+    server::LifecycleLayer,
+    tracing::TracingLayer,
+};
+use schema::NodeId;
+use tower::ServiceBuilder;
+use tracing_subscriber::filter::LevelFilter;
+
+use common::{eyre::Result, serde_json, tracing};
+
+use crate::{
+    ServerState, ServerStatus, code_lens,
+    commands::{self, INSERT_CLONES, INSERT_INSTRUCTION, MERGE_DOC},
+    completion, content, dom, formatting, hover, kernels_, lifecycle, logging, models_, node_ids,
+    prompts_, symbols, text_document,
+};
+
+/// Run the language server
+#[tracing::instrument]
+pub async fn run(log_level: LevelFilter, log_filter: &str) -> Result<()> {
+    let (server, _) = MainLoop::new_server(|client| {
+        logging::setup(log_level, log_filter, client.clone());
+
+        let mut router = Router::new(ServerState {
+            client: client.clone(),
+            documents: HashMap::new(),
+            options: Default::default(),
+            status: ServerStatus::Running,
+        });
+
+        router
+            .request::<request::Initialize, _>(|state, params| {
+                if let Some(options) = params.initialization_options {
+                    lifecycle::initialize_options(state, options);
+                }
+                let client = state.client.clone();
+                async move { lifecycle::initialize(client).await }
+            })
+            .notification::<notification::Initialized>(lifecycle::initialized);
+
+        router
+            .notification::<notification::DidOpenTextDocument>(text_document::did_open)
+            .notification::<notification::DidChangeTextDocument>(text_document::did_change)
+            .notification::<notification::DidSaveTextDocument>(text_document::did_save)
+            .notification::<notification::DidCloseTextDocument>(text_document::did_close);
+
+        router.request::<request::DocumentSymbolRequest, _>(|state, params| {
+            let uri = params.text_document.uri;
+            let sync_root = state
+                .documents
+                .get(&uri)
+                .map(|text_doc| (text_doc.sync_state(), text_doc.root.clone()));
+            async move {
+                match sync_root {
+                    Some((sync, root)) => symbols::request(sync, root).await,
+                    None => Ok(None),
+                }
+            }
+        });
+
+        router
+            .request::<request::Completion, _>(|state, params| {
+                let uri = &params.text_document_position.text_document.uri;
+                let doc = state
+                    .documents
+                    .get(uri)
+                    .map(|text_doc| (text_doc.format.clone(), text_doc.source.clone()));
+                async move {
+                    match doc {
+                        Some((format, source)) => completion::request(params, format, source).await,
+                        None => Ok(None),
+                    }
+                }
+            })
+            .request::<request::ResolveCompletionItem, _>(|_state, params| {
+                completion::resolve_item(params)
+            });
+
+        router
+            .request::<request::CodeLensRequest, _>(|state, params| {
+                let uri = params.text_document.uri;
+                let format_root = state
+                    .documents
+                    .get(&uri)
+                    .map(|text_doc| (text_doc.format.clone(), text_doc.root.clone()));
+                async move {
+                    match format_root {
+                        Some((format, root)) => code_lens::request(uri, format, root).await,
+                        None => Ok(None),
+                    }
+                }
+            })
+            .request::<request::CodeLensResolve, _>(|_, code_lens| code_lens::resolve(code_lens));
+
+        router.request::<request::HoverRequest, _>(|state, params| {
+            let uri = params
+                .text_document_position_params
+                .text_document
+                .uri
+                .clone();
+            let doc_root = state
+                .documents
+                .get(&uri)
+                .map(|text_doc| (text_doc.doc.clone(), text_doc.root.clone()));
+            async move {
+                match doc_root {
+                    Some((doc, root)) => hover::request(params, uri, doc, root).await,
+                    None => Ok(None),
+                }
+            }
+        });
+
+        router
+            .request::<request::ExecuteCommand, _>(|state, params| {
+                let doc_props = if matches!(params.command.as_str(), MERGE_DOC) {
+                    None
+                } else {
+                    params
+                        .arguments
+                        .first()
+                        .and_then(|value| serde_json::from_value(value.clone()).ok())
+                        .and_then(|uri| {
+                            state.documents.get(&uri).map(|text_doc| {
+                                (
+                                    text_doc.author.clone(),
+                                    text_doc.format.clone(),
+                                    text_doc.source.clone(),
+                                    text_doc.root.clone(),
+                                    text_doc.doc.clone(),
+                                    text_doc.sync_state().clone(),
+                                )
+                            })
+                        })
+                };
+
+                let source_doc =
+                    if matches!(params.command.as_str(), INSERT_CLONES | INSERT_INSTRUCTION) {
+                        params
+                            .arguments
+                            .get(2)
+                            .and_then(|value| serde_json::from_value(value.clone()).ok())
+                            .and_then(|uri| {
+                                state
+                                    .documents
+                                    .get(&uri)
+                                    .map(|text_doc| text_doc.doc.clone())
+                            })
+                    } else {
+                        None
+                    };
+
+                let client = state.client.clone();
+                async move {
+                    #[allow(clippy::single_match)]
+                    match params.command.as_str() {
+                        MERGE_DOC => return commands::merge_doc(params, client).await,
+                        _ => {}
+                    }
+
+                    let Some(doc_props) = doc_props else {
+                        return Err(ResponseError::new(
+                            ErrorCode::INVALID_PARAMS,
+                            "Invalid document URI",
+                        ));
+                    };
+
+                    let (author, format, source, root, doc, sync_state) = doc_props;
+                    commands::doc_command(
+                        params, author, format, source, root, doc, sync_state, source_doc, client,
+                    )
+                    .await
+                }
+            })
+            .notification::<notification::WorkDoneProgressCancel>(commands::cancel_progress);
+
+        router.request::<request::Formatting, _>(|state, params| {
+            let uri = params.text_document.uri;
+            let doc_format = state.documents.get(&uri).map(|text_doc| {
+                (
+                    text_doc.doc.clone(),
+                    text_doc.format.clone(),
+                    text_doc.source.clone(),
+                )
+            });
+            async move {
+                match doc_format {
+                    Some((doc, format, source)) => formatting::request(doc, format, source).await,
+                    None => Ok(None),
+                }
+            }
+        });
+
+        router
+            .request::<dom::SubscribeDom, _>(|state, params| {
+                let (uri, node_id) = match params.uri.fragment() {
+                    Some(fragment) => {
+                        let mut uri = params.uri.clone();
+                        uri.set_fragment(None);
+                        (uri, NodeId::from_str(fragment).ok())
+                    }
+                    None => (params.uri.clone(), None),
+                };
+                let doc = state
+                    .documents
+                    .get(&uri)
+                    .map(|text_doc| text_doc.doc.clone());
+                let client = state.client.clone();
+                async move {
+                    match doc {
+                        Some(doc) => dom::subscribe(doc, node_id, client).await,
+                        None => Err(ResponseError::new(
+                            ErrorCode::INVALID_PARAMS,
+                            "Unknown document",
+                        )),
+                    }
+                }
+            })
+            .request::<dom::ResetDom, _>(|_state, params| dom::reset(params.subscription_id))
+            .request::<dom::UnsubscribeDom, _>(|_state, params| {
+                dom::unsubscribe(params.subscription_id)
+            });
+
+        router
+            .request::<node_ids::NodeIdsForLines, _>(|state, params| {
+                let root = state
+                    .documents
+                    .get(&params.uri)
+                    .map(|text_doc| text_doc.root.clone());
+                async move {
+                    match root {
+                        Some(root) => node_ids::node_ids_for_lines(root, params.lines).await,
+                        None => Err(ResponseError::new(
+                            ErrorCode::INVALID_PARAMS,
+                            "Unknown document",
+                        )),
+                    }
+                }
+            })
+            .request::<node_ids::LinesForNodeIds, _>(|state, params| {
+                let root = state
+                    .documents
+                    .get(&params.uri)
+                    .map(|text_doc| text_doc.root.clone());
+                async move {
+                    match root {
+                        Some(root) => node_ids::lines_for_node_ids(root, params.ids).await,
+                        None => Err(ResponseError::new(
+                            ErrorCode::INVALID_PARAMS,
+                            "Unknown document",
+                        )),
+                    }
+                }
+            });
+
+        router.request::<content::SubscribeContent, _>(|state, params| {
+            let uri = &params.uri;
+            let doc = state
+                .documents
+                .get(uri)
+                .map(|text_doc| text_doc.doc.clone());
+            let client = state.client.clone();
+            async move {
+                match doc {
+                    Some(doc) => content::subscribe(doc, params, client).await,
+                    None => Ok(String::new()),
+                }
+            }
+        });
+
+        router.request::<kernels_::ListKernels, _>(|_state, _params| async {
+            Ok(kernels_::list().await)
+        });
+
+        router.request::<prompts_::ListPrompts, _>(|_state, _params| async {
+            Ok(prompts_::list().await)
+        });
+
+        router.request::<models_::ListModels, _>(|_state, _params| async {
+            Ok(models_::list().await)
+        });
+
+        router.request::<request::Shutdown, _>(|state, _params| {
+            let result = lifecycle::shutdown(state);
+            async move { result }
+        });
+
+        router.notification::<notification::Exit>(|state, _params| lifecycle::exit(state));
+
+        ServiceBuilder::new()
+            .layer(TracingLayer::default())
+            .layer(LifecycleLayer::default())
+            .layer(CatchUnwindLayer::default())
+            .layer(ConcurrencyLayer::default())
+            .layer(ClientProcessMonitorLayer::new(client))
+            .service(router)
+    });
+
+    // Prefer truly asynchronous piped stdin/stdout without blocking tasks.
+    #[cfg(unix)]
+    let (stdin, stdout) = (
+        async_lsp::stdio::PipeStdin::lock_tokio()?,
+        async_lsp::stdio::PipeStdout::lock_tokio()?,
+    );
+
+    // Fallback to spawn blocking read/write otherwise.
+    #[cfg(not(unix))]
+    let (stdin, stdout) = {
+        use common::tokio::io;
+        (
+            tokio_util::compat::TokioAsyncReadCompatExt::compat(io::stdin()),
+            tokio_util::compat::TokioAsyncWriteCompatExt::compat_write(io::stdout()),
+        )
+    };
+
+    server.run_buffered(stdin, stdout).await?;
+
+    Ok(())
+}

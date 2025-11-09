@@ -1,0 +1,11 @@
+A simple for loop
+
+[1,2,3]With a programming language specified
+
+[1,2,3]Nested for loops
+
+[['a', 'b'], ['c', 'd']]With an else clause
+
+[]With no content in 'content' or 'otherwise'
+
+[]

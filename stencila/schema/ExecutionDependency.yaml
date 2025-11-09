@@ -1,0 +1,25 @@
+title: ExecutionDependency
+'@id': stencila:ExecutionDependency
+nick: exy
+extends: Entity
+category: flow
+description: An upstream execution dependency of a node.
+required:
+  - dependencyRelation
+  - dependencyNode
+core:
+  - codeLocation
+properties:
+  dependencyRelation:
+    '@id': stencila:dependencyRelation
+    description: The relation to the dependency.
+    $ref: ExecutionDependencyRelation
+  dependencyNode:
+    '@id': stencila:dependencyNode
+    description: The node that is the dependency.
+    $ref: ExecutionDependencyNode
+  codeLocation:
+    '@id': stencila:codeLocation
+    description: The location that the dependency is defined.
+    $ref: CodeLocation
+

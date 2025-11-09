@@ -1,0 +1,23 @@
+---
+source: rust/codec-openalex/tests/examples.rs
+expression: node
+---
+{
+  "type": "Organization",
+  "id": "https://openalex.org/I4210112410",
+  "name": "Universidad Regional del Norte",
+  "ror": "021jdc910",
+  "alternateNames": [
+    "URN"
+  ],
+  "identifiers": [
+    "https://openalex.org/I4210112410",
+    "https://ror.org/021jdc910",
+    {
+      "type": "PropertyValue",
+      "propertyId": "grid",
+      "value": "grid.441192.b"
+    }
+  ],
+  "url": "https://www.urn.edu.mx/"
+}

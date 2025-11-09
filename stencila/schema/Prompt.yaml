@@ -1,0 +1,63 @@
+title: Prompt
+"@id": stencila:Prompt
+extends: [CreativeWork, Executable]
+category: works
+description: A prompt for creating or editing document content.
+markdown:
+  derive: false
+required:
+  - name
+  - title
+  - description
+  - version
+  - instructionTypes
+  - content
+core:
+  - frontmatter
+  - nodeTypes
+  - nodeCount
+  - queryPatterns
+properties:
+  frontmatter:
+    "@id": stencila:frontmatter
+    description: Frontmatter containing document metadata.
+    $comment: Currently assumed to be YAML or JSON.
+    type: string
+    strip: [metadata]
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+  instructionTypes:
+    "@id": stencila:instructionTypes
+    description: The types of instructions that the prompt supports
+    type: array
+    items:
+      $ref: InstructionType
+  nodeTypes:
+    "@id": stencila:nodeTypes
+    description: The types of nodes that the prompt supports
+    type: array
+    items:
+      type: string
+  nodeCount:
+    "@id": stencila:nodeCount
+    description: The number of nodes that the prompt supports
+    $comment: |
+      Use a string to indicate a range of possible node counts e.g. "1+" for one
+      or more nodes, "1-5" for one to five nodes.
+    anyOf:
+      - $ref: UnsignedInteger
+      - type: string
+  queryPatterns:
+    "@id": stencila:queryPatterns
+    description: Regular expressions used to match the prompt with a user query
+    type: array
+    items:
+      type: string
+  content:
+    "@id": stencila:content
+    description: The content of the prompt.
+    type: array
+    items:
+      $ref: Block
+    dom:
+      elem: section

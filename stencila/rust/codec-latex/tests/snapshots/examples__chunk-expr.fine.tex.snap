@@ -1,0 +1,21 @@
+---
+source: rust/codec-latex/tests/examples.rs
+expression: "&latex"
+---
+One plus two equals \expr{1 + 2}.
+
+No language or other options:
+
+\begin{chunk}
+3 + 1
+\end{chunk}
+
+With lang and options:
+
+\begin{chunk}
+x <- 3
+3 + 2
+\end{chunk}
+\begin{chunk}
+plot(1:10)
+\end{chunk}

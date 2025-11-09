@@ -1,0 +1,13 @@
+[package]
+name = "codec-markdown-trait"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+codec-info = { path = "../codec-info" }
+codec-markdown-derive = { path = "../codec-markdown-derive" }
+common = { path = "../common" }
+format = { path = "../format" }
+
+[lints]
+workspace = true

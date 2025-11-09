@@ -1,0 +1,11 @@
+A note
+
+A warning
+
+Foldable, but unfolded
+
+Foldable
+
+This is the first inner-inner admonition
+
+This is the second inner-inner admonition

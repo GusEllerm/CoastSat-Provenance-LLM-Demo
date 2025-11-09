@@ -1,0 +1,72 @@
+title: ProvenanceCategory
+'@id': stencila:ProvenanceCategory
+extends: Enumeration
+description: A description of the provenance of content in terms of human/machine involvement.
+default:
+  Hw
+anyOf:
+  # Note: the following variant descriptions appear in web interfaces. Given that,
+  # they are kept brief and should be edited with that in mind.
+
+  # Human only
+  - const: HwHeHv
+    '@id': stencila:ProvenanceHwHeHv
+    description: Human written, edited and verified.
+  - const: HwHe
+    '@id': stencila:ProvenanceHwHe
+    description: Human written and edited.
+  - const: HwHv
+    '@id': stencila:ProvenanceHwHv
+    description: Human written and verified.
+  - const: Hw
+    '@id': stencila:ProvenanceHw
+    description: Human written.
+
+  # Human written, machine verified
+  - const: HwMv
+    '@id': stencila:ProvenanceHwMv
+    description: Human written, machine verified.
+
+  # Machine written, human edited
+  - const: MwHeHv
+    '@id': stencila:ProvenanceMwHeHv
+    description: Machine written, human edited, human verified.
+  - const: MwHe
+    '@id': stencila:ProvenanceMwHe
+    description: Machine written, human edited.
+  - const: MwHeMv
+    '@id': stencila:ProvenanceMwHeHv
+    description: Machine written, human edited, machine verified.
+
+  # Human written, machine edited
+  - const: HwMeHv
+    '@id': stencila:ProvenanceHwMeHv
+    description: Human written, machine edited, human verified.
+  - const: HwMe
+    '@id': stencila:ProvenanceHwMe
+    description: Human written, machine edited.
+  - const: HwMeMv
+    '@id': stencila:ProvenanceHwMeMv
+    description: Human written, machine edited, machine verified.
+
+  # Machine written, human verified
+  - const: MwHv
+    '@id': stencila:ProvenanceMwHv
+    description: Machine written, human verified.
+  - const: MwMeHv
+    '@id': stencila:ProvenanceMwMeHv
+    description: Machine written, machine edited, human verified.
+
+  # Machine only
+  - const: Mw
+    '@id': stencila:ProvenanceMw
+    description: Machine written.
+  - const: MwMv
+    '@id': stencila:ProvenanceMwMv
+    description: Machine written and verified.
+  - const: MwMe
+    '@id': stencila:ProvenanceMwMe
+    description: Machine written and edited.
+  - const: MwMeMv
+    '@id': stencila:ProvenanceMwMeMv
+    description: Machine written, edited and verified.

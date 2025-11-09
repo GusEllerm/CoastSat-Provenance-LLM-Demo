@@ -1,0 +1,34 @@
+title: AudioObject
+'@id': schema:AudioObject
+extends: MediaObject
+category: works
+description: An audio file.
+dom:
+  derive: false
+html:
+  elem: audio
+  special: true
+jats:
+  elem: inline-media
+  special: true
+markdown:
+  derive: false
+proptest: {}
+core:
+  - caption
+  - title
+properties:
+  caption:
+    '@id': schema:caption
+    description: The caption for this audio recording.
+    type: array
+    items:
+      $ref: Inline
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    html:
+      attr: alt
+  transcript:
+    '@id': schema:transcript
+    description: The transcript of this audio recording.
+    type: string

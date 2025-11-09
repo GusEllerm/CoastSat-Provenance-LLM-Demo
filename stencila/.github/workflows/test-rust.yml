@@ -1,0 +1,71 @@
+# Workflow for testing Rust core on multiple platforms
+#
+# Extends the main `test.yml` workflow by running `make -C rust lint test`
+# on several platforms (whereas `test.yml` build all modules, including
+# `web` and `vscode` on Ubuntu only).
+#
+# Intended to be run manually for specific branches, commits, or tags
+# rather than on every push.
+
+name: Test Rust
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: "Platforms to test on (comma-separated: ubuntu,macos,windows)"
+        type: string
+        default: "ubuntu,macos,windows"
+
+env:
+  RUST_VERSION: "1.89.0"
+  ORT_VERSION: "1.22.0"
+
+jobs:
+  test-rust:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu
+            runner: ubuntu-latest-16core
+          - platform: macos
+            runner: macos-15
+          - platform: windows
+            runner: windows-latest
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: Checkout repo
+        if: ${{ contains(inputs.platforms, matrix.platform) }}
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        if: ${{ contains(inputs.platforms, matrix.platform) }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          components: clippy
+
+      - name: Setup linker
+        if: ${{ contains(inputs.platforms, matrix.platform) }}
+        run: make -C rust setup-linker
+
+      - name: Setup Rust cache
+        if: ${{ contains(inputs.platforms, matrix.platform) }}
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install uv
+        if: ${{ contains(inputs.platforms, matrix.platform) }}
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install Ninja for Kuzu (Windows)
+        if: ${{ contains(inputs.platforms, 'windows') && matrix.platform == 'windows' }}
+        run: choco install ninja --yes
+
+      - name: Setup Pandoc
+        uses: pandoc/actions/setup@v1
+
+      - name: Run tests
+        if: ${{ contains(inputs.platforms, matrix.platform) }}
+        run: make -C rust test

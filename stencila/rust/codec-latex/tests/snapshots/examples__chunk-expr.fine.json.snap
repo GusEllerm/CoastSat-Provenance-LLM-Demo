@@ -1,0 +1,83 @@
+---
+source: rust/codec-latex/tests/examples.rs
+expression: article
+---
+{
+  "type": "Article",
+  "title": [
+    {
+      "type": "Text",
+      "value": {
+        "string": "Knitting LaTeX and code with Stencila"
+      }
+    }
+  ],
+  "content": [
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "One plus two equals "
+          }
+        },
+        {
+          "type": "CodeExpression",
+          "code": {
+            "string": "1 + 2"
+          }
+        },
+        {
+          "type": "Text",
+          "value": {
+            "string": "."
+          }
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "No language or other options:"
+          }
+        }
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "code": {
+        "string": "3 + 1"
+      }
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "With lang and options:"
+          }
+        }
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "code": {
+        "string": "x <- 3\n3 + 2"
+      }
+    },
+    {
+      "type": "CodeChunk",
+      "code": {
+        "string": "plot(1:10)"
+      }
+    }
+  ],
+  "repository": "https://github.com/stencila/stencila",
+  "path": "rust/codec-latex/tests/examples/chunk-expr.tex",
+  "commit": "redacted"
+}

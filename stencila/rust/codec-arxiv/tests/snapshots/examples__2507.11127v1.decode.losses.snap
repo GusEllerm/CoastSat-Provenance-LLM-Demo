@@ -1,0 +1,5 @@
+---
+source: rust/codec-arxiv/tests/examples.rs
+expression: info.losses
+---
+"<div class=\"ltx_pagination ltx_role_newpage\">": 3

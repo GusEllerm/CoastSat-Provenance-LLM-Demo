@@ -1,0 +1,402 @@
+use std::path::PathBuf;
+
+use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
+use codec_cbor::r#trait::CborCodec;
+use codec_markdown::to_markdown_flavor;
+use codecs::Format;
+use common::{
+    futures::stream::{FuturesUnordered, StreamExt},
+    itertools::Itertools,
+    tokio,
+};
+use schema::{
+    Author, AuthorRole, AuthorRoleAuthor, AuthorRoleName, CompilationDigest, ExecutionMessage,
+    InstructionAttachment, InstructionBlock, MessageLevel, SoftwareApplication,
+};
+
+use crate::{ExecuteOptions, interrupt_impl, message_utils, model_utils, prelude::*, state_digest};
+
+const MAX_ATTACHMENT_BYTES: u64 = 5 * 1024 * 1024;
+
+impl Executable for InstructionBlock {
+    #[tracing::instrument(skip_all)]
+    async fn compile(&mut self, executor: &mut Executor) -> WalkControl {
+        let node_id = self.node_id();
+        tracing::trace!("Compiling InstructionBlock {node_id}");
+
+        // Generate a compilation digest that captures the state of properties that
+        // determine if a re-execution is required. The feedback on suggestions is
+        // ignored because that would change the digest when a suggestion is deleted.
+        let state_digest = state_digest!(
+            self.instruction_type,
+            self.message.to_cbor().unwrap_or_default().as_slice(),
+            self.prompt.target,
+            self.model_parameters
+                .to_cbor()
+                .unwrap_or_default()
+                .as_slice()
+        );
+
+        let compilation_digest = CompilationDigest::new(state_digest);
+        let execution_required =
+            execution_required_digests(&self.options.execution_digest, &compilation_digest);
+        executor.patch(
+            &node_id,
+            [
+                set(NodeProperty::CompilationDigest, compilation_digest),
+                set(NodeProperty::ExecutionRequired, execution_required),
+            ],
+        );
+
+        // Call `prompt.compile` directly because a `PromptBlock` that
+        // is not a `Block::PromptBlock` variant is not walked over
+        self.prompt.compile(executor).await;
+
+        WalkControl::Continue
+    }
+
+    #[tracing::instrument(skip_all)]
+    async fn prepare(&mut self, executor: &mut Executor) -> WalkControl {
+        let node_id = self.node_id();
+        tracing::trace!("Preparing InstructionBlock {node_id}");
+
+        // Set execution status
+        if let Some(status) = executor.node_execution_status(
+            self.node_type(),
+            &node_id,
+            &self.execution_mode,
+            &self.options.execution_required,
+        ) {
+            self.options.execution_status = Some(status);
+            executor.patch(&node_id, [set(NodeProperty::ExecutionStatus, status)]);
+        }
+
+        // Continue to mark executable nodes in `content` and/or `suggestion` as pending
+        WalkControl::Continue
+    }
+
+    #[tracing::instrument(skip_all)]
+    async fn execute(&mut self, executor: &mut Executor) -> WalkControl {
+        let node_id = self.node_id();
+
+        let ExecuteOptions {
+            retain_suggestions,
+            dry_run,
+            ..
+        } = executor.execute_options.clone().unwrap_or_default();
+
+        // Get options which may be overridden if this is a revision
+        // Note: to avoid accidentally generating many replicates, hard code maximum 10 here
+        let mut model_ids = self.model_parameters.model_ids.clone().clone();
+        let mut replicates = (self.model_parameters.replicates.unwrap_or(1) as usize).min(10);
+
+        // If this is a revision (i.e. a retry, possibly with feedback already added to suggestions)
+        // as indicated by previous suggestions being retained, then (a) set the number of replicates
+        // to one, (b) use the same model as that which generated the active suggestion, and
+        // (c) put the active suggestion last when sending to the model <<- TODO
+        if retain_suggestions {
+            replicates = 1;
+
+            if let (Some(index), Some(suggestions)) = (self.active_suggestion, &self.suggestions)
+                && let Some(suggestion) = suggestions.get(index as usize)
+            {
+                model_ids = suggestion.authors.iter().flatten().find_map(|author| {
+                    match author {
+                        // Gets the first generator author having an id
+                        Author::AuthorRole(AuthorRole {
+                            role_name: AuthorRoleName::Generator,
+                            author:
+                                AuthorRoleAuthor::SoftwareApplication(SoftwareApplication {
+                                    id: Some(id),
+                                    ..
+                                }),
+                            ..
+                        }) => Some(vec![id.clone()]),
+                        _ => None,
+                    }
+                });
+            }
+        };
+
+        if !matches!(
+            self.options.execution_status,
+            Some(ExecutionStatus::Pending)
+        ) {
+            tracing::trace!("Skipping InstructionBlock {node_id}");
+
+            // Continue to execute executable nodes in `content` and/or `suggestions`
+            return WalkControl::Continue;
+        }
+
+        tracing::debug!("Executing InstructionBlock {node_id}");
+
+        executor.patch(
+            &node_id,
+            [
+                set(NodeProperty::ExecutionStatus, ExecutionStatus::Running),
+                none(NodeProperty::ExecutionMessages),
+            ],
+        );
+
+        let started = Timestamp::now();
+        let mut messages = Vec::new();
+
+        resolve_instruction_attachments(&mut self.options.attachments, executor, &mut messages)
+            .await;
+
+        // Determine the types of nodes in the content of the instruction
+        // TODO: reinstate use of node_types
+        let _ = self
+            .content
+            .iter()
+            .flatten()
+            .map(|block| block.node_type().to_string())
+            .collect_vec();
+
+        // Execute the `PromptBlock`. The instruction context needs to
+        // be set for the prompt context to be complete (i.e. include `instruction` variable)
+        executor.instruction_context = Some((&*self).into());
+        self.prompt.execute(executor).await;
+        executor.instruction_context = None;
+
+        // Render the `PromptBlock` into a system prompt
+        let system_prompt = to_markdown_flavor(&self.prompt.content, Format::Markdown);
+
+        // Create an author role for the prompt
+        let prompter = AuthorRole {
+            last_modified: Some(Timestamp::now()),
+            ..Default::default() // TODO: reinstate getting the author role for the prompt
+                                 //..prompt.deref().clone().into()
+        };
+
+        // Get the authors of the instruction
+        let mut instructors = Vec::new();
+        for author in self.message.authors.iter().flatten() {
+            instructors.push(AuthorRole {
+                last_modified: Some(Timestamp::now()),
+                ..author.clone().into_author_role(AuthorRoleName::Instructor)
+            });
+        }
+
+        // Unless specified, clear existing suggestions
+        if !retain_suggestions {
+            executor.patch(&node_id, [none(NodeProperty::Suggestions)]);
+        }
+
+        // Render variables in the instruction message through Jinja
+        // This allows {{variable}} syntax to be resolved from code kernels
+        let rendered_message =
+            match message_utils::render_message_variables(&self.message, executor).await {
+                Ok(rendered) => rendered,
+                Err(error) => {
+                    tracing::warn!(
+                        "Failed to render variables in message, using original: {}",
+                        error
+                    );
+                    // If rendering fails, use original message
+                    self.message.clone()
+                }
+            };
+
+        // Create a future for each replicate
+        let mut futures = FuturesUnordered::new();
+        for _ in 0..replicates {
+            // TODO: rather than repeating all this prep work to create a model task
+            // within `prompts::execute_instruction_block` it could be done
+            // once, and then clones and moved to each instruction.
+            let instructors = instructors.clone();
+            let prompter = prompter.clone();
+            let system_prompt = system_prompt.to_string();
+            let mut instruction = self.clone();
+            // Use the rendered message with variables resolved
+            instruction.message = rendered_message.clone();
+            if let Some(attachments) = instruction.options.attachments.as_ref() {
+                let mut parts = model_utils::attachments_to_message_parts(attachments);
+                instruction.message.parts.append(&mut parts);
+            }
+            if let Some(model_ids) = model_ids.clone() {
+                // Apply the model id for revisions
+                instruction.model_parameters.model_ids = Some(model_ids);
+            };
+            futures.push(async move {
+                prompts::execute_instruction_block(
+                    instructors,
+                    prompter,
+                    &system_prompt,
+                    &instruction,
+                    dry_run,
+                )
+                .await
+            })
+        }
+
+        // Wait for each future, adding the suggestion (or error message) to the instruction
+        // as it arrives, and then (optionally) executing the suggestion
+        while let Some(result) = futures.next().await {
+            match result {
+                Ok(mut suggestion) => {
+                    executor.patch(
+                        &node_id,
+                        [push(NodeProperty::Suggestions, suggestion.clone())],
+                    );
+
+                    let mut fork = executor.fork_for_all();
+                    tokio::spawn(async move {
+                        if let Err(error) = fork.compile_prepare_execute(&mut suggestion).await {
+                            tracing::error!("While executing suggestion: {error}");
+                        }
+                    });
+                }
+                Err(error) => messages.push(error_to_execution_message(
+                    "While executing instruction",
+                    error,
+                )),
+            }
+        }
+
+        let messages = (!messages.is_empty()).then_some(messages);
+
+        let ended = Timestamp::now();
+        let status = execution_status(&messages);
+        let required = execution_required_status(&status);
+        let duration = execution_duration(&started, &ended);
+        let count = self.options.execution_count.unwrap_or_default() + 1;
+        let compilation_digest = self.options.compilation_digest.clone();
+
+        executor.patch(
+            &node_id,
+            [
+                set(NodeProperty::ExecutionStatus, status),
+                set(NodeProperty::ExecutionRequired, required),
+                set(NodeProperty::ExecutionMessages, messages),
+                set(NodeProperty::ExecutionDuration, duration),
+                set(NodeProperty::ExecutionEnded, ended),
+                set(NodeProperty::ExecutionCount, count),
+                set(NodeProperty::ExecutionDigest, compilation_digest),
+            ],
+        );
+
+        WalkControl::Continue
+    }
+
+    #[tracing::instrument(skip_all)]
+    async fn interrupt(&mut self, executor: &mut Executor) -> WalkControl {
+        let node_id = self.node_id();
+        tracing::debug!("Interrupting InstructionBlock {node_id}");
+
+        interrupt_impl!(self, executor, &node_id);
+
+        // Continue to interrupt executable nodes in `content`
+        WalkControl::Continue
+    }
+}
+
+async fn resolve_instruction_attachments(
+    attachments: &mut Option<Vec<InstructionAttachment>>,
+    executor: &Executor,
+    messages: &mut Vec<ExecutionMessage>,
+) {
+    if let Some(attachments) = attachments {
+        for attachment in attachments.iter_mut() {
+            if attachment.file.content.is_some() {
+                continue;
+            }
+
+            if let Err(error) = resolve_instruction_attachment(attachment, executor).await {
+                tracing::warn!("{error}");
+                messages.push(ExecutionMessage::new(MessageLevel::Warning, error));
+            }
+        }
+    }
+}
+
+async fn resolve_instruction_attachment(
+    attachment: &mut InstructionAttachment,
+    executor: &Executor,
+) -> Result<(), String> {
+    let original_path = attachment.file.path.clone();
+    let path = original_path.trim();
+
+    if path.is_empty() {
+        return Err(format!(
+            "Attachment `{}` does not specify a file path.",
+            attachment.alias
+        ));
+    }
+
+    if path.starts_with("http://") || path.starts_with("https://") {
+        return Err(format!(
+            "Remote attachment `{}` using `{}` is not yet supported.",
+            attachment.alias, path
+        ));
+    }
+
+    let path = path.trim_start_matches("file://");
+
+    let mut resolved = PathBuf::from(path);
+    if !resolved.is_absolute() {
+        if let Some(base) = executor.directory_stack.last() {
+            resolved = base.join(&resolved);
+        }
+    }
+
+    let metadata = tokio::fs::metadata(&resolved).await.map_err(|error| {
+        format!(
+            "Unable to access attachment `{}` at `{}`: {error}",
+            attachment.alias,
+            resolved.display()
+        )
+    })?;
+
+    if !metadata.is_file() {
+        return Err(format!(
+            "Attachment `{}` at `{}` is not a file.",
+            attachment.alias,
+            resolved.display()
+        ));
+    }
+
+    let size = metadata.len();
+    if size > MAX_ATTACHMENT_BYTES {
+        return Err(format!(
+            "Attachment `{}` is {} bytes which exceeds the limit of {} bytes.",
+            attachment.alias, size, MAX_ATTACHMENT_BYTES
+        ));
+    }
+
+    let data = tokio::fs::read(&resolved).await.map_err(|error| {
+        format!(
+            "Failed to read attachment `{}` at `{}`: {error}",
+            attachment.alias,
+            resolved.display()
+        )
+    })?;
+
+    let format = Format::from_path(&resolved);
+    let media_type = format.media_type();
+
+    let name = resolved
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or(&attachment.alias)
+        .to_string();
+
+    attachment.file.name = name;
+    attachment.file.path = resolved.to_string_lossy().to_string();
+    attachment.file.media_type = Some(media_type);
+    attachment.file.size = Some(size);
+
+    match String::from_utf8(data.clone()) {
+        Ok(text) => {
+            attachment.file.content = Some(text);
+            attachment.file.options.transfer_encoding = None;
+        }
+        Err(_) => {
+            let encoded = BASE64.encode(data);
+            attachment.file.content = Some(encoded);
+            attachment.file.options.transfer_encoding = Some("base64".to_string());
+        }
+    }
+
+    Ok(())
+}

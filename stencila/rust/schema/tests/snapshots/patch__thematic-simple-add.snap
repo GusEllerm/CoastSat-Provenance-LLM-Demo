@@ -1,0 +1,148 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 37
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: This is something.
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 18
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 18
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: And something else.
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 19
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 19
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: This is something.
+    - type: ThematicBreak
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: And something else.
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 37
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: This is something.
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 18
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 18
+          characterPercent: 100
+    - type: ThematicBreak
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: And something else.
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 19
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 19
+          characterPercent: 100
+ops:
+  - - - content
+    - Insert:
+        - - 1
+          - type: ThematicBreak

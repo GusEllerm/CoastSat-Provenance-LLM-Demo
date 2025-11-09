@@ -1,0 +1,16 @@
+title: ThematicBreak
+'@id': stencila:ThematicBreak
+nick: thb
+extends: Entity
+category: prose
+description: |
+  A thematic break, such as a scene change in a story, a transition to another topic, or a new document.
+html:
+  elem: hr
+jats:
+  elem: hr
+markdown:
+  # Use three asterisks, rather than three hyphens, to avoid confusion
+  # with YAML front matter delimiters
+  template: '***\n\n'
+proptest: {}

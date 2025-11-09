@@ -1,0 +1,72 @@
+title: ListItem
+"@id": schema:ListItem
+nick: lsi
+extends: Thing
+category: prose
+description: A single item in a list.
+$comment: |
+  This is an implementation, and extension, of schema.org [`ListItem`](https://schema.org/ListItem).
+  It extends schema.ord `ListItem` by adding `content` and `isChecked` properties.
+
+  Analogues of `ListItem` in other schema include:
+    - JATS XML `<list-item>`](https://jats.nlm.nih.gov/articleauthoring/tag-library/1.2/element/list-item.html)
+    - HTML [`<li>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li)
+    - MDAST [`ListItem`](https://github.com/syntax-tree/mdast#listitem)
+    - OpenDocument [`<text:list-item>`](http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#__RefHeading__1415154_253892949)
+html:
+  elem: li
+jats:
+  elem: list-item
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}
+required:
+  - content
+core:
+  - item
+  - isChecked
+  - position
+properties:
+  content:
+    "@id": stencila:content
+    description: The content of the list item.
+    $comment: Use either `content` or `item`, not both.
+    type: array
+    items:
+      $ref: Block
+    dom:
+      elem: li
+    proptest:
+      min: 
+        description: Generate a single, arbitrary, paragraph
+        strategy: vec_paragraphs(1)
+      low:
+        description: Generate one, arbitrary, non-list block
+        strategy: vec_blocks_list_item(1)
+      high:
+        description: Generate up to two, arbitrary, non-list blocks
+        strategy: vec_blocks_list_item(2)
+      max:
+        description: Generate up to four, arbitrary, non-list blocks
+        strategy: vec_blocks_list_item(4)
+  item:
+    "@id": schema:item
+    description: The item represented by this list item.
+    $comment: Use either `item` or `content`, not both.
+    $ref: Node
+  isChecked:
+    "@id": stencila:isChecked
+    description: A flag to indicate if this list item is checked.
+    type: boolean
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    jats:
+      attr: is-checked
+  position:
+    "@id": schema:position
+    description: The position of the item in a series or sequence of items.
+    type: integer
+    jats:
+      attr: position

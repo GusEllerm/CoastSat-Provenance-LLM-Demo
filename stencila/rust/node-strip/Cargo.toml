@@ -1,0 +1,11 @@
+[package]
+name = "node-strip"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+common = { path = "../common" }
+node-strip-derive = { path = "../node-strip-derive" }
+
+[lints]
+workspace = true

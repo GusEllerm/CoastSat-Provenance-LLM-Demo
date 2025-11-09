@@ -1,0 +1,223 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/MathInline.schema.json",
+  "@id": "stencila:MathInline",
+  "title": "MathInline",
+  "nick": "mti",
+  "extends": [
+    "Math"
+  ],
+  "category": "math",
+  "description": "A fragment of math, e.g a variable name, to be treated as inline content.",
+  "dom": {
+    "derive": false
+  },
+  "html": {
+    "elem": "math"
+  },
+  "jats": {
+    "elem": "inline-formula",
+    "special": true
+  },
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "code"
+  ],
+  "core": [
+    "id",
+    "mathLanguage",
+    "authors",
+    "provenance"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "code": {
+      "@id": "stencila:code",
+      "description": "The code of the equation in the `mathLanguage`.",
+      "strip": [
+        "code"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex"
+        ]
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a simple fixed string of math.",
+          "value": "Cord::from(\"math\")"
+        },
+        "low": {
+          "description": "Generate a random string of up to 10 alphanumeric characters (exclude whitespace which \nwhen leading or trailing causes issues for Markdown).\n",
+          "strategy": "r\"[a-zA-Z0-9]{1,10}\".prop_map(Cord::from)"
+        },
+        "high": {
+          "description": "Generate a random string of up to 100 characters (excluding control characters).\n",
+          "strategy": "r\"[^\\p{C}]{1,100}\".prop_map(Cord::from)"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "String::arbitrary().prop_map(Cord::from)"
+        }
+      },
+      "$ref": "Cord.schema.json"
+    },
+    "mathLanguage": {
+      "@id": "stencila:mathLanguage",
+      "description": "The language used for the equation e.g tex, mathml, asciimath.",
+      "$comment": "Where necessary, the language is assumed to be TeX.",
+      "aliases": [
+        "math-language",
+        "math_language"
+      ],
+      "strip": [
+        "code"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "proptest": {
+        "min": {
+          "description": "Fixed as TeX (for testing with Markdown which uses dollars to delimit TeX by default)",
+          "value": "Some(String::from(\"tex\"))"
+        },
+        "high": {
+          "description": "Generate a random string of up to 10 alphanumeric characters.",
+          "strategy": "option::of(r\"[a-zA-Z0-9]{1,10}\")"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "option::of(String::arbitrary())"
+        }
+      },
+      "type": "string"
+    },
+    "authors": {
+      "@id": "schema:author",
+      "description": "The authors of the math.",
+      "aliases": [
+        "author"
+      ],
+      "strip": [
+        "authors"
+      ],
+      "serde": {
+        "deserializeWith": "option_one_or_many_string_or_object"
+      },
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Author.schema.json"
+      }
+    },
+    "provenance": {
+      "@id": "stencila:provenance",
+      "description": "A summary of the provenance of the math.",
+      "strip": [
+        "provenance"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ProvenanceCount.schema.json"
+      }
+    },
+    "compilationDigest": {
+      "@id": "stencila:compilationDigest",
+      "description": "A digest of the `code` and `mathLanguage`.",
+      "$comment": "Used to avoid unnecessary transpilation to MathML.",
+      "aliases": [
+        "compilation-digest",
+        "compilation_digest"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "$ref": "CompilationDigest.schema.json"
+    },
+    "compilationMessages": {
+      "@id": "stencila:compilationMessages",
+      "description": "Messages generated while parsing and compiling the math expression.",
+      "aliases": [
+        "compilation-messages",
+        "compilation_messages",
+        "compilationMessage",
+        "compilation-message",
+        "compilation_message"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "CompilationMessage.schema.json"
+      }
+    },
+    "mathml": {
+      "@id": "stencila:mathml",
+      "description": "The MathML transpiled from the `code`.",
+      "$comment": "Used along with `compilationDigest` to avoid unnecessary transpilation to MathML.",
+      "strip": [
+        "output"
+      ],
+      "html": {
+        "content": true
+      },
+      "type": "string"
+    },
+    "images": {
+      "@id": "schema:image",
+      "description": "Images of the math.",
+      "$comment": "Some document formats, such as JATS XML, often represent math using images. This property\nallows for such instances whilst being consistent with the `images` property of the `Thing` node type.\n",
+      "aliases": [
+        "image"
+      ],
+      "strip": [
+        "content"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "ImageObject.schema.json"
+      }
+    }
+  }
+}

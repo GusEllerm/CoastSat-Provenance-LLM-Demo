@@ -1,0 +1,48 @@
+title: TableRow
+'@id': stencila:TableRow
+nick: tbr
+extends: Entity
+category: works
+description: A row within a Table.
+dom:
+  derive: false
+jats:
+  special: true
+html:
+  elem: tr
+proptest: {}
+required:
+  - cells
+core:
+  - rowType
+properties:
+  cells:
+    '@id': stencila:cells
+    description: An array of cells in the row.
+    type: array
+    items:
+      $ref: TableCell
+    walk: true
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    dom:
+      elem: tr
+    proptest:
+      min:
+        description: Generate a single, arbitrary, table cell.
+        strategy: vec(TableCell::arbitrary(), size_range(1..=1))
+      low:
+        description: Generate two, arbitrary, table cells.
+        strategy: vec(TableCell::arbitrary(), size_range(2..=2))
+      high:
+        description: Generate four, arbitrary, table cells.
+        strategy: vec(TableCell::arbitrary(), size_range(4..=4))
+      max:
+        description: Generate up to eight, arbitrary, table cells.
+        strategy: vec(TableCell::arbitrary(), size_range(1..=8))
+  rowType:
+    '@id': stencila:rowType
+    description: The type of row.
+    $ref: TableRowType
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]

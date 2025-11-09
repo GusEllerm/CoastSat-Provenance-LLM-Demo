@@ -1,0 +1,176 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Citation.schema.json",
+  "@id": "stencila:Citation",
+  "title": "Citation",
+  "extends": [
+    "Entity"
+  ],
+  "category": "prose",
+  "description": "A reference to a `CreativeWork` that is cited in another `CreativeWork`.",
+  "$comment": "A `Citation` node is used within a [`CreativeWork`](./CreativeWork), usually an\n[`Article`](./Article), to refer to an other `CreativeWork`.\nOften a `Citation` will be associated with other citations, in a `CitationGroup`.\n",
+  "jats": {
+    "special": true
+  },
+  "markdown": {
+    "derive": false
+  },
+  "required": [
+    "type",
+    "target"
+  ],
+  "core": [
+    "id",
+    "citationMode"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "target": {
+      "@id": "schema:target",
+      "description": "The target of the citation (URL or reference ID).",
+      "patch": {
+        "formats": [
+          "all"
+        ]
+      },
+      "type": "string"
+    },
+    "compilationMessages": {
+      "@id": "stencila:compilationMessages",
+      "description": "Messages generated while resolving the target if the citation.",
+      "aliases": [
+        "compilation-messages",
+        "compilation_messages",
+        "compilationMessage",
+        "compilation-message",
+        "compilation_message"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "CompilationMessage.schema.json"
+      }
+    },
+    "cites": {
+      "@id": "stencila:cites",
+      "description": "The `Reference` being cited, resolved from the `target`.",
+      "dom": {
+        "elem": "span"
+      },
+      "$ref": "Reference.schema.json"
+    },
+    "citationMode": {
+      "@id": "stencila:citationMode",
+      "description": "Determines how the citation is shown within the surrounding text.",
+      "aliases": [
+        "citation-mode",
+        "citation_mode"
+      ],
+      "patch": {
+        "formats": [
+          "all"
+        ]
+      },
+      "$ref": "CitationMode.schema.json"
+    },
+    "citationIntent": {
+      "@id": "stencila:citationIntent",
+      "description": "The type/s of the citation, both factually and rhetorically.",
+      "aliases": [
+        "citation-intent",
+        "citation_intent"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "CitationIntent.schema.json"
+      }
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "Optional structured content/text of this citation.",
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Inline.schema.json"
+      }
+    },
+    "pageStart": {
+      "@id": "schema:pageStart",
+      "description": "The page on which the work starts; for example \"135\" or \"xiii\".",
+      "aliases": [
+        "page-start",
+        "page_start"
+      ],
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "pageEnd": {
+      "@id": "schema:pageEnd",
+      "description": "The page on which the work ends; for example \"138\" or \"xvi\".",
+      "aliases": [
+        "page-end",
+        "page_end"
+      ],
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "pagination": {
+      "@id": "schema:pagination",
+      "description": "Any description of pages that is not separated into pageStart and pageEnd; for example, \"1-6, 9, 55\".",
+      "type": "string"
+    },
+    "citationPrefix": {
+      "@id": "stencila:citationPrefix",
+      "description": "Text to show before the citation.",
+      "$comment": "Previously this was name `prefix` but for consistency with `citationMode`\nand `honorificPrefix`, to avoid ambiguity with other prefixes was renamed\nto `citationPrefix`.\n",
+      "aliases": [
+        "citation-prefix",
+        "citation_prefix"
+      ],
+      "type": "string"
+    },
+    "citationSuffix": {
+      "@id": "stencila:citationSuffix",
+      "description": "Text to show after the citation.",
+      "$comment": "See comment on `citationPrefix` regarding naming.\n",
+      "aliases": [
+        "citation-suffix",
+        "citation_suffix"
+      ],
+      "type": "string"
+    }
+  }
+}

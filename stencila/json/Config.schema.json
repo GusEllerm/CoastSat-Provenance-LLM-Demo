@@ -1,0 +1,42 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Config.schema.json",
+  "title": "Config",
+  "nick": "cfg",
+  "category": "config",
+  "description": "Stencila document configuration options.",
+  "core": [
+    "theme",
+    "models",
+    "publish"
+  ],
+  "properties": {
+    "theme": {
+      "description": "The styling theme to use for the document",
+      "patch": {
+        "formats": [
+          "all"
+        ]
+      },
+      "type": "string"
+    },
+    "models": {
+      "description": "The parameters used for selecting and running generative AI models",
+      "patch": {
+        "formats": [
+          "all"
+        ]
+      },
+      "$ref": "ConfigModels.schema.json"
+    },
+    "publish": {
+      "description": "Publishing configuration options",
+      "patch": {
+        "formats": [
+          "all"
+        ]
+      },
+      "$ref": "ConfigPublish.schema.json"
+    }
+  }
+}

@@ -1,0 +1,402 @@
+---
+source: rust/codec-biblio/tests/examples.rs
+expression: node
+---
+{
+  "type": "Article",
+  "references": [
+    {
+      "type": "Reference",
+      "id": "c1",
+      "workType": "Chapter",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Carroll"
+          ],
+          "givenNames": [
+            "Lewis"
+          ]
+        }
+      ],
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Down the Rabbit-Hole"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "id": "c1_parent",
+        "workType": "Book",
+        "authors": [
+          {
+            "type": "Person",
+            "familyNames": [
+              "Carroll"
+            ],
+            "givenNames": [
+              "Lewis"
+            ]
+          }
+        ],
+        "publisher": {
+          "type": "Organization",
+          "name": "Macmillan",
+          "address": "London"
+        },
+        "date": {
+          "type": "Date",
+          "value": "1865"
+        },
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "Alice's Adventures in Wonderland"
+            }
+          }
+        ],
+        "pagination": "96 pages",
+        "identifiers": [
+          {
+            "type": "PropertyValue",
+            "propertyId": "isbn",
+            "value": "978-0-14-043761-4"
+          }
+        ]
+      },
+      "pageStart": 1,
+      "pageEnd": 8,
+      "identifiers": [
+        {
+          "type": "PropertyValue",
+          "propertyId": "serial",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "Reference",
+      "id": "c2",
+      "workType": "Chapter",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Eddy"
+          ],
+          "givenNames": [
+            "Sean",
+            "R."
+          ]
+        }
+      ],
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Hidden Markov Models in Computational Biology"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "id": "c2_parent",
+        "workType": "Book",
+        "editors": [
+          {
+            "type": "Person",
+            "familyNames": [
+              "Baldi"
+            ],
+            "givenNames": [
+              "Pierre"
+            ]
+          },
+          {
+            "type": "Person",
+            "familyNames": [
+              "Brunak"
+            ],
+            "givenNames": [
+              "Søren"
+            ]
+          }
+        ],
+        "publisher": {
+          "type": "Organization",
+          "name": "MIT Press",
+          "address": "Cambridge, MA"
+        },
+        "date": {
+          "type": "Date",
+          "value": "2001"
+        },
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "Bioinformatics: The Machine Learning Approach"
+            }
+          }
+        ],
+        "pagination": "452 pages",
+        "version": "2",
+        "identifiers": [
+          {
+            "type": "PropertyValue",
+            "propertyId": "isbn",
+            "value": "978-0-262-02506-5"
+          }
+        ]
+      },
+      "pageStart": 83,
+      "pageEnd": 106,
+      "identifiers": [
+        {
+          "type": "PropertyValue",
+          "propertyId": "serial",
+          "value": "4"
+        }
+      ]
+    },
+    {
+      "type": "Reference",
+      "id": "c3",
+      "workType": "Chapter",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Melville"
+          ],
+          "givenNames": [
+            "Herman"
+          ]
+        }
+      ],
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Call me Ishmael"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "id": "c3_parent",
+        "workType": "Book",
+        "authors": [
+          {
+            "type": "Person",
+            "familyNames": [
+              "Melville"
+            ],
+            "givenNames": [
+              "Herman"
+            ]
+          }
+        ],
+        "publisher": {
+          "type": "Organization",
+          "name": "Harper & Brothers",
+          "address": "New York"
+        },
+        "date": {
+          "type": "Date",
+          "value": "1851"
+        },
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "Moby-Dick; or, The Whale"
+            }
+          }
+        ],
+        "pagination": "635 pages",
+        "identifiers": [
+          {
+            "type": "PropertyValue",
+            "propertyId": "isbn",
+            "value": "978-0-14-243724-7"
+          }
+        ]
+      },
+      "pageStart": 1,
+      "pageEnd": 7,
+      "identifiers": [
+        {
+          "type": "PropertyValue",
+          "propertyId": "serial",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "Reference",
+      "id": "c4",
+      "workType": "Chapter",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Milne"
+          ],
+          "givenNames": [
+            "A.",
+            "A."
+          ]
+        }
+      ],
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "In Which We Are Introduced to Winnie-the-Pooh and Some Bees, and the Stories Begin"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "id": "c4_parent",
+        "workType": "Book",
+        "authors": [
+          {
+            "type": "Person",
+            "familyNames": [
+              "Milne"
+            ],
+            "givenNames": [
+              "A.",
+              "A."
+            ]
+          }
+        ],
+        "publisher": {
+          "type": "Organization",
+          "name": "Methuen & Co.",
+          "address": "London"
+        },
+        "date": {
+          "type": "Date",
+          "value": "1926"
+        },
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "Winnie-the-Pooh"
+            }
+          }
+        ],
+        "pagination": "158 pages",
+        "identifiers": [
+          {
+            "type": "PropertyValue",
+            "propertyId": "isbn",
+            "value": "978-0-525-44442-1"
+          }
+        ]
+      },
+      "pageStart": 3,
+      "pageEnd": 17,
+      "identifiers": [
+        {
+          "type": "PropertyValue",
+          "propertyId": "serial",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "Reference",
+      "id": "c5",
+      "workType": "Chapter",
+      "authors": [
+        {
+          "type": "Person",
+          "familyNames": [
+            "Ramey"
+          ],
+          "givenNames": [
+            "Chet"
+          ]
+        }
+      ],
+      "title": [
+        {
+          "type": "Text",
+          "value": {
+            "string": "Bash"
+          }
+        }
+      ],
+      "isPartOf": {
+        "type": "Reference",
+        "id": "c5_parent",
+        "workType": "Book",
+        "editors": [
+          {
+            "type": "Person",
+            "familyNames": [
+              "Brown"
+            ],
+            "givenNames": [
+              "Amy"
+            ]
+          },
+          {
+            "type": "Person",
+            "familyNames": [
+              "Wilson"
+            ],
+            "givenNames": [
+              "Greg"
+            ]
+          }
+        ],
+        "publisher": {
+          "type": "Organization",
+          "name": "Lulu.com"
+        },
+        "date": {
+          "type": "Date",
+          "value": "2011"
+        },
+        "title": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "The Architecture of Open Source Applications"
+            }
+          }
+        ],
+        "pagination": "432 pages",
+        "identifiers": [
+          {
+            "type": "PropertyValue",
+            "propertyId": "isbn",
+            "value": "978-1-257-63801-7"
+          }
+        ],
+        "url": "http://aosabook.org/en/index.html"
+      },
+      "pageStart": 29,
+      "pageEnd": 47,
+      "identifiers": [
+        {
+          "type": "PropertyValue",
+          "propertyId": "serial",
+          "value": "2"
+        }
+      ]
+    }
+  ],
+  "content": []
+}

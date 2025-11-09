@@ -1,0 +1,5 @@
+---
+source: rust/codec-arxiv/tests/examples.rs
+expression: info.losses
+---
+"<div class=\"ltx_flex_cell ltx_flex_size_3\">": 6

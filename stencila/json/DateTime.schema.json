@@ -1,0 +1,68 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/DateTime.schema.json",
+  "@id": "schema:DateTime",
+  "title": "DateTime",
+  "nick": "dti",
+  "extends": [
+    "Entity"
+  ],
+  "category": "data",
+  "description": "A combination of date and time of day in the form `[-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm]`.",
+  "jats": {
+    "elem": "date-time",
+    "special": true
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "value"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "value": {
+      "@id": "schema:value",
+      "description": "The date as an ISO 8601 string.",
+      "proptest": {
+        "min": {
+          "description": "Generate a fixed date-time string.",
+          "value": "String::from(\"2022-02-22T22:22:22\")"
+        },
+        "low": {
+          "description": "Generate a random date-time string.",
+          "regex": "[0-9]{4}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]\\.[0-9]+([+-][0-2][0-9]:[0-5][0-9]|Z)"
+        },
+        "high": {
+          "description": "Generate a random string of up to 20 alphanumeric characters, colons & hyphens.",
+          "regex": "[a-zA-Z0-9\\-:]{1,20}"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "String::arbitrary()"
+        }
+      },
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

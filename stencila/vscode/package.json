@@ -1,0 +1,1306 @@
+{
+  "name": "stencila",
+  "displayName": "Stencila",
+  "publisher": "stencila",
+  "description": "Documents with Scientific Intelligence",
+  "version": "0.6.0",
+  "license": "Apache-2.0",
+  "author": "Stencila and contributors",
+  "homepage": "https://github.com/stencila/stencila/tree/main/vscode#readme",
+  "bugs": {
+    "url": "https://github.com/stencila/stencila/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stencila/stencila",
+    "directory": "vscode"
+  },
+  "icon": "icons/stencila-128.png",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "extensionDependencies": [
+    "ms-python.python",
+    "usernamehw.errorlens"
+  ],
+  "categories": [
+    "AI",
+    "Data Science",
+    "Education",
+    "Visualization",
+    "Notebooks"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "authentication": [
+      {
+        "id": "stencila",
+        "label": "Stencila Cloud"
+      }
+    ],
+    "configuration": {
+      "title": "Stencila",
+      "properties": {
+        "stencila.user.name": {
+          "order": 1,
+          "type": "string",
+          "default": "",
+          "description": "Your full name (optional). Used when attributing document changes."
+        },
+        "stencila.user.affiliations": {
+          "order": 2,
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Your professional affiliations (optional). You can add multiple affiliations. Used when attributing document changes."
+        },
+        "stencila.user.object": {
+          "order": 3,
+          "description": "Advanced. A https://schema.org/Person object representing you, used when attributing document changes. Overrides other `user` settings above.",
+          "type": [
+            "object",
+            "null"
+          ],
+          "default": null,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "Person"
+            },
+            "givenNames": {
+              "type": "string"
+            },
+            "familyNames": {
+              "type": "string"
+            },
+            "affiliations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "name"
+                ],
+                "properties": {
+                  "type": {
+                    "const": "Organization"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "stencila.documents.onSave": {
+          "order": 15,
+          "description": "What action to take when a document is saved in the editor",
+          "enumDescriptions": [
+            "Do nothing",
+            "If the document is already being tracked, store it in the tracking directory",
+            "If the document is not yet tracked track it, and then store it in the tracking directory"
+          ],
+          "enum": [
+            "Nothing",
+            "Store",
+            "Track"
+          ],
+          "default": "Store"
+        },
+        "stencila.diagnostics.compilationMessages": {
+          "order": 21,
+          "description": "The minimum severity level of compilation messages (from code linting, math parsing, etc) to show in editor",
+          "enum": [
+            "Trace",
+            "Debug",
+            "Info",
+            "Warning",
+            "Error",
+            "Exception"
+          ],
+          "default": "Error"
+        },
+        "stencila.diagnostics.executionMessages": {
+          "order": 22,
+          "description": "The minimum severity level of execution messages (from runtime logging and exceptions) to show in editor",
+          "enum": [
+            "Trace",
+            "Debug",
+            "Info",
+            "Warning",
+            "Error",
+            "Exception"
+          ],
+          "default": "Warning"
+        },
+        "stencila.gutter.enabled": {
+          "order": 30,
+          "description": "Enable gutter with markers for document node type and status.",
+          "type": "boolean",
+          "default": true
+        },
+        "stencila.gutter.markerWidth": {
+          "order": 31,
+          "description": "Width of document node type gutter markers.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 6,
+          "default": 4
+        },
+        "stencila.gutter.animateRunning": {
+          "order": 32,
+          "description": "Animate gutter marker for running document nodes.",
+          "type": "boolean",
+          "default": true
+        },
+        "stencila.linkedScrolling.previewFollowsEditor": {
+          "order": 60,
+          "description": "Synchronize the scroll position of the preview to the scroll position of the editor.",
+          "type": "boolean",
+          "default": true
+        },
+        "stencila.linkedScrolling.editorFollowsPreview": {
+          "order": 61,
+          "description": "Synchronize the scroll position of the editor to the scroll position of the preview.",
+          "type": "boolean",
+          "default": true
+        },
+        "stencila.languageServer.logLevel": {
+          "order": 100,
+          "description": "The logging level of the Stencila Language Server (server restart required)",
+          "enum": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ],
+          "default": "info"
+        },
+        "stencila.logging.usage": {
+          "order": 130,
+          "description": "Enable logging of extension usage events. Helps us fix bugs and improve usability.",
+          "type": "boolean",
+          "default": true,
+          "tags": [
+            "telemetry",
+            "usesOnlineServices"
+          ]
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "stencila.new-smd",
+        "category": "Create",
+        "title": "New Stencila Markdown document",
+        "shortTitle": "Stencila Markdown",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "stencila.new-myst",
+        "category": "Create",
+        "title": "New MyST Markdown document",
+        "shortTitle": "MyST Markdown",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "stencila.new-qmd",
+        "category": "Create",
+        "title": "New Quarto Markdown document (alpha)",
+        "shortTitle": "Quarto Markdown",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "stencila.new-latex",
+        "category": "Create",
+        "title": "New LaTeX document (alpha)",
+        "shortTitle": "LaTeX",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "stencila.new-chat",
+        "category": "Create",
+        "title": "New Stencila AI Chat",
+        "shortTitle": "Chat",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "stencila.new-prompt",
+        "category": "Create",
+        "title": "New Stencila AI Prompt",
+        "shortTitle": "Prompt",
+        "icon": "$(comment)"
+      },
+      {
+        "command": "stencila.view-doc",
+        "category": "Stencila",
+        "title": "Preview document",
+        "shortTitle": "Preview doc",
+        "icon": "$(preview)"
+      },
+      {
+        "command": "stencila.chat-doc",
+        "category": "Stencila",
+        "title": "Chat about document",
+        "shortTitle": "Document chat",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "stencila.insert-chat.create",
+        "category": "Stencila",
+        "title": "Chat to create"
+      },
+      {
+        "command": "stencila.insert-chat.create.code-chunk",
+        "category": "Stencila",
+        "title": "Code Chunk"
+      },
+      {
+        "command": "stencila.insert-chat.create.figure-code",
+        "category": "Stencila",
+        "title": "Figure > Code based"
+      },
+      {
+        "command": "stencila.insert-chat.create.figure-flowchart",
+        "category": "Stencila",
+        "title": "Figure > Mermaid Flowchart"
+      },
+      {
+        "command": "stencila.insert-chat.create.figure-mermaid",
+        "category": "Stencila",
+        "title": "Figure > Mermaid"
+      },
+      {
+        "command": "stencila.insert-chat.create.figure-svg",
+        "category": "Stencila",
+        "title": "Figure > SVG"
+      },
+      {
+        "command": "stencila.insert-chat.create.figure-timeline",
+        "category": "Stencila",
+        "title": "Figure > Mermaid Timeline"
+      },
+      {
+        "command": "stencila.insert-chat.create.list-ordered",
+        "category": "Stencila",
+        "title": "List > Ordered"
+      },
+      {
+        "command": "stencila.insert-chat.create.list-unordered",
+        "category": "Stencila",
+        "title": "List > Unordered"
+      },
+      {
+        "command": "stencila.insert-chat.create.math-block",
+        "category": "Stencila",
+        "title": "Math"
+      },
+      {
+        "command": "stencila.insert-chat.create.paragraph",
+        "category": "Stencila",
+        "title": "Paragraph"
+      },
+      {
+        "command": "stencila.insert-chat.create.quote-block",
+        "category": "Stencila",
+        "title": "Quote"
+      },
+      {
+        "command": "stencila.insert-chat.create.table-code",
+        "category": "Stencila",
+        "title": "Table > Code based"
+      },
+      {
+        "command": "stencila.insert-chat.create.table-empty",
+        "category": "Stencila",
+        "title": "Table > Empty"
+      },
+      {
+        "command": "stencila.insert-chat.create.table-filled",
+        "category": "Stencila",
+        "title": "Table > Filled"
+      },
+      {
+        "command": "stencila.insert-chat.edit",
+        "category": "Stencila",
+        "title": "Chat to edit selection"
+      },
+      {
+        "command": "stencila.insert-chat.fix",
+        "category": "Stencila",
+        "title": "Chat to fix selection"
+      },
+      {
+        "command": "stencila.insert-command-create",
+        "category": "Stencila",
+        "title": "Command to create",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "stencila.insert-command-edit",
+        "category": "Stencila",
+        "title": "Command to edit",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "stencila.insert-command-fix",
+        "category": "Stencila",
+        "title": "Command to fix",
+        "icon": "$(wrench)"
+      },
+      {
+        "command": "stencila.invoke.run-curr",
+        "category": "Stencila",
+        "title": "Run this node",
+        "shortTitle": "Run node",
+        "icon": "$(run)"
+      },
+      {
+        "command": "stencila.invoke.run-above",
+        "category": "Stencila",
+        "title": "Run nodes above and then this node",
+        "shortTitle": "Run above",
+        "icon": "$(run-above)"
+      },
+      {
+        "command": "stencila.invoke.run-below",
+        "category": "Stencila",
+        "title": "Run this node and then nodes below",
+        "shortTitle": "Run below",
+        "icon": "$(run-below)"
+      },
+      {
+        "command": "stencila.invoke.run-doc",
+        "category": "Stencila",
+        "title": "Run document",
+        "shortTitle": "Run doc",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "stencila.invoke.run-code",
+        "category": "Stencila",
+        "title": "Run all code in document",
+        "shortTitle": "Run code",
+        "icon": "$(zap)"
+      },
+      {
+        "command": "stencila.invoke.run-instruct",
+        "category": "Stencila",
+        "title": "Run all commands in document",
+        "shortTitle": "Run instructions",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "stencila.invoke.cancel-curr",
+        "category": "Stencila",
+        "title": "Cancel running this node",
+        "icon": "$(stop)"
+      },
+      {
+        "command": "stencila.invoke.cancel-doc",
+        "category": "Stencila",
+        "title": "Cancel all running nodes in the document",
+        "shortTitle": "Cancel all",
+        "icon": "$(stop)"
+      },
+      {
+        "command": "stencila.invoke.lock-curr",
+        "category": "Stencila",
+        "title": "Lock this node",
+        "shortTitle": "Lock node",
+        "icon": "$(lock)"
+      },
+      {
+        "command": "stencila.invoke.unlock-curr",
+        "category": "Stencila",
+        "title": "Unlock this node",
+        "shortTitle": "Unlock node",
+        "icon": "$(unlock)"
+      },
+      {
+        "command": "stencila.invoke.prev-node",
+        "category": "Stencila",
+        "title": "Go to previous suggestion",
+        "shortTitle": "Previous suggestion",
+        "icon": "$(arrow-left)"
+      },
+      {
+        "command": "stencila.invoke.next-node",
+        "category": "Stencila",
+        "title": "Go to next suggestion",
+        "shortTitle": "Next suggestion",
+        "icon": "$(arrow-right)"
+      },
+      {
+        "command": "stencila.invoke.retry-node",
+        "category": "Stencila",
+        "title": "Retry the command by creating a new suggestion",
+        "shortTitle": "Retry command",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "stencila.invoke.revise-node",
+        "category": "Stencila",
+        "title": "Revise the current suggestion based on feedback",
+        "shortTitle": "Revise suggestion",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "stencila.invoke.archive-node",
+        "category": "Stencila",
+        "title": "Accept current suggestion and archive command",
+        "shortTitle": "Accept suggestion",
+        "icon": "$(archive)"
+      },
+      {
+        "command": "stencila.invoke.export-doc",
+        "category": "Stencila",
+        "title": "Export document",
+        "shortTitle": "Export doc",
+        "icon": "$(files)"
+      },
+      {
+        "command": "stencila.invoke.merge-doc",
+        "category": "Stencila",
+        "title": "Merge document",
+        "shortTitle": "Merge doc",
+        "icon": "$(git-pull-request-go-to-changes)"
+      },
+      {
+        "command": "stencila.setup.refresh",
+        "category": "Stencila",
+        "title": "Refresh setup checklist",
+        "shortTitle": "Refresh setup list",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "stencila.kernels.refresh",
+        "category": "Stencila",
+        "title": "Refresh kernels list",
+        "shortTitle": "Refresh kernels",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "stencila.kernels.use",
+        "category": "Stencila",
+        "title": "Use kernel in document",
+        "shortTitle": "Use kernel",
+        "icon": "$(arrow-circle-right)"
+      },
+      {
+        "command": "stencila.prompts.picker",
+        "category": "Stencila",
+        "title": "Prompt pricker",
+        "shortTitle": "Find and use a prompt",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "stencila.prompts.refresh",
+        "category": "Stencila",
+        "title": "Refresh prompts list",
+        "shortTitle": "Refresh prompts",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "stencila.prompts.open",
+        "category": "Stencila",
+        "title": "Open prompt in editor",
+        "shortTitle": "Open prompt",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "stencila.prompts.use",
+        "category": "Stencila",
+        "title": "Use prompt in document",
+        "shortTitle": "Use prompt",
+        "icon": "$(arrow-circle-right)"
+      },
+      {
+        "command": "stencila.models.refresh",
+        "category": "Stencila",
+        "title": "Refresh models list",
+        "shortTitle": "Refresh models",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "stencila.models.use",
+        "category": "Stencila",
+        "title": "Use model for current command",
+        "shortTitle": "Use model",
+        "icon": "$(arrow-circle-right)"
+      },
+      {
+        "command": "stencila.secrets.set",
+        "category": "Stencila",
+        "title": "Set secret",
+        "icon": "$(workspace-trusted)"
+      },
+      {
+        "command": "stencila.secrets.delete",
+        "category": "Stencila",
+        "title": "Delete secret",
+        "icon": "$(workspace-untrusted)"
+      },
+      {
+        "command": "stencila.lsp-server.restart",
+        "category": "Stencila",
+        "title": "Restart Language Server"
+      },
+      {
+        "command": "stencila.lsp-server.logs",
+        "category": "Stencila",
+        "title": "Language Server Logs"
+      },
+      {
+        "command": "stencila.walkthroughs.expand",
+        "category": "Stencila",
+        "title": "Expand current walkthrough",
+        "shortTitle": "Expand walkthrough",
+        "icon": "$(chevron-down)"
+      },
+      {
+        "command": "stencila.walkthroughs.collapse",
+        "category": "Stencila",
+        "title": "Collapse and restart current walkthrough",
+        "shortTitle": "Collapse and restart walkthrough",
+        "icon": "$(chevron-up)"
+      },
+      {
+        "command": "stencila.cloud.signin",
+        "category": "Stencila Cloud",
+        "title": "Sign in",
+        "icon": "$(sign-in)"
+      },
+      {
+        "command": "stencila.cloud.signout",
+        "category": "Stencila Cloud",
+        "title": "Sign out",
+        "icon": "$(sign-out)"
+      },
+      {
+        "command": "stencila.settings",
+        "category": "Stencila",
+        "title": "Settings",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "stencila.shell",
+        "category": "Stencila",
+        "title": "Open a shell with the Stencila CLI available",
+        "shortTitle": "Stencila Shell",
+        "icon": "$(terminal)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "stencila.command-picker",
+        "key": "ctrl+f1",
+        "mac": "cmd+f1"
+      },
+      {
+        "command": "stencila.view-doc",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.chat-doc",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.export-doc",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.run-curr",
+        "key": "ctrl+enter",
+        "mac": "cmd+enter",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.run-above",
+        "key": "ctrl+1 enter",
+        "mac": "cmd+1 enter",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.run-below",
+        "key": "ctrl+2 enter",
+        "mac": "cmd+2 enter",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.run-doc",
+        "key": "ctrl+shift+enter",
+        "mac": "cmd+shift+enter",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.prev-node",
+        "key": "ctrl+alt+[",
+        "mac": "cmd+alt+[",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.next-node",
+        "key": "ctrl+alt+]",
+        "mac": "cmd+alt+]",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.archive-node",
+        "key": "ctrl+alt+\\",
+        "mac": "cmd+alt+\\",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.retry-node",
+        "key": "ctrl+r",
+        "mac": "cmd+r",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.invoke.revise-node",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      },
+      {
+        "command": "stencila.prompts.picker",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "editorTextFocus && editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "stencila.insert-chat.create-submenu",
+        "label": "Chat to create..."
+      },
+      {
+        "id": "stencila.insert-chat.create.figure-submenu",
+        "label": "Figure..."
+      },
+      {
+        "id": "stencila.insert-chat.create.list-submenu",
+        "label": "List..."
+      },
+      {
+        "id": "stencila.insert-chat.create.table-submenu",
+        "label": "Table..."
+      }
+    ],
+    "menus": {
+      "file/newFile": [
+        {
+          "command": "stencila.new-smd",
+          "group": "Document"
+        },
+        {
+          "command": "stencila.new-qmd",
+          "group": "Document"
+        },
+        {
+          "command": "stencila.new-myst",
+          "group": "Document"
+        },
+        {
+          "command": "stencila.new-latex",
+          "group": "Document"
+        },
+        {
+          "command": "stencila.new-chat",
+          "group": "AI"
+        },
+        {
+          "command": "stencila.new-prompt",
+          "group": "AI"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "stencila.shell"
+        },
+        {
+          "command": "stencila.new-smd"
+        },
+        {
+          "command": "stencila.new-qmd"
+        },
+        {
+          "command": "stencila.new-myst"
+        },
+        {
+          "command": "stencila.new-latex"
+        },
+        {
+          "command": "stencila.new-chat"
+        },
+        {
+          "command": "stencila.new-prompt"
+        },
+        {
+          "command": "stencila.view-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.chat-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.run-curr",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.run-above",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.run-below",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.run-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.run-code",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.run-instruct",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.cancel-curr",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.cancel-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.lock-curr",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.unlock-curr",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.export-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.invoke.merge-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.walkthroughs.expand",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        },
+        {
+          "command": "stencila.walkthroughs.collapse",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/"
+        }
+      ],
+      "editor/title/run": [
+        {
+          "command": "stencila.view-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "000-Stencila@1"
+        },
+        {
+          "command": "stencila.invoke.run-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "000-Stencila@2"
+        },
+        {
+          "command": "stencila.chat-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "000-Stencila@3"
+        },
+        {
+          "command": "stencila.invoke.export-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "000-Stencila@4"
+        },
+        {
+          "command": "stencila.invoke.merge-doc",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "000-Stencila@5"
+        }
+      ],
+      "editor/context": [
+        {
+          "submenu": "stencila.insert-chat.create-submenu",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "000-Stencila@1"
+        },
+        {
+          "command": "stencila.insert-chat.edit",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "000-Stencila@2"
+        },
+        {
+          "command": "stencila.invoke.run-curr",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "001-Stencila@1"
+        },
+        {
+          "command": "stencila.invoke.lock-curr",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "001-Stencila@2"
+        },
+        {
+          "command": "stencila.invoke.unlock-curr",
+          "when": "editorLangId =~ /^(md|smd|qmd|myst|latex)$/",
+          "group": "001-Stencila@3"
+        }
+      ],
+      "stencila.insert-chat.create-submenu": [
+        {
+          "command": "stencila.insert-chat.create.paragraph"
+        },
+        {
+          "submenu": "stencila.insert-chat.create.figure-submenu"
+        },
+        {
+          "submenu": "stencila.insert-chat.create.table-submenu"
+        },
+        {
+          "command": "stencila.insert-chat.create.code-chunk"
+        },
+        {
+          "command": "stencila.insert-chat.create.math-block"
+        },
+        {
+          "submenu": "stencila.insert-chat.create.list-submenu"
+        },
+        {
+          "command": "stencila.insert-chat.create.quote-block"
+        }
+      ],
+      "stencila.insert-chat.create.figure-submenu": [
+        {
+          "command": "stencila.insert-chat.create.figure-code"
+        },
+        {
+          "command": "stencila.insert-chat.create.figure-flowchart"
+        },
+        {
+          "command": "stencila.insert-chat.create.figure-timeline"
+        },
+        {
+          "command": "stencila.insert-chat.create.figure-mermaid"
+        },
+        {
+          "command": "stencila.insert-chat.create.figure-svg"
+        }
+      ],
+      "stencila.insert-chat.create.list-submenu": [
+        {
+          "command": "stencila.insert-chat.create.list-ordered"
+        },
+        {
+          "command": "stencila.insert-chat.create.list-unordered"
+        }
+      ],
+      "stencila.insert-chat.create.table-submenu": [
+        {
+          "command": "stencila.insert-chat.create.table-code"
+        },
+        {
+          "command": "stencila.insert-chat.create.table-empty"
+        },
+        {
+          "command": "stencila.insert-chat.create.table-filled"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "stencila.prompts.picker",
+          "when": "view == stencila-prompts",
+          "group": "navigation"
+        },
+        {
+          "command": "stencila.prompts.refresh",
+          "when": "view == stencila-prompts",
+          "group": "navigation"
+        },
+        {
+          "command": "stencila.models.refresh",
+          "when": "view == stencila-models",
+          "group": "navigation"
+        },
+        {
+          "command": "stencila.kernels.refresh",
+          "when": "view == stencila-kernels",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "stencila.kernels.use",
+          "when": "view == stencila-kernels && viewItem == kernel",
+          "group": "inline"
+        },
+        {
+          "command": "stencila.prompts.open",
+          "when": "view == stencila-prompts && viewItem == prompt",
+          "group": "inline"
+        },
+        {
+          "command": "stencila.prompts.use",
+          "when": "view == stencila-prompts && viewItem == prompt",
+          "group": "inline"
+        },
+        {
+          "command": "stencila.cloud.signin",
+          "when": "view == stencila-models && viewItem == signin",
+          "group": "inline"
+        },
+        {
+          "command": "stencila.models.use",
+          "when": "view == stencila-models && viewItem == model",
+          "group": "inline"
+        }
+      ]
+    },
+    "languages": [
+      {
+        "id": "smd",
+        "aliases": [
+          "Stencila Markdown"
+        ],
+        "extensions": [
+          ".smd"
+        ],
+        "configuration": "./syntaxes/smd/configuration.json",
+        "icon": {
+          "light": "./icons/stencila-128.png",
+          "dark": "./icons/stencila-128.png"
+        }
+      },
+      {
+        "id": "docsql",
+        "aliases": [
+          "Documents Query Language",
+          "docsql"
+        ],
+        "extensions": [
+          ".docsql"
+        ],
+        "configuration": "./syntaxes/docsql/configuration.json"
+      },
+      {
+        "id": "cypher",
+        "aliases": [
+          "Cypher Query Language",
+          "cypher"
+        ],
+        "extensions": [
+          ".cql",
+          ".cyp",
+          ".cypher"
+        ],
+        "configuration": "./syntaxes/cypher/cypher.configuration.json"
+      },
+      {
+        "id": "myst",
+        "aliases": [
+          "MyST Markdown",
+          "myst"
+        ],
+        "extensions": [
+          ".myst"
+        ],
+        "configuration": "./syntaxes/myst/configuration.json",
+        "icon": {
+          "light": "./icons/myst-128.png",
+          "dark": "./icons/myst-128.png"
+        }
+      },
+      {
+        "id": "qmd",
+        "aliases": [
+          "Quarto Markdown",
+          "quarto"
+        ],
+        "extensions": [
+          ".qmd",
+          ".rmd"
+        ],
+        "configuration": "./syntaxes/qmd/configuration.json",
+        "icon": {
+          "light": "./icons/quarto-128.png",
+          "dark": "./icons/quarto-128.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "smd",
+        "scopeName": "source.smd",
+        "path": "./syntaxes/smd/tmGrammar.json",
+        "embeddedLanguages": {
+          "source.js": "javascript",
+          "meta.embedded.language.css": "css",
+          "meta.embedded.language.cypher": "cypher",
+          "meta.embedded.language.docsql": "docsql",
+          "meta.embedded.language.javascript": "javascript",
+          "meta.embedded.language.html": "html",
+          "meta.embedded.language.python": "python",
+          "meta.embedded.language.r": "r",
+          "meta.embedded.language.sql": "sql",
+          "meta.embedded.language.tex": "latex",
+          "meta.embedded.language.xml": "xml",
+          "meta.embedded.block.frontmatter": "yaml"
+        }
+      },
+      {
+        "language": "docsql",
+        "scopeName": "source.docsql",
+        "path": "./syntaxes/docsql/tmGrammar.json"
+      },
+      {
+        "language": "cypher",
+        "scopeName": "source.cypher",
+        "path": "./syntaxes/cypher/cypher.tmLanguage"
+      },
+      {
+        "language": "myst",
+        "scopeName": "text.mystmarkdown",
+        "path": "./syntaxes/myst/myst.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.c": "c",
+          "meta.embedded.block.clojure": "clojure",
+          "meta.embedded.block.coffee": "coffee",
+          "meta.embedded.block.cpp": "cpp",
+          "meta.embedded.block.csharp": "csharp",
+          "meta.embedded.block.css": "css",
+          "meta.embedded.block.diff": "diff",
+          "meta.embedded.block.dockerfile": "dockerfile",
+          "meta.embedded.block.dosbatch": "dosbatch",
+          "meta.embedded.block.dot": "dot",
+          "meta.embedded.block.frontmatter": "yaml",
+          "meta.embedded.block.fsharp": "fsharp",
+          "meta.embedded.block.go": "go",
+          "meta.embedded.block.groovy": "groovy",
+          "meta.embedded.block.html": "html",
+          "meta.embedded.block.ini": "ini",
+          "meta.embedded.block.java": "java",
+          "meta.embedded.block.javascript": "javascript",
+          "meta.embedded.block.json": "json",
+          "meta.embedded.block.julia": "julia",
+          "meta.embedded.block.less": "less",
+          "meta.embedded.block.lua": "lua",
+          "meta.embedded.block.makefile": "makefile",
+          "meta.embedded.block.mermaid": "mermaid",
+          "meta.embedded.block.objc": "objc",
+          "meta.embedded.block.perl": "perl",
+          "meta.embedded.block.perl6": "perl6",
+          "meta.embedded.block.php": "php",
+          "meta.embedded.block.powershell": "powershell",
+          "meta.embedded.block.prql": "prql",
+          "meta.embedded.block.pug": "jade",
+          "meta.embedded.block.python": "python",
+          "meta.embedded.block.r": "r",
+          "meta.embedded.block.ruby": "ruby",
+          "meta.embedded.block.rust": "rust",
+          "meta.embedded.block.scala": "scala",
+          "meta.embedded.block.scss": "scss",
+          "meta.embedded.block.shellscript": "shellscript",
+          "meta.embedded.block.sql": "sql",
+          "meta.embedded.block.stan": "stan",
+          "meta.embedded.block.typescript": "typescript",
+          "meta.embedded.block.typescriptreact": "typescriptreact",
+          "meta.embedded.block.typst": "typst",
+          "meta.embedded.block.vs_net": "vs_net",
+          "meta.embedded.block.xml": "xml",
+          "meta.embedded.block.xsl": "xsl",
+          "meta.embedded.block.yaml": "yaml",
+          "meta.embedded.math.quarto": "latex",
+          "source.css": "css",
+          "source.js": "javascript"
+        }
+      },
+      {
+        "language": "qmd",
+        "scopeName": "text.html.quarto",
+        "path": "./syntaxes/qmd/qmd.tmLanguage",
+        "embeddedLanguages": {
+          "meta.embedded.block.c": "c",
+          "meta.embedded.block.clojure": "clojure",
+          "meta.embedded.block.coffee": "coffee",
+          "meta.embedded.block.cpp": "cpp",
+          "meta.embedded.block.csharp": "csharp",
+          "meta.embedded.block.css": "css",
+          "meta.embedded.block.diff": "diff",
+          "meta.embedded.block.dockerfile": "dockerfile",
+          "meta.embedded.block.dosbatch": "dosbatch",
+          "meta.embedded.block.dot": "dot",
+          "meta.embedded.block.frontmatter": "yaml",
+          "meta.embedded.block.fsharp": "fsharp",
+          "meta.embedded.block.go": "go",
+          "meta.embedded.block.groovy": "groovy",
+          "meta.embedded.block.html": "html",
+          "meta.embedded.block.ini": "ini",
+          "meta.embedded.block.java": "java",
+          "meta.embedded.block.javascript": "javascript",
+          "meta.embedded.block.json": "json",
+          "meta.embedded.block.julia": "julia",
+          "meta.embedded.block.less": "less",
+          "meta.embedded.block.lua": "lua",
+          "meta.embedded.block.makefile": "makefile",
+          "meta.embedded.block.mermaid": "mermaid",
+          "meta.embedded.block.objc": "objc",
+          "meta.embedded.block.perl": "perl",
+          "meta.embedded.block.perl6": "perl6",
+          "meta.embedded.block.php": "php",
+          "meta.embedded.block.powershell": "powershell",
+          "meta.embedded.block.prql": "prql",
+          "meta.embedded.block.pug": "jade",
+          "meta.embedded.block.python": "python",
+          "meta.embedded.block.r": "r",
+          "meta.embedded.block.ruby": "ruby",
+          "meta.embedded.block.rust": "rust",
+          "meta.embedded.block.scala": "scala",
+          "meta.embedded.block.scss": "scss",
+          "meta.embedded.block.shellscript": "shellscript",
+          "meta.embedded.block.sql": "sql",
+          "meta.embedded.block.stan": "stan",
+          "meta.embedded.block.typescript": "typescript",
+          "meta.embedded.block.typescriptreact": "typescriptreact",
+          "meta.embedded.block.typst": "typst",
+          "meta.embedded.block.vs_net": "vs_net",
+          "meta.embedded.block.xml": "xml",
+          "meta.embedded.block.xsl": "xsl",
+          "meta.embedded.block.yaml": "yaml",
+          "meta.embedded.math.quarto": "latex",
+          "source.css": "css",
+          "source.js": "javascript"
+        }
+      }
+    ],
+    "snippets": [
+      {
+        "language": "myst",
+        "path": "./syntaxes/myst/snippets.jsonc"
+      },
+      {
+        "language": "qmd",
+        "path": "./syntaxes/qmd/snippets.json"
+      }
+    ],
+    "themes": [
+      {
+        "id": "Stencila Light",
+        "label": "Stencila Light",
+        "uiTheme": "vs",
+        "path": "./themes/stencila-light-color-theme.json"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "stencila-sidebar",
+          "title": "Stencila",
+          "icon": "./icons/stencila-sidebar.svg"
+        }
+      ]
+    },
+    "views": {
+      "stencila-sidebar": [
+        {
+          "id": "stencila-prompts",
+          "name": "Prompts"
+        },
+        {
+          "id": "stencila-models",
+          "name": "Models",
+          "visibility": "collapsed"
+        },
+        {
+          "id": "stencila-kernels",
+          "name": "Kernels",
+          "visibility": "collapsed"
+        }
+      ]
+    },
+    "walkthroughs": [
+      {
+        "id": "get-started",
+        "title": "Get Started with Stencila",
+        "featuredFor": [
+          "*.smd",
+          "*.qmd",
+          "*.myst",
+          "*.ipynb"
+        ],
+        "description": "A guide to getting started with the Stencila VSCode extension",
+        "steps": [
+          {
+            "id": "step1",
+            "title": "Commands Menu",
+            "description": "The Commands Menu provides a central place to access commonly used commands.\n\nOpen the menu by clicking on 'Stencila' in right of the bottom status bar. Quickly find the command you want by typing in the menu.",
+            "media": {
+              "image": "./images/command-menu.gif",
+              "altText": "Using the Stencila Commands Menu"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "fix": "eslint \"src/**/*.ts\" --fix --ignore-pattern src/node-colours.ts",
+    "lint": "eslint \"src/**/*.ts\" --ignore-pattern src/node-colours.ts  && tsc --noEmit",
+    "compile:web": "cd ../web/ && npm run build:vscode",
+    "fetch:cypher": "node syntaxes/cypher/fetch.js",
+    "fetch:myst": "node syntaxes/myst/fetch.js",
+    "fetch:qmd": "node syntaxes/qmd/fetch.js",
+    "compile:smd": "node syntaxes/smd/compile.js",
+    "compile:docsql": "node syntaxes/docsql/compile.js",
+    "compile:syntaxes": "npm run compile:smd && npm run compile:docsql",
+    "compile:ts": "node esbuild.mjs",
+    "compile": "npm run compile:web && npm run compile:syntaxes && npm run compile:ts",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "test": "vscode-test",
+    "package": "npx vsce package"
+  },
+  "dependencies": {
+    "@vscode/python-extension": "1.0.5",
+    "posthog-js": "1.260.2",
+    "vscode-languageclient": "9.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.33.0",
+    "@types/mocha": "10.0.10",
+    "@types/node": "24.3.0",
+    "@types/vscode": "1.103.0",
+    "@typescript-eslint/parser": "8.40.0",
+    "@vscode/test-cli": "0.0.11",
+    "@vscode/test-electron": "2.5.2",
+    "@vscode/vsce": "3.6.0",
+    "esbuild": "0.25.9",
+    "eslint": "9.33.0",
+    "js-yaml": "4.1.0",
+    "ovsx": "0.10.5",
+    "typescript-eslint": "8.40.0"
+  }
+}

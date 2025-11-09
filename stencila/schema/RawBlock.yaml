@@ -1,0 +1,103 @@
+title: RawBlock
+'@id': stencila:RawBlock
+extends: Entity
+description: Document content in a specific format
+$comment: |
+  The content of the block is not decoded by any codecs and is output when the encoding format
+  matches that of the raw block and the `render` option is used.
+  Analogous to node types in [Pandoc](https://github.com/jgm/pandoc-types/blob/1cf21a602535b6b263fef9548521353912115d87/src/Text/Pandoc/Definition.hs#L284) and [MultiMarkdown](https://fletcher.github.io/MultiMarkdown-6/syntax/raw.html).
+dom:
+  derive: false
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}
+required:
+  - format
+  - content
+core:
+  - compilationDigest
+  - compilationMessages
+  - css
+  - authors
+  - provenance
+properties:
+  format:
+    '@id': stencila:format
+    description: The format of the raw content.
+    type: string
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    proptest:
+      min:
+        description: Fixed as Markdown
+        value: String::from("markdown")
+      high:
+        description: Generate a random string of up to 10 alphanumeric characters.
+        strategy: r"[a-zA-Z0-9]{1,10}"
+      max:
+        description: Generate an arbitrary string.
+        strategy: String::arbitrary()
+  content:
+    '@id': stencila:content
+    description: The raw content.
+    $ref: Cord
+    proptest:
+      min:
+        description: Generate a simple fixed string.
+        value: Cord::from("content")
+      low:
+        description: |
+          Generate a random string of up to 10 alphanumeric characters (exclude whitespace which 
+          when leading or trailing causes issues for Markdown).
+        strategy: r"[a-zA-Z0-9]{1,10}".prop_map(Cord::from)
+      high:
+        description: |
+          Generate a random string of up to 100 characters (excluding control characters).
+        strategy: r"[^\p{C}]{1,100}".prop_map(Cord::from)
+      max:
+        description: Generate an arbitrary string.
+        strategy: String::arbitrary().prop_map(Cord::from)
+  compilationDigest:
+    '@id': stencila:compilationDigest
+    description: A digest of the `format` and `content` properties.
+    $comment: Used to avoid unnecessary parsing and transpiling of the `content`.
+    $ref: CompilationDigest
+    strip: [compilation]
+  compilationMessages:
+    '@id': stencila:compilationMessages
+    description: Messages generated while parsing and transpiling the `content` into the `css` property.
+    type: array
+    items:
+      $ref: CompilationMessage
+    strip: [compilation]
+  css:
+    '@id': stencila:css
+    description: A Cascading Style Sheet (CSS) generated from the `content`.
+    $comment: |
+      When the format is HTML, this property is the CSS generated for any Tailwind classes in
+      "class" attributes. When the format is CSS, this property is the CSS transpiled to support
+      modern features such as nesting and custom media queries and minified.
+    type: string
+    strip: [output]
+  authors:
+    '@id': schema:author
+    description: The authors of the content.
+    type: array
+    items:
+      $ref: Author
+    strip: [authors]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+    dom:
+      elem: span
+  provenance:
+    '@id': stencila:provenance
+    description: A summary of the provenance of the content.
+    type: array
+    items:
+      $ref: ProvenanceCount
+    strip: [provenance]
+    dom:
+      elem: span

@@ -1,0 +1,421 @@
+{
+  "title": "Node",
+  "description": "Union type for all types in this schema, including primitives and entities",
+  "anyOf": [
+    {
+      "$ref": "Null.schema.json"
+    },
+    {
+      "$ref": "Boolean.schema.json"
+    },
+    {
+      "$ref": "Integer.schema.json"
+    },
+    {
+      "$ref": "UnsignedInteger.schema.json"
+    },
+    {
+      "$ref": "Number.schema.json"
+    },
+    {
+      "$ref": "String.schema.json"
+    },
+    {
+      "$ref": "Array.schema.json"
+    },
+    {
+      "$ref": "Admonition.schema.json"
+    },
+    {
+      "$ref": "Annotation.schema.json"
+    },
+    {
+      "$ref": "AppendixBreak.schema.json"
+    },
+    {
+      "$ref": "ArrayHint.schema.json"
+    },
+    {
+      "$ref": "ArrayValidator.schema.json"
+    },
+    {
+      "$ref": "Article.schema.json"
+    },
+    {
+      "$ref": "AudioObject.schema.json"
+    },
+    {
+      "$ref": "AuthorRole.schema.json"
+    },
+    {
+      "$ref": "BooleanValidator.schema.json"
+    },
+    {
+      "$ref": "Brand.schema.json"
+    },
+    {
+      "$ref": "Button.schema.json"
+    },
+    {
+      "$ref": "CallArgument.schema.json"
+    },
+    {
+      "$ref": "CallBlock.schema.json"
+    },
+    {
+      "$ref": "Chat.schema.json"
+    },
+    {
+      "$ref": "ChatMessage.schema.json"
+    },
+    {
+      "$ref": "ChatMessageGroup.schema.json"
+    },
+    {
+      "$ref": "Citation.schema.json"
+    },
+    {
+      "$ref": "CitationGroup.schema.json"
+    },
+    {
+      "$ref": "Claim.schema.json"
+    },
+    {
+      "$ref": "CodeBlock.schema.json"
+    },
+    {
+      "$ref": "CodeChunk.schema.json"
+    },
+    {
+      "$ref": "CodeExpression.schema.json"
+    },
+    {
+      "$ref": "CodeInline.schema.json"
+    },
+    {
+      "$ref": "CodeLocation.schema.json"
+    },
+    {
+      "$ref": "Collection.schema.json"
+    },
+    {
+      "$ref": "Comment.schema.json"
+    },
+    {
+      "$ref": "CompilationDigest.schema.json"
+    },
+    {
+      "$ref": "CompilationMessage.schema.json"
+    },
+    {
+      "$ref": "ConstantValidator.schema.json"
+    },
+    {
+      "$ref": "ContactPoint.schema.json"
+    },
+    {
+      "$ref": "CreativeWork.schema.json"
+    },
+    {
+      "$ref": "Datatable.schema.json"
+    },
+    {
+      "$ref": "DatatableColumn.schema.json"
+    },
+    {
+      "$ref": "DatatableColumnHint.schema.json"
+    },
+    {
+      "$ref": "DatatableHint.schema.json"
+    },
+    {
+      "$ref": "Date.schema.json"
+    },
+    {
+      "$ref": "DateTime.schema.json"
+    },
+    {
+      "$ref": "DateTimeValidator.schema.json"
+    },
+    {
+      "$ref": "DateValidator.schema.json"
+    },
+    {
+      "$ref": "DefinedTerm.schema.json"
+    },
+    {
+      "$ref": "Directory.schema.json"
+    },
+    {
+      "$ref": "Duration.schema.json"
+    },
+    {
+      "$ref": "DurationValidator.schema.json"
+    },
+    {
+      "$ref": "Emphasis.schema.json"
+    },
+    {
+      "$ref": "EnumValidator.schema.json"
+    },
+    {
+      "$ref": "Enumeration.schema.json"
+    },
+    {
+      "$ref": "Excerpt.schema.json"
+    },
+    {
+      "$ref": "ExecutionDependant.schema.json"
+    },
+    {
+      "$ref": "ExecutionDependency.schema.json"
+    },
+    {
+      "$ref": "ExecutionMessage.schema.json"
+    },
+    {
+      "$ref": "ExecutionTag.schema.json"
+    },
+    {
+      "$ref": "Figure.schema.json"
+    },
+    {
+      "$ref": "File.schema.json"
+    },
+    {
+      "$ref": "ForBlock.schema.json"
+    },
+    {
+      "$ref": "Form.schema.json"
+    },
+    {
+      "$ref": "Function.schema.json"
+    },
+    {
+      "$ref": "Grant.schema.json"
+    },
+    {
+      "$ref": "Heading.schema.json"
+    },
+    {
+      "$ref": "IfBlock.schema.json"
+    },
+    {
+      "$ref": "IfBlockClause.schema.json"
+    },
+    {
+      "$ref": "ImageObject.schema.json"
+    },
+    {
+      "$ref": "IncludeBlock.schema.json"
+    },
+    {
+      "$ref": "InlinesBlock.schema.json"
+    },
+    {
+      "$ref": "InstructionAttachment.schema.json"
+    },
+    {
+      "$ref": "InstructionBlock.schema.json"
+    },
+    {
+      "$ref": "InstructionInline.schema.json"
+    },
+    {
+      "$ref": "InstructionMessage.schema.json"
+    },
+    {
+      "$ref": "IntegerValidator.schema.json"
+    },
+    {
+      "$ref": "Island.schema.json"
+    },
+    {
+      "$ref": "Link.schema.json"
+    },
+    {
+      "$ref": "List.schema.json"
+    },
+    {
+      "$ref": "ListItem.schema.json"
+    },
+    {
+      "$ref": "MathBlock.schema.json"
+    },
+    {
+      "$ref": "MathInline.schema.json"
+    },
+    {
+      "$ref": "MediaObject.schema.json"
+    },
+    {
+      "$ref": "ModelParameters.schema.json"
+    },
+    {
+      "$ref": "MonetaryGrant.schema.json"
+    },
+    {
+      "$ref": "Note.schema.json"
+    },
+    {
+      "$ref": "NumberValidator.schema.json"
+    },
+    {
+      "$ref": "ObjectHint.schema.json"
+    },
+    {
+      "$ref": "Organization.schema.json"
+    },
+    {
+      "$ref": "Paragraph.schema.json"
+    },
+    {
+      "$ref": "Parameter.schema.json"
+    },
+    {
+      "$ref": "Periodical.schema.json"
+    },
+    {
+      "$ref": "Person.schema.json"
+    },
+    {
+      "$ref": "PostalAddress.schema.json"
+    },
+    {
+      "$ref": "Product.schema.json"
+    },
+    {
+      "$ref": "Prompt.schema.json"
+    },
+    {
+      "$ref": "PromptBlock.schema.json"
+    },
+    {
+      "$ref": "PropertyValue.schema.json"
+    },
+    {
+      "$ref": "ProvenanceCount.schema.json"
+    },
+    {
+      "$ref": "PublicationIssue.schema.json"
+    },
+    {
+      "$ref": "PublicationVolume.schema.json"
+    },
+    {
+      "$ref": "QuoteBlock.schema.json"
+    },
+    {
+      "$ref": "QuoteInline.schema.json"
+    },
+    {
+      "$ref": "RawBlock.schema.json"
+    },
+    {
+      "$ref": "Reference.schema.json"
+    },
+    {
+      "$ref": "Review.schema.json"
+    },
+    {
+      "$ref": "Section.schema.json"
+    },
+    {
+      "$ref": "Sentence.schema.json"
+    },
+    {
+      "$ref": "SoftwareApplication.schema.json"
+    },
+    {
+      "$ref": "SoftwareSourceCode.schema.json"
+    },
+    {
+      "$ref": "Strikeout.schema.json"
+    },
+    {
+      "$ref": "StringHint.schema.json"
+    },
+    {
+      "$ref": "StringValidator.schema.json"
+    },
+    {
+      "$ref": "Strong.schema.json"
+    },
+    {
+      "$ref": "StyledBlock.schema.json"
+    },
+    {
+      "$ref": "StyledInline.schema.json"
+    },
+    {
+      "$ref": "Subscript.schema.json"
+    },
+    {
+      "$ref": "SuggestionBlock.schema.json"
+    },
+    {
+      "$ref": "SuggestionInline.schema.json"
+    },
+    {
+      "$ref": "Superscript.schema.json"
+    },
+    {
+      "$ref": "Table.schema.json"
+    },
+    {
+      "$ref": "TableCell.schema.json"
+    },
+    {
+      "$ref": "TableRow.schema.json"
+    },
+    {
+      "$ref": "Text.schema.json"
+    },
+    {
+      "$ref": "ThematicBreak.schema.json"
+    },
+    {
+      "$ref": "Thing.schema.json"
+    },
+    {
+      "$ref": "Time.schema.json"
+    },
+    {
+      "$ref": "TimeValidator.schema.json"
+    },
+    {
+      "$ref": "Timestamp.schema.json"
+    },
+    {
+      "$ref": "TimestampValidator.schema.json"
+    },
+    {
+      "$ref": "TupleValidator.schema.json"
+    },
+    {
+      "$ref": "Underline.schema.json"
+    },
+    {
+      "$ref": "Unknown.schema.json"
+    },
+    {
+      "$ref": "Variable.schema.json"
+    },
+    {
+      "$ref": "VideoObject.schema.json"
+    },
+    {
+      "$ref": "Walkthrough.schema.json"
+    },
+    {
+      "$ref": "WalkthroughStep.schema.json"
+    },
+    {
+      "$ref": "Cord.schema.json"
+    },
+    {
+      "$ref": "Object.schema.json"
+    }
+  ],
+  "default": null
+}

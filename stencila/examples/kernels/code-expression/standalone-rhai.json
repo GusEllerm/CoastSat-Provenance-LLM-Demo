@@ -1,0 +1,52 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "@context": "https://stencila.org/context.jsonld",
+  "type": "Article",
+  "content": [
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "CodeExpression",
+          "code": "1 + 2 + 3",
+          "programmingLanguage": "rhai",
+          "output": 6,
+          "compilationDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 15380821604634399077
+          },
+          "executionDigest": {
+            "type": "CompilationDigest",
+            "stateDigest": 15380821604634399077
+          },
+          "executionCount": 1,
+          "executionRequired": "No",
+          "executionStatus": "Succeeded",
+          "executionEnded": {
+            "type": "Timestamp",
+            "value": 1714644380834,
+            "timeUnit": "Millisecond"
+          },
+          "executionDuration": {
+            "type": "Duration",
+            "value": 7,
+            "timeUnit": "Millisecond"
+          }
+        }
+      ]
+    }
+  ],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1714644380834,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 7,
+    "timeUnit": "Millisecond"
+  }
+}

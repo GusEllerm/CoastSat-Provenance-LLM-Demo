@@ -1,0 +1,36 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Primitive.schema.json",
+  "@id": "stencila:Primitive",
+  "title": "Primitive",
+  "category": "data",
+  "description": "Union type for all primitives values.",
+  "$comment": "Analogous to JSON values but adds `Integer` and `UnsignedInteger`.\n\nSimilar to https://schema.org/DataType \"The basic data types such as Integers, Strings, etc.\"\nbut includes `Array` and `Object` and excludes `Date`, `Time` and `DateTime` (which are\ntreated in this schema as `Entity`s having a `type` property to disambiguate them from strings).\n",
+  "anyOf": [
+    {
+      "$ref": "Null.schema.json"
+    },
+    {
+      "$ref": "Boolean.schema.json"
+    },
+    {
+      "$ref": "Integer.schema.json"
+    },
+    {
+      "$ref": "UnsignedInteger.schema.json"
+    },
+    {
+      "$ref": "Number.schema.json"
+    },
+    {
+      "$ref": "String.schema.json"
+    },
+    {
+      "$ref": "Array.schema.json"
+    },
+    {
+      "$ref": "Object.schema.json"
+    }
+  ],
+  "default": "Null"
+}

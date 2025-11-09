@@ -1,0 +1,46 @@
+---
+source: rust/codec-latex/tests/examples.rs
+expression: article
+---
+{
+  "type": "Article",
+  "content": [
+    {
+      "type": "ForBlock",
+      "code": {
+        "string": "c(1,2,3)"
+      },
+      "variable": "item",
+      "content": [
+        {
+          "type": "RawBlock",
+          "format": "latex",
+          "content": {
+            "string": "\\p This is item "
+          }
+        },
+        {
+          "type": "InlinesBlock",
+          "content": [
+            {
+              "type": "CodeExpression",
+              "code": {
+                "string": "item"
+              }
+            }
+          ]
+        },
+        {
+          "type": "RawBlock",
+          "format": "latex",
+          "content": {
+            "string": ".\n"
+          }
+        }
+      ]
+    }
+  ],
+  "repository": "https://github.com/stencila/stencila",
+  "path": "rust/codec-latex/tests/examples/for.tex",
+  "commit": "redacted"
+}

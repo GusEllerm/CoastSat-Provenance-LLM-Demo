@@ -1,0 +1,24 @@
+smd:
+  canonical: true
+
+compact.jats.xml:
+  decode:
+    # TODO: Enable authors and other metadata encoding/decoding
+    strip-scopes: [authors, metadata]
+
+pandoc:
+  encode:
+    strip-props:
+      # Only encode one metadata field (title) to avoid changes in snapshot
+      # caused by different order of metadata fields
+      - Article.authors
+      - Article.keywords
+      - Article.date_published
+  decode:
+    strip-scopes:
+      # Strip metadata fields because not encoded above
+      # and/or not supported
+      - metadata
+    strip-props:
+      # TODO: Implement authors
+      - Article.authors

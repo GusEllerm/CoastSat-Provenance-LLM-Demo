@@ -1,0 +1,172 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/CodeInline.schema.json",
+  "@id": "stencila:CodeInline",
+  "title": "CodeInline",
+  "nick": "cdi",
+  "extends": [
+    "CodeStatic"
+  ],
+  "category": "code",
+  "description": "Inline code.",
+  "dom": {
+    "derive": false
+  },
+  "html": {
+    "elem": "code"
+  },
+  "jats": {
+    "elem": "code"
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "code"
+  ],
+  "core": [
+    "id",
+    "programmingLanguage",
+    "authors",
+    "provenance"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "code": {
+      "@id": "stencila:code",
+      "description": "The code.",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex",
+          "lexical",
+          "koenig"
+        ]
+      },
+      "html": {
+        "content": true
+      },
+      "jats": {
+        "content": true
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a simple fixed string of code.",
+          "value": "Cord::from(\"code\")"
+        },
+        "low": {
+          "description": "Generate a random string of up to 10 alphanumeric characters (exclude whitespace which\ncan be problematic in Markdown).\n",
+          "strategy": "r\"[a-zA-Z0-9]{1,10}\".prop_map(Cord::from)"
+        },
+        "high": {
+          "description": "Generate a random string of up to 100 characters (excluding control characters).\n",
+          "strategy": "r\"[^\\p{C}]{1,100}\".prop_map(Cord::from)"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "String::arbitrary().prop_map(Cord::from)"
+        }
+      },
+      "$ref": "Cord.schema.json"
+    },
+    "programmingLanguage": {
+      "@id": "schema:programmingLanguage",
+      "description": "The programming language of the code.",
+      "aliases": [
+        "programming-language",
+        "programming_language"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex",
+          "lexical",
+          "koenig"
+        ]
+      },
+      "jats": {
+        "attr": "language"
+      },
+      "proptest": {
+        "min": {
+          "description": "Do not generate a programming language.",
+          "value": "None"
+        },
+        "low": {
+          "description": "Generate one of the well known programming language short names.",
+          "strategy": "option::of(r\"(cpp)|(js)|(py)|(r)|(ts)\")"
+        },
+        "high": {
+          "description": "Generate a random string of up to 10 alphanumeric characters.",
+          "strategy": "option::of(r\"[a-zA-Z0-9]{1,10}\")"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "option::of(String::arbitrary())"
+        }
+      },
+      "type": "string"
+    },
+    "authors": {
+      "@id": "schema:author",
+      "description": "The authors of the code.",
+      "aliases": [
+        "author"
+      ],
+      "strip": [
+        "authors"
+      ],
+      "serde": {
+        "deserializeWith": "option_one_or_many_string_or_object"
+      },
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Author.schema.json"
+      }
+    },
+    "provenance": {
+      "@id": "stencila:provenance",
+      "description": "A summary of the provenance of the code.",
+      "strip": [
+        "provenance"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ProvenanceCount.schema.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,106 @@
+title: Table
+'@id': schema:Table
+nick: tbl
+extends: CreativeWork
+category: works
+description: A table.
+patch:
+  takeAuthors: true
+dom:
+  derive: false
+jats:
+  special: true
+html:
+  special: true
+markdown:
+  derive: false
+proptest: {}
+required:
+  - rows
+core:
+  - label
+  - labelAutomatically
+  - caption
+  - notes
+  - authors
+  - provenance
+properties:
+  label:
+    '@id': stencila:label
+    description: A short label for the table.
+    type: string
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+  labelAutomatically:
+    '@id': stencila:labelAutomatically
+    description: Whether the label should be automatically updated.
+    type: boolean
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+  caption:
+    '@id': schema:caption
+    description: A caption for the table.
+    type: array
+    items:
+      $ref: Block
+    walk: true
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    dom:
+      elem: caption
+    proptest:
+      min:
+        description: No caption.
+        value: None
+      low:
+        description: Generate up to two arbitrary paragraphs.
+        strategy: option::of(vec_paragraphs(2))
+      max:
+        description: Generate up to three arbitrary, non-recursive, block nodes.
+        strategy: option::of(vec_blocks_non_recursive(3))
+  rows:
+    '@id': stencila:rows
+    description: |
+      Rows of cells in the table.
+    type: array
+    items:
+      $ref: TableRow
+    walk: true
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    dom:
+      elem: table
+    proptest:
+      min:
+        description: Generate up to a 2x2 table with a header row.
+        strategy: table_rows_with_header(2,2)
+      low:
+        description: Generate up to a 3x3 table with a header row.
+        strategy: table_rows_with_header(3,3)
+      high:
+        description: Generate up to four, arbitrary, table rows.
+        strategy: vec(TableRow::arbitrary(), size_range(1..=4))
+      max:
+        description: Generate up to eight, arbitrary, table rows.
+        strategy: vec(TableRow::arbitrary(), size_range(1..=8))
+  notes:
+    '@id': schema:notes
+    description: Notes for the table.
+    type: array
+    items:
+      $ref: Block
+    walk: true
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    dom:
+      elem: aside
+    proptest:
+      min:
+        description: No notes.
+        value: None
+      low:
+        description: Generate an arbitrary paragraph.
+        strategy: option::of(vec_paragraphs(1))
+      max:
+        description: Generate up to two arbitrary, non-recursive, block nodes.
+        strategy: option::of(vec_blocks_non_recursive(2))

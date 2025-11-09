@@ -1,0 +1,39 @@
+title: DurationValidator
+'@id': stencila:DurationValidator
+nick: duv
+extends: Entity
+category: data
+description: A validator specifying the constraints on a duration.
+markdown:
+  derive: false
+core:
+  - timeUnits
+  - minimum
+  - maximum
+properties:
+  timeUnits:
+    '@id': stencila:timeUnits
+    type: array
+    items:
+      $ref: TimeUnit
+    description: The time units that the duration can have.
+    $comment: |
+      A duration is valid if its `timeUnit` is amongst the `timeUnits` of the validator.
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+  minimum:
+    '@id': stencila:minimum
+    $ref: Duration
+    description: The inclusive lower limit for a duration.
+    $comment: |
+      A duration is valid if it is greater than, or exactly equal to, `minimum`.
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+  maximum:
+    '@id': stencila:maximum
+    $ref: Duration
+    description: The inclusive upper limit for a duration.
+    $comment: |
+      A duration is valid if it is less than, or exactly equal to, `maximum`.
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]

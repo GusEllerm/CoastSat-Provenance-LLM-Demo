@@ -1,0 +1,9 @@
+A styled block with two paragraphs:
+
+rounded border border-solid border-blue-200 bg-blue-100 p-2With style language specified:
+
+color:redNested styled blocks:
+
+bg-red-100 p-2Containing variable interpolations:
+
+bg-red-{{var1}} p-$var2 m-$var3

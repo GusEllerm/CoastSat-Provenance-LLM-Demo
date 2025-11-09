@@ -1,0 +1,109 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Text.schema.json",
+  "@id": "schema:Text",
+  "title": "Text",
+  "nick": "txt",
+  "extends": [
+    "Entity"
+  ],
+  "category": "prose",
+  "description": "Textual content.",
+  "$comment": "Intended mostly for use for inline text e.g. the text in a paragraph.\n\nDiffers from the primitive `String` type in that it has a `type` and `id` property.\nThe `id` property allows use to identify text nodes with a sequence of inline nodes\nfor better diffing.\n\nAlso, in Rust, the `value` property is implemented as a CRDT.\n",
+  "dom": {
+    "derive": false
+  },
+  "html": {
+    "elem": "span"
+  },
+  "jats": {
+    "special": true
+  },
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "value"
+  ],
+  "core": [
+    "id",
+    "compilationMessages"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "value": {
+      "@id": "schema:value",
+      "description": "The value of the text content",
+      "patch": {
+        "formats": [
+          "all"
+        ]
+      },
+      "dom": {
+        "elem": "none"
+      },
+      "html": {
+        "content": true
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a fixed string of text.",
+          "value": "Cord::from(\"text\")"
+        },
+        "low": {
+          "description": "Generate a random string of up to 10 alphanumeric characters.",
+          "strategy": "r\"[a-zA-Z0-9]{1,10}\".prop_map(Cord::from)"
+        },
+        "high": {
+          "description": "Generate a random string of up to 100 alphanumeric characters, some special characters commonly used in prose, and whitespace.",
+          "strategy": "r\"[a-zA-Z0-9 \\t\\-_.!?*+-/()'<>=]{1,100}\".prop_map(Cord::from)"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "String::arbitrary().prop_map(Cord::from)"
+        }
+      },
+      "$ref": "Cord.schema.json"
+    },
+    "compilationMessages": {
+      "@id": "stencila:compilationMessages",
+      "description": "Messages generated while compiling the text.",
+      "aliases": [
+        "compilation-messages",
+        "compilation_messages",
+        "compilationMessage",
+        "compilation-message",
+        "compilation_message"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "CompilationMessage.schema.json"
+      }
+    }
+  }
+}

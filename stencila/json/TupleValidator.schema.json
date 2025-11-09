@@ -1,0 +1,62 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/TupleValidator.schema.json",
+  "@id": "stencila:TupleValidator",
+  "title": "TupleValidator",
+  "nick": "tuv",
+  "extends": [
+    "Entity"
+  ],
+  "category": "data",
+  "description": "A validator specifying constraints on an array of heterogeneous items.",
+  "markdown": {
+    "derive": false
+  },
+  "required": [
+    "type"
+  ],
+  "core": [
+    "id",
+    "items"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "items": {
+      "@id": "schema:itemListElement",
+      "description": "An array of validators specifying the constraints on each successive item in the array.",
+      "aliases": [
+        "item"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Validator.schema.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+title: ExecutionDependant
+'@id': stencila:ExecutionDependant
+nick: exd
+extends: Entity
+category: flow
+description: A downstream execution dependant of a node.
+required:
+  - dependantRelation
+  - dependantNode
+core:
+  - codeLocation
+properties:
+  dependantRelation:
+    '@id': stencila:dependantRelation
+    description: The relation to the dependant.
+    $ref: ExecutionDependantRelation
+  dependantNode:
+    '@id': stencila:dependantNode
+    description: The node that is the dependant.
+    $ref: ExecutionDependantNode
+  codeLocation:
+    '@id': stencila:codeLocation
+    description: The location that the dependant is defined.
+    $ref: CodeLocation

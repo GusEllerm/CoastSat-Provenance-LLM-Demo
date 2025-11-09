@@ -1,0 +1,16 @@
+[package]
+name = "node-patch-derive"
+version = "0.0.0"
+edition = "2024"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+common = { path = "../common" }
+darling = { workspace = true }
+format = { path = "../format" }
+syn = { workspace = true }
+
+[lints]
+workspace = true

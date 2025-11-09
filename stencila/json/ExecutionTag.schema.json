@@ -1,0 +1,60 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/ExecutionTag.schema.json",
+  "@id": "stencila:ExecutionTag",
+  "title": "ExecutionTag",
+  "nick": "ext",
+  "extends": [
+    "Entity"
+  ],
+  "category": "flow",
+  "description": "A tag on code that affects its execution.",
+  "required": [
+    "type",
+    "name",
+    "value",
+    "isGlobal"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "name": {
+      "@id": "schema:name",
+      "description": "The name of the tag",
+      "type": "string"
+    },
+    "value": {
+      "@id": "schema:value",
+      "description": "The value of the tag",
+      "type": "string"
+    },
+    "isGlobal": {
+      "@id": "stencila:isGlobal",
+      "description": "Whether the tag is global to the document",
+      "aliases": [
+        "is-global",
+        "is_global"
+      ],
+      "type": "boolean"
+    }
+  }
+}

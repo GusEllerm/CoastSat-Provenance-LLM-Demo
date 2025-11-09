@@ -1,0 +1,108 @@
+{
+  "@id": "https://stencila.org/DurationValidator",
+  "name": "DurationValidator",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "https://schema.org/",
+    "stencila": "https://stencila.org/"
+  },
+  "@graph": [
+    {
+      "@id": "stencila:DurationValidator",
+      "@type": "rdfs:Class",
+      "rdfs:label": "DurationValidator",
+      "rdfs:comment": "A validator specifying the constraints on a duration.",
+      "rdfs:subClassOf": {
+        "@id": "stencila:Entity"
+      }
+    },
+    {
+      "@id": "stencila:timeUnits",
+      "@type": "rdfs:Property",
+      "rdfs:label": "timeUnits",
+      "rdfs:comment": "The time units that the duration can have.",
+      "schema:domainIncludes": [
+        {
+          "@id": "stencila:DurationValidator"
+        },
+        {
+          "@id": "stencila:TimestampValidator"
+        }
+      ],
+      "schema:rangeIncludes": {
+        "@id": "stencila:TimeUnit"
+      }
+    },
+    {
+      "@id": "stencila:minimum",
+      "@type": "rdfs:Property",
+      "rdfs:label": "minimum",
+      "rdfs:comment": "The inclusive lower limit for a duration.",
+      "schema:domainIncludes": [
+        {
+          "@id": "stencila:ArrayHint"
+        },
+        {
+          "@id": "stencila:DatatableColumnHint"
+        },
+        {
+          "@id": "stencila:DateTimeValidator"
+        },
+        {
+          "@id": "stencila:DateValidator"
+        },
+        {
+          "@id": "stencila:DurationValidator"
+        },
+        {
+          "@id": "stencila:NumberValidator"
+        },
+        {
+          "@id": "stencila:TimeValidator"
+        },
+        {
+          "@id": "stencila:TimestampValidator"
+        }
+      ],
+      "schema:rangeIncludes": {
+        "@id": "schema:Duration"
+      }
+    },
+    {
+      "@id": "stencila:maximum",
+      "@type": "rdfs:Property",
+      "rdfs:label": "maximum",
+      "rdfs:comment": "The inclusive upper limit for a duration.",
+      "schema:domainIncludes": [
+        {
+          "@id": "stencila:ArrayHint"
+        },
+        {
+          "@id": "stencila:DatatableColumnHint"
+        },
+        {
+          "@id": "stencila:DateTimeValidator"
+        },
+        {
+          "@id": "stencila:DateValidator"
+        },
+        {
+          "@id": "stencila:DurationValidator"
+        },
+        {
+          "@id": "stencila:NumberValidator"
+        },
+        {
+          "@id": "stencila:TimeValidator"
+        },
+        {
+          "@id": "stencila:TimestampValidator"
+        }
+      ],
+      "schema:rangeIncludes": {
+        "@id": "schema:Duration"
+      }
+    }
+  ]
+}

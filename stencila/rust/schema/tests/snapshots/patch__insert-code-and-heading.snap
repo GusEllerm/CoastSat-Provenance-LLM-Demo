@@ -1,0 +1,358 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 31
+      characterPercent: 100
+  content:
+    - type: Heading
+      level: 1
+      content:
+        - type: Text
+          value:
+            string: heading1
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 8
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 8
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para1
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para2
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+    - type: Heading
+      level: 2
+      content:
+        - type: Text
+          value:
+            string: heading2
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 8
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 8
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para3
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: Heading
+      level: 1
+      content:
+        - type: Text
+          value:
+            string: heading1
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para1
+    - type: CodeBlock
+      code:
+        string: ""
+      programmingLanguage: python
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para2
+    - type: Heading
+      level: 2
+      content:
+        - type: Text
+          value:
+            string: heading3
+    - type: Heading
+      level: 2
+      content:
+        - type: Text
+          value:
+            string: heading2
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para3
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 39
+      characterPercent: 100
+  content:
+    - type: Heading
+      level: 1
+      content:
+        - type: Text
+          value:
+            string: heading1
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 8
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 8
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para1
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+    - type: CodeBlock
+      code:
+        string: ""
+        authorship:
+          - - 1
+            - 0
+            - 0
+            - 0
+      programmingLanguage: python
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para2
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+    - type: Heading
+      level: 2
+      content:
+        - type: Text
+          value:
+            string: heading3
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 8
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 8
+          characterPercent: 100
+    - type: Heading
+      level: 2
+      content:
+        - type: Text
+          value:
+            string: heading2
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 8
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 8
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para3
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 5
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+ops:
+  - - - content
+    - Insert:
+        - - 2
+          - type: CodeBlock
+            code:
+              string: ""
+            programmingLanguage: python
+        - - 4
+          - type: Heading
+            level: 2
+            content:
+              - type: Text
+                value:
+                  string: heading3

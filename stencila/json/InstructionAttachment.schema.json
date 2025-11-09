@@ -1,0 +1,51 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/InstructionAttachment.schema.json",
+  "@id": "stencila:InstructionAttachment",
+  "title": "InstructionAttachment",
+  "nick": "iat",
+  "extends": [
+    "Entity"
+  ],
+  "category": "edits",
+  "description": "An attachment that can be provided to an instruction for model context.",
+  "required": [
+    "type",
+    "alias",
+    "file"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "alias": {
+      "@id": "stencila:alias",
+      "description": "A short name for referring to the attachment within prompts.",
+      "type": "string"
+    },
+    "file": {
+      "@id": "stencila:file",
+      "description": "The file to attach.",
+      "walk": true,
+      "$ref": "File.schema.json"
+    }
+  }
+}

@@ -1,0 +1,346 @@
+use codec_info::lost_options;
+use common::tracing;
+use images::highlight_image;
+
+use crate::{AudioObject, ImageObject, MediaObject, VideoObject, prelude::*};
+
+macro_rules! html_attrs {
+    ($object:expr) => {{
+        use codec_html_trait::encode::attr;
+
+        let mut attrs = vec![attr("src", $object.content_url.as_str())];
+
+        if let Some(caption) = &$object.caption {
+            attrs.push(attr("alt", caption.to_text().trim()))
+        }
+
+        if let Some(title) = &$object.title {
+            attrs.push(attr("title", title.to_text().trim()))
+        }
+
+        attrs
+    }};
+}
+
+macro_rules! jats_attrs {
+    ($object:expr) => {{
+        let mut attrs = vec![("xlink:href", $object.content_url.as_str())];
+
+        if let Some(media_type) = &$object.media_type {
+            let mut parts = media_type.split('/');
+            if let Some(mime_type) = parts.next() {
+                attrs.push(("mimetype", mime_type))
+            }
+            if let Some(mime_subtype) = parts.next() {
+                attrs.push(("mime-subtype", mime_subtype))
+            }
+        }
+
+        attrs
+    }};
+}
+
+macro_rules! jats_content {
+    ($object:expr) => {{
+        let mut content = String::new();
+
+        if let Some(caption) = &$object.caption {
+            use codec_jats_trait::encode::escape;
+
+            let caption = caption.to_text();
+            content.push_str(&["<alt-text>", &escape(caption.trim()), "</alt-text>"].concat())
+        }
+
+        content
+    }};
+}
+
+macro_rules! to_markdown {
+    ($object:expr, $context:expr, $losses:expr) => {{
+        $context
+            .enter_node($object.node_type(), $object.node_id())
+            .merge_losses(lost_options!($object, id))
+            .merge_losses($losses)
+            .push_str("![");
+
+        if let Some(caption) = &$object.caption {
+            $context.push_prop_fn(NodeProperty::Caption, |context| {
+                caption.to_markdown(context)
+            });
+        }
+
+        $context
+            .push_str("](")
+            .push_prop_str(NodeProperty::ContentUrl, &$object.content_url);
+
+        if let Some(title) = &$object.title {
+            $context
+                .push_str(" \"")
+                .push_prop_fn(NodeProperty::Title, |context| title.to_markdown(context))
+                .push_str("\"");
+        }
+
+        $context.push_str(")");
+
+        if matches!($context.content_type, Some(ContentType::Block)) {
+            // If a block media object, then ensure newlines after it
+            $context.newline().exit_node().newline();
+        } else {
+            $context.exit_node();
+        }
+    }};
+}
+
+impl MediaObject {
+    pub fn to_jats_special(&self) -> (String, Losses) {
+        // It is necessary to have special JATS functions for these types
+        // to split the `media_type` field into separate `mimetype` and `media-subtype`
+        // attributes and to ensure `AudioObject` and `VideoObject` ad differentiated
+        // through the `mimetype` attribute
+
+        use codec_jats_trait::encode::elem;
+
+        (elem("inline-media", jats_attrs!(self), ""), Losses::todo())
+    }
+}
+
+impl AudioObject {
+    pub fn to_html_special(&self, _context: &mut HtmlEncodeContext) -> String {
+        use codec_html_trait::encode::elem;
+
+        let mut attrs = html_attrs!(self);
+        attrs.push("controls".to_string());
+
+        elem("audio", &attrs, &[])
+    }
+
+    pub fn to_jats_special(&self) -> (String, Losses) {
+        use codec_jats_trait::encode::elem;
+
+        let mut attrs = jats_attrs!(self);
+        if !attrs.iter().any(|(name, ..)| name == &"mimetype") {
+            attrs.push(("mimetype", "audio"));
+        }
+
+        (
+            elem("inline-media", attrs, jats_content!(self)),
+            Losses::todo(),
+        )
+    }
+}
+
+impl DomCodec for AudioObject {
+    fn to_dom(&self, context: &mut DomEncodeContext) {
+        context
+            .enter_node(self.node_type(), self.node_id())
+            .push_attr("content-url", &self.content_url)
+            .enter_elem("audio")
+            .push_attr("src", &self.content_url)
+            .push_attr_boolean("controls")
+            .exit_elem()
+            .exit_node();
+    }
+}
+
+impl MarkdownCodec for AudioObject {
+    fn to_markdown(&self, context: &mut MarkdownEncodeContext) {
+        to_markdown!(self, context, lost_options!(self.options, transcript))
+    }
+}
+
+impl ImageObject {
+    pub fn to_html_special(&self, _context: &mut HtmlEncodeContext) -> String {
+        use codec_html_trait::encode::elem;
+
+        elem("img", &html_attrs!(self), &[])
+    }
+
+    pub fn to_jats_special(&self) -> (String, Losses) {
+        use codec_jats_trait::encode::elem;
+
+        (
+            elem("inline-graphic", jats_attrs!(self), jats_content!(self)),
+            Losses::todo(),
+        )
+    }
+}
+
+impl DomCodec for ImageObject {
+    fn to_dom(&self, context: &mut DomEncodeContext) {
+        context.enter_node(self.node_type(), self.node_id());
+
+        let mut img = true;
+
+        if let Some(media_type) = &self.media_type {
+            context.push_attr("media-type", media_type);
+
+            // Do not encode an <img> if media type is defined and not an image subtype
+            // (e.g. a Plotly spec)
+            if !media_type.starts_with("image/") {
+                img = false
+            }
+        }
+
+        // Encode the `content-url` attribute if not a DataURI
+        // See <stencila-image-object> custom element for how this is used.
+        // Do no put DataURIs into the `content-url` attribute since the custom element
+        // can not use it and that would unnecessarily bloat HTML since it will be in <img>
+        if !self.content_url.starts_with("data:") {
+            context.push_attr("content-url", &self.content_url);
+        }
+
+        if img {
+            // If the document is being encoded standalone, and the image URL is a data URI
+            // or file system path (possibly with a relative URL) the ensure that we have
+            // created an on disk copy
+            if context.standalone
+                && !(self.content_url.starts_with("http://")
+                    || self.content_url.starts_with("https://"))
+            {
+                let images_dir = context.images_dir();
+
+                let image_name = if self.content_url.starts_with("data:") {
+                    // Encode the data URI to a file
+                    match images::data_uri_to_file(&self.content_url, &images_dir) {
+                        Ok(path) => Some(path),
+                        Err(error) => {
+                            tracing::warn!("While encoding image data URI to file: {error}");
+                            None
+                        }
+                    }
+                } else {
+                    match images::file_uri_to_file(
+                        &self.content_url,
+                        context.from_path.as_deref(),
+                        &images_dir,
+                    ) {
+                        Ok(path) => Some(path),
+                        Err(error) => {
+                            tracing::warn!("While encoding image to file: {error}");
+                            None
+                        }
+                    }
+                };
+
+                // Fallback to encoding the original URL
+                let src = match image_name {
+                    Some(image_name) => images_dir.join(image_name).to_string_lossy().to_string(),
+                    None => self.content_url.to_string(),
+                };
+
+                context
+                    .enter_elem("img")
+                    .push_attr("src", &src)
+                    .exit_elem_void();
+
+                // If the document image is not set yet, then set it
+                if context.image().is_none() {
+                    context.set_image(&src);
+                }
+            } else {
+                // Not standalone, so just encode content URL as image (optimize for speed)
+                context
+                    .enter_elem("img")
+                    .push_attr("src", &self.content_url)
+                    .exit_elem_void();
+            }
+        }
+
+        if let Some(title) = &self.title {
+            context.push_slot_fn("span", "title", |context| title.to_dom(context));
+        }
+
+        if let Some(caption) = &self.caption {
+            context.push_slot_fn("span", "caption", |context| caption.to_dom(context));
+        }
+
+        if let Some(authors) = &self.options.authors {
+            context.push_slot_fn("span", "authors", |context| authors.to_dom(context));
+        }
+
+        context.exit_node();
+    }
+}
+
+impl LatexCodec for ImageObject {
+    fn to_latex(&self, context: &mut LatexEncodeContext) {
+        let path = if self.content_url.starts_with("data:") {
+            let images_dir = context.temp_dir.clone();
+            let image_name =
+                images::data_uri_to_file(&self.content_url, &images_dir).unwrap_or_default();
+            let path = images_dir.join(image_name);
+
+            if context.highlight
+                && context.has_format_via_pandoc()
+                && let Err(error) = highlight_image(&path)
+            {
+                tracing::error!("While highlighting image object: {error}");
+            }
+
+            path.to_string_lossy().to_string()
+        } else {
+            self.content_url.clone()
+        };
+
+        context
+            .enter_node(self.node_type(), self.node_id())
+            .str(r"\includegraphics[width=\linewidth,keepaspectratio]{")
+            .str(&path)
+            .char('}')
+            .exit_node();
+    }
+}
+
+impl MarkdownCodec for ImageObject {
+    fn to_markdown(&self, context: &mut MarkdownEncodeContext) {
+        to_markdown!(self, context, lost_options!(self.options, thumbnail))
+    }
+}
+
+impl VideoObject {
+    pub fn to_html_special(&self, _context: &mut HtmlEncodeContext) -> String {
+        use codec_html_trait::encode::elem;
+
+        let mut attrs = html_attrs!(self);
+        attrs.push("controls".to_string());
+
+        elem("video", &attrs, &[])
+    }
+
+    pub fn to_jats_special(&self) -> (String, Losses) {
+        use codec_jats_trait::encode::elem;
+
+        let mut attrs = jats_attrs!(self);
+        if !attrs.iter().any(|(name, ..)| name == &"mimetype") {
+            attrs.push(("mimetype", "video"));
+        }
+
+        (
+            elem("inline-media", attrs, jats_content!(self)),
+            Losses::todo(),
+        )
+    }
+}
+
+impl DomCodec for VideoObject {
+    fn to_dom(&self, context: &mut DomEncodeContext) {
+        context
+            .enter_node(self.node_type(), self.node_id())
+            .push_attr("content-url", &self.content_url)
+            .enter_elem("video")
+            .push_attr("src", &self.content_url)
+            .push_attr_boolean("controls")
+            .exit_elem()
+            .exit_node();
+    }
+}
+
+impl MarkdownCodec for VideoObject {
+    fn to_markdown(&self, context: &mut MarkdownEncodeContext) {
+        to_markdown!(
+            self,
+            context,
+            lost_options!(self.options, thumbnail, transcript)
+        )
+    }
+}

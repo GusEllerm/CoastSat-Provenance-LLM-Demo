@@ -1,0 +1,35 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/workflow/diagram-v2
+title: CoastSat Workflow Diagram
+description: Produce a Mermaid diagram summarising the CoastSat workflow.
+
+version: "0.1.1"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are producing a diagrammatic summary of the CoastSat workflow for the introduction section. Use only the steps provided in the metadata.
+
+Metadata keys:
+- `step_order` (list of step names in execution order)
+- `steps` (list of step dicts) with: `name`, `position`, `code_repository_markdown`, `inputs`, `outputs`
+
+Return Markdown containing:
+1. A fenced `{mermaid}` code block (begin with ```` ```{mermaid}```` and end with ```` ``` ````) containing a `flowchart TD` diagram that links steps in order, annotating each node with (a) the step name and (b) a short phrase describing its primary role. When a step has a `code_repository_markdown`, include the link in brackets within the node label.
+2. A single-sentence caption beneath the diagram noting the kinds of artefacts produced (refer to outputs where available).
+
+Guidelines:
+- Do not add steps or edges that are not reflected in `step_order`.
+- Keep node labels under 12 words and avoid backticks or braces inside labels.
+- Mermaid must be syntactically valid so the renderer can display the diagram.
+
+# Workflow Metadata
+
+{{ instruction.target }}
+
+# Shared Context
+
+:::: include ../../partials/context/coastsat/overview.smd

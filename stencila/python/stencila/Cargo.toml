@@ -1,0 +1,27 @@
+[package]
+name = "stencila"
+version = "2.0.0-beta.2"
+edition = "2024"
+
+[lib]
+# The name of the native library. This is the name which will be used in Python to import the
+# library (i.e. `import stencila`). If you change this, you must also change the name of the
+# `#[pymodule]` in `src/lib.rs`.
+name = "stencila"
+doc = false
+
+# "cdylib" is necessary to produce a shared library for Python to import from.
+#
+# Downstream Rust code (including code in `bin/`, `examples/`, and `tests/`) will not be able
+# to `use stencila;` unless the "rlib" or "lib" crate type is also included, e.g.:
+# crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
+
+[dependencies]
+codecs = { path = "../../rust/codecs" }
+common = { path = "../../rust/common" }
+pyo3 = { version = "0.25.1", features = ["extension-module"] }
+pyo3-async-runtimes = { version = "0.25.0", features = [
+    "attributes",
+    "tokio-runtime",
+] }

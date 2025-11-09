@@ -1,0 +1,18 @@
+title: MathInline
+'@id': stencila:MathInline
+nick: mti
+extends: Math
+category: math
+description: A fragment of math, e.g a variable name, to be treated as inline content.
+dom:
+  derive: false
+html:
+  elem: math
+jats:
+  elem: inline-formula
+  special: true
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}

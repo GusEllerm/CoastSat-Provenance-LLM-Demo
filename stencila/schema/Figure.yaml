@@ -1,0 +1,90 @@
+title: Figure
+'@id': stencila:Figure
+extends: CreativeWork
+category: works
+description: Encapsulates one or more images, videos, tables, etc, and provides captions and labels for them.
+dom:
+  derive: false
+html:
+  elem: figure
+jats:
+  elem: fig
+markdown:
+  derive: false
+proptest: {}
+required:
+  - content
+core:
+  - label
+  - labelAutomatically
+  - caption
+  - authors
+  - provenance
+properties:
+  label:
+    '@id': stencila:label
+    description: A short label for the figure.
+    type: string
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    jats:
+      elem: label
+    proptest:
+      min:
+        description: No label
+        value: None
+      low:
+        description: Generate a simple label
+        strategy: option::of(r"[a-zA-Z0-9]+")
+      max:
+        description: Generate an arbitrary string
+        strategy: option::of(String::arbitrary())
+  labelAutomatically:
+    '@id': stencila:labelAutomatically
+    description: Whether the label should be automatically updated.
+    type: boolean
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    jats:
+      attr: label-automatically
+  caption:
+    '@id': schema:caption
+    description: A caption for the figure.
+    type: array
+    items:
+      $ref: Block
+    walk: true
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    dom:
+      elem: figcaption
+    jats:
+      elem: caption
+    proptest:
+      min:
+        description: No caption
+        value: None
+      low:
+        description: Generate up to two arbitrary paragraphs.
+        strategy: option::of(vec_paragraphs(2))
+      max:
+        description: Generate up to three arbitrary, non-recursive, block nodes.
+        strategy: option::of(vec_blocks_non_recursive(3))
+  content:
+    '@id': stencila:content
+    description: The content of the figure.
+    type: array
+    items:
+      $ref: Block
+    dom:
+      elem: figure
+    proptest:
+      min:
+        description: Generate a single arbitrary block image object.
+        strategy: vec_blocks_image_object(1)
+      low:
+        description: Generate up to two arbitrary, non-recursive, block nodes (excluding code chunks).
+        strategy: vec_blocks_figure_content(2)
+      max:
+        description: Generate up to four arbitrary, non-recursive, block nodes.
+        strategy: vec_blocks_non_recursive(4)

@@ -1,0 +1,15 @@
+.vscode-test
+dist
+out
+
+# Ignore CLI binary downloaded/copied into this folder
+/cli
+
+# Ignore VSIX packages built in this folder
+/*.vsix
+
+# Ignore generated grammar files
+/syntaxes/**/tmGrammar.json
+
+# Ignore walkthroughs which are simply copied from outside into here
+/walkthroughs

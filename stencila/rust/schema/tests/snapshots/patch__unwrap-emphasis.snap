@@ -1,0 +1,127 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 12
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: "grass "
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 6
+        - type: Emphasis
+          content:
+            - type: Text
+              value:
+                string: rabbit
+                authorship:
+                  - - 1
+                    - 0
+                    - 0
+                    - 6
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 12
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: grass rabbit
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 12
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: grass rabbit
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 6
+              - - 1
+                - 1
+                - 0
+                - 6
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 12
+          characterPercent: 100
+ops:
+  - - - content
+      - 0
+      - content
+    - Remove:
+        - 1
+  - - - content
+      - 0
+      - content
+      - 0
+      - value
+    - Apply:
+        - Insert:
+            - 6
+            - rabbit

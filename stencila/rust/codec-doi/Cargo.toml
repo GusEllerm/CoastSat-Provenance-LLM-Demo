@@ -1,0 +1,13 @@
+[package]
+name = "codec-doi"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+codec = { path = "../codec" }
+codec-csl = { path = "../codec-csl" }
+url = { workspace = true }
+version = { path = "../version" }
+
+[lints]
+workspace = true

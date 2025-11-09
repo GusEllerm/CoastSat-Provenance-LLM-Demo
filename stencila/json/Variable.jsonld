@@ -1,0 +1,191 @@
+{
+  "@id": "https://stencila.org/Variable",
+  "name": "Variable",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "https://schema.org/",
+    "stencila": "https://stencila.org/"
+  },
+  "@graph": [
+    {
+      "@id": "stencila:Variable",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Variable",
+      "rdfs:comment": "A variable representing a name / value pair.",
+      "rdfs:subClassOf": {
+        "@id": "stencila:Entity"
+      }
+    },
+    {
+      "@id": "schema:name",
+      "@type": "rdfs:Property",
+      "rdfs:label": "name",
+      "rdfs:comment": "The name of the variable.",
+      "schema:domainIncludes": [
+        {
+          "@id": "schema:Thing"
+        },
+        {
+          "@id": "stencila:Button"
+        },
+        {
+          "@id": "stencila:DatatableColumn"
+        },
+        {
+          "@id": "stencila:DatatableColumnHint"
+        },
+        {
+          "@id": "stencila:Directory"
+        },
+        {
+          "@id": "stencila:ExecutionTag"
+        },
+        {
+          "@id": "stencila:File"
+        },
+        {
+          "@id": "stencila:Function"
+        },
+        {
+          "@id": "stencila:Parameter"
+        },
+        {
+          "@id": "stencila:TableCell"
+        },
+        {
+          "@id": "stencila:Variable"
+        }
+      ],
+      "schema:rangeIncludes": {
+        "@id": "schema:Text"
+      }
+    },
+    {
+      "@id": "schema:programmingLanguage",
+      "@type": "rdfs:Property",
+      "rdfs:label": "programmingLanguage",
+      "rdfs:comment": "The programming language that the variable is defined in e.g. Python, JSON.",
+      "schema:domainIncludes": [
+        {
+          "@id": "schema:SoftwareSourceCode"
+        },
+        {
+          "@id": "stencila:CallArgument"
+        },
+        {
+          "@id": "stencila:CodeExecutable"
+        },
+        {
+          "@id": "stencila:CodeExpression"
+        },
+        {
+          "@id": "stencila:CodeStatic"
+        },
+        {
+          "@id": "stencila:Variable"
+        }
+      ],
+      "schema:rangeIncludes": {
+        "@id": "schema:Text"
+      }
+    },
+    {
+      "@id": "stencila:nativeType",
+      "@type": "rdfs:Property",
+      "rdfs:label": "nativeType",
+      "rdfs:comment": "The native type of the variable e.g. `float`, `datetime.datetime`, `pandas.DataFrame`",
+      "schema:domainIncludes": {
+        "@id": "stencila:Variable"
+      },
+      "schema:rangeIncludes": {
+        "@id": "schema:Text"
+      }
+    },
+    {
+      "@id": "stencila:nodeType",
+      "@type": "rdfs:Property",
+      "rdfs:label": "nodeType",
+      "rdfs:comment": "The Stencila node type of the variable e.g. `Number`, `DateTime`, `Datatable`.",
+      "schema:domainIncludes": [
+        {
+          "@id": "stencila:Excerpt"
+        },
+        {
+          "@id": "stencila:Variable"
+        }
+      ],
+      "schema:rangeIncludes": {
+        "@id": "schema:Text"
+      }
+    },
+    {
+      "@id": "schema:value",
+      "@type": "rdfs:Property",
+      "rdfs:label": "value",
+      "rdfs:comment": "The value of the variable.",
+      "schema:domainIncludes": [
+        {
+          "@id": "schema:Date"
+        },
+        {
+          "@id": "schema:DateTime"
+        },
+        {
+          "@id": "schema:Duration"
+        },
+        {
+          "@id": "schema:PropertyValue"
+        },
+        {
+          "@id": "schema:Text"
+        },
+        {
+          "@id": "schema:Time"
+        },
+        {
+          "@id": "schema:Timestamp"
+        },
+        {
+          "@id": "stencila:CallArgument"
+        },
+        {
+          "@id": "stencila:ConstantValidator"
+        },
+        {
+          "@id": "stencila:ExecutionTag"
+        },
+        {
+          "@id": "stencila:Parameter"
+        },
+        {
+          "@id": "stencila:Variable"
+        }
+      ]
+    },
+    {
+      "@id": "stencila:hint",
+      "@type": "rdfs:Property",
+      "rdfs:label": "hint",
+      "rdfs:comment": "A hint to the value and/or structure of the variable.",
+      "schema:domainIncludes": {
+        "@id": "stencila:Variable"
+      },
+      "schema:rangeIncludes": {
+        "@id": "stencila:Hint"
+      }
+    },
+    {
+      "@id": "stencila:nativeHint",
+      "@type": "rdfs:Property",
+      "rdfs:label": "nativeHint",
+      "rdfs:comment": "A textual hint to the value and/or structure of the variable.",
+      "schema:domainIncludes": {
+        "@id": "stencila:Variable"
+      },
+      "schema:rangeIncludes": {
+        "@id": "schema:Text"
+      }
+    }
+  ]
+}

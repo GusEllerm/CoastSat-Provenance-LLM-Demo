@@ -1,0 +1,224 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "type": "Article",
+  "content": [
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "An insert instruction with no prompt:"
+        }
+      ]
+    },
+    {
+      "type": "InstructionBlock",
+      "instructionType": "Create",
+      "message": {
+        "type": "InstructionMessage",
+        "parts": [{ "type": "Text", "value": "a 4x10 table" }]
+      }
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "An insert instruction with a prompt:"
+        }
+      ]
+    },
+    {
+      "type": "InstructionBlock",
+      "instructionType": "Create",
+      "prompt": {
+        "type": "PromptBlock",
+        "target": "table"
+      },
+      "message": {
+        "type": "InstructionMessage",
+        "parts": [
+          {
+            "type": "Text",
+            "value": "top five highest mountains, with height in metres"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "An insert instruction with a prompt but a blank instruction"
+        }
+      ]
+    },
+    {
+      "type": "InstructionBlock",
+      "instructionType": "Create",
+      "prompt": {
+        "type": "PromptBlock",
+        "target": "code-chunk"
+      }
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "An edit instruction (has content) with no prompt:"
+        }
+      ]
+    },
+    {
+      "type": "InstructionBlock",
+      "instructionType": "Edit",
+      "message": {
+        "type": "InstructionMessage",
+        "parts": [{ "type": "Text", "value": "improve this paragraph" }]
+      },
+      "content": [
+        {
+          "type": "Paragraph",
+          "content": [
+            { "type": "Text", "value": "The paragraph to be improved." }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "An edit instruction with a prompt:"
+        }
+      ]
+    },
+    {
+      "type": "InstructionBlock",
+      "instructionType": "Edit",
+      "prompt": {
+        "type": "PromptBlock",
+        "target": "para"
+      },
+      "message": {
+        "type": "InstructionMessage",
+        "parts": [{ "type": "Text", "value": "please improve this paragraph" }]
+      },
+      "content": [
+        {
+          "type": "Paragraph",
+          "content": [
+            { "type": "Text", "value": "Another paragraph to be improved." }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "An insert instruction with a prompt and a suggestion:"
+        }
+      ]
+    },
+    {
+      "type": "InstructionBlock",
+      "instructionType": "Create",
+      "prompt": {
+        "type": "PromptBlock",
+        "target": "code-chunk"
+      },
+      "message": {
+        "type": "InstructionMessage",
+        "parts": [{ "type": "Text", "value": "analyze data" }]
+      },
+      "activeSuggestion": 0,
+      "suggestions": [
+        {
+          "type": "SuggestionBlock",
+          "content": [{ "type": "CodeChunk", "code": "some code" }]
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "An edit instruction with a suggestion:"
+        }
+      ]
+    },
+    {
+      "type": "InstructionBlock",
+      "instructionType": "Edit",
+      "message": {
+        "type": "InstructionMessage",
+        "parts": [{ "type": "Text", "value": "more succinct" }]
+      },
+      "content": [
+        {
+          "type": "Paragraph",
+          "content": [
+            { "type": "Text", "value": "A rather long winded paragraph." }
+          ]
+        }
+      ],
+      "activeSuggestion": 0,
+      "suggestions": [
+        {
+          "type": "SuggestionBlock",
+          "content": [
+            {
+              "type": "Paragraph",
+              "content": [{ "type": "Text", "value": "A paragraph." }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "With prompt and model parameters specified:"
+        }
+      ]
+    },
+    {
+      "type": "InstructionBlock",
+      "instructionType": "Create",
+      "message": {
+        "type": "InstructionMessage",
+        "parts": [
+          {
+            "type": "Text",
+            "value": {
+              "string": "message"
+            }
+          }
+        ]
+      },
+      "prompt": {
+        "type": "PromptBlock",
+        "target": "prompt"
+      },
+      "modelParameters": {
+        "type": "ModelParameters",
+        "modelIds": ["model1", "model2"],
+        "replicates": 3,
+        "qualityWeight": 10,
+        "costWeight": 10,
+        "speedWeight": 10,
+        "minimumScore": 40,
+        "temperature": 10,
+        "randomSeed": 123
+      }
+    }
+  ]
+}

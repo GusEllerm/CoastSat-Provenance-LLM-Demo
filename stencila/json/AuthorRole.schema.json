@@ -1,0 +1,75 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/AuthorRole.schema.json",
+  "@id": "stencila:AuthorRole",
+  "title": "AuthorRole",
+  "extends": [
+    "Role"
+  ],
+  "category": "works",
+  "description": "An author and their role.",
+  "dom": {
+    "derive": false
+  },
+  "required": [
+    "type",
+    "author",
+    "roleName"
+  ],
+  "core": [
+    "id",
+    "format",
+    "lastModified"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "author": {
+      "@id": "schema:author",
+      "description": "The entity acting as an author.",
+      "$ref": "AuthorRoleAuthor.schema.json"
+    },
+    "roleName": {
+      "@id": "schema:roleName",
+      "description": "The role played by the author.",
+      "aliases": [
+        "role-name",
+        "role_name"
+      ],
+      "$ref": "AuthorRoleName.schema.json"
+    },
+    "format": {
+      "@id": "stencila:format",
+      "description": "The format that the author used to perform the role. e.g. Markdown, Python",
+      "type": "string"
+    },
+    "lastModified": {
+      "@id": "stencila:lastModified",
+      "description": "Timestamp of most recent modification, by the author, in the role.",
+      "aliases": [
+        "last-modified",
+        "last_modified"
+      ],
+      "strip": [
+        "timestamps"
+      ],
+      "$ref": "Timestamp.schema.json"
+    }
+  }
+}

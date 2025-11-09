@@ -1,0 +1,15 @@
+[package]
+name = "kernel-quickjs"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+kernel = { path = "../kernel" }
+rquickjs = { version = "0.9.0", features = ["futures", "macro", "parallel"] }
+
+[dev-dependencies]
+common-dev = { path = "../common-dev" }
+test-log = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,13 @@
+compact.jats.xml:
+  decode:
+    strip-props:
+      #TODO removed when property decode and encode are implemented
+      - CodeChunk.execution_mode
+
+qmd:
+  decode:
+    strip-props:
+      - CodeChunk.execution_mode
+      # Round-tripped code may not be the same as original because label
+      # and caption are put into code
+      - CodeChunk.code

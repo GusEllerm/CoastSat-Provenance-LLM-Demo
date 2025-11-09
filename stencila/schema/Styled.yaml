@@ -1,0 +1,105 @@
+title: Styled
+'@id': stencila:Styled
+extends: Entity
+category: style
+abstract: true
+status: beta
+description: An abstract base class for a document node that has styling applied to it and/or its content.
+$comment: |
+  This class is very similar to the `Math` abstract base class but has `styleLanguage` instead
+  of `mathLanguage` and compiled `css` instead of `mathml`.
+
+  Note also that `styleLanguage` is optional.
+required:
+  - code
+core:
+  - styleLanguage
+  - authors
+  - provenance
+properties:
+  code:
+    '@id': stencila:code
+    description: The code of the equation in the `styleLanguage`.
+    $ref: Cord
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    jats:
+      attr: style
+    proptest:
+      min:
+        description: Generate a simple fixed string of code.
+        value: Cord::from("code")
+      low:
+        description: |
+          Generate a random string of up to 10 alphanumeric & space characters (trimmed). Avoid keywords used to identify other node types.
+        strategy: r"[a-zA-Z0-9 ]{1,10}".prop_filter("No keywords", |code| !["include", "call", "if", "ifblock", "for"].contains(&code.trim())).prop_map(|code| Cord::from(code.trim()))
+      high:
+        description: |
+          Generate a random string of up to 100 characters (excluding control characters).
+        strategy: r"[^\p{C}]{1,100}".prop_map(Cord::from)
+      max:
+        description: Generate an arbitrary string.
+        strategy: String::arbitrary().prop_map(Cord::from)
+  styleLanguage:
+    '@id': stencila:styleLanguage
+    description: The language used for the style specification e.g. css, tw
+    type: string
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    jats:
+      attr: style-detail
+    proptest:
+      min:
+        description: Do not generate a style language.
+        value: None
+      high:
+        description: Generate a random string of up to 10 alphanumeric characters.
+        strategy: option::of(r"[a-zA-Z0-9]{1,10}")
+      max:
+        description: Generate an arbitrary string.
+        strategy: option::of(String::arbitrary())
+  authors:
+    '@id': schema:author
+    description: The authors of the code and content in the styled node.
+    type: array
+    items:
+      $ref: Author
+    strip: [authors]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+    dom:
+      elem: span
+  provenance:
+    '@id': stencila:provenance
+    description: A summary of the provenance of the code and content in the styed node.
+    type: array
+    items:
+      $ref: ProvenanceCount
+    strip: [provenance]
+    dom:
+      elem: span
+  compilationDigest:
+    '@id': stencila:compilationDigest
+    description: A digest of the `code` and `styleLanguage`.
+    $comment: Used to avoid unnecessary transpilation to CSS.
+    $ref: CompilationDigest
+    strip: [compilation]
+  compilationMessages:
+    '@id': stencila:compilationMessages
+    description: Messages generated while parsing and transpiling the style.
+    type: array
+    items:
+      $ref: CompilationMessage
+    strip: [compilation]
+  css:
+    '@id': stencila:css
+    description: A Cascading Style Sheet (CSS) transpiled from the `code` property.
+    type: string
+    strip: [output]
+  classList:
+    '@id': stencila:classList
+    description: A space separated list of class names associated with the node.
+    type: string
+    $comment: |
+      Analogous to the [`classList` property of an `Element`](https://developer.mozilla.org/en-US/docs/Web/API/Element/classList)
+      in the Web API.

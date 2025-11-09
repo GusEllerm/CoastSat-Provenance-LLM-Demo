@@ -1,0 +1,17 @@
+[package]
+name = "publish-ghost"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+cli-utils = { "path" = "../cli-utils" }
+codec-text = { "path" = "../codec-text" }
+common = { "path" = "../common" }
+document = { path = "../document" }
+jsonwebtoken = { version = "9.3.1", default-features = false }
+node-media = { "path" = "../node-media" }
+secrets = { "path" = "../secrets" }
+url = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,39 @@
+title: ImageObject
+'@id': schema:ImageObject
+nick: img
+extends: MediaObject
+category: works
+description: An image file.
+dom:
+  derive: false
+html:
+  elem: img
+  special: true
+jats:
+  elem: inline-graphic
+  special: true
+latex:
+  derive: false
+markdown:
+  derive: false
+core:
+  - caption
+  - title
+proptest: {}
+properties:
+  caption:
+    '@id': schema:caption
+    description: The caption for this image.
+    html:
+      attr: alt
+    type: array
+    items:
+      $ref: Inline
+    patch:
+      formats: [md, smd, myst, ipynb, qmd, lexical, koenig]
+    dom:
+      elem: span
+  thumbnail:
+    '@id': schema:thumbnail
+    description: Thumbnail image of this image.
+    $ref: ImageObject

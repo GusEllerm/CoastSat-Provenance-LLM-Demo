@@ -1,0 +1,11 @@
+[package]
+name = "status"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+common = { path = "../common" }
+schemars = { version = "1.0.4", features = ["indexmap2"] }
+
+[lints]
+workspace = true

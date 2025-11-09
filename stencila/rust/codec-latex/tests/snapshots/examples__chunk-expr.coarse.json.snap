@@ -1,0 +1,80 @@
+---
+source: rust/codec-latex/tests/examples.rs
+expression: article
+---
+{
+  "type": "Article",
+  "content": [
+    {
+      "type": "RawBlock",
+      "format": "latex",
+      "content": {
+        "string": "\\documentclass{article}\n\n\\begin{document}\n\n\\title{Knitting LaTeX and code with Stencila}\n\nOne plus two equals "
+      }
+    },
+    {
+      "type": "InlinesBlock",
+      "content": [
+        {
+          "type": "CodeExpression",
+          "code": {
+            "string": "1 + 2"
+          }
+        }
+      ]
+    },
+    {
+      "type": "RawBlock",
+      "format": "latex",
+      "content": {
+        "string": ".\n\nNo language or other options:\n\n"
+      }
+    },
+    {
+      "type": "CodeChunk",
+      "code": {
+        "string": "3 + 1\n"
+      }
+    },
+    {
+      "type": "RawBlock",
+      "format": "latex",
+      "content": {
+        "string": "\nWith lang and options:\n\n"
+      }
+    },
+    {
+      "type": "CodeChunk",
+      "code": {
+        "string": "x <- 3\n3 + 2\n"
+      },
+      "programmingLanguage": "r",
+      "isEchoed": true,
+      "isHidden": true
+    },
+    {
+      "type": "RawBlock",
+      "format": "latex",
+      "content": {
+        "string": "\n"
+      }
+    },
+    {
+      "type": "CodeChunk",
+      "code": {
+        "string": "#| fig.height: 6\n#| fig.width: 12\nplot(1:10)\n"
+      },
+      "programmingLanguage": "r"
+    },
+    {
+      "type": "RawBlock",
+      "format": "latex",
+      "content": {
+        "string": "\n\\end{document}\n"
+      }
+    }
+  ],
+  "repository": "https://github.com/stencila/stencila",
+  "path": "rust/codec-latex/tests/examples/chunk-expr.tex",
+  "commit": "redacted"
+}

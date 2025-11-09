@@ -1,0 +1,171 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "type": "Article",
+  "content": [
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A paragraph with an instruction to insert content "
+        },
+        {
+          "type": "InstructionInline",
+          "instructionType": "Create",
+          "message": {
+            "type": "InstructionMessage",
+            "parts": [{ "type": "Text", "value": "insert an inline" }]
+          }
+        },
+        {
+          "type": "Text",
+          "value": "."
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "A paragraph with an instruction to edit some existing content: "
+        },
+        {
+          "type": "InstructionInline",
+          "instructionType": "Create",
+          "message": {
+            "type": "InstructionMessage",
+            "parts": [{ "type": "Text", "value": "improve this" }]
+          },
+          "content": [
+            {
+              "type": "Text",
+              "value": "existing content"
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "value": "."
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "Instructions with a prompt: "
+        },
+        {
+          "type": "InstructionInline",
+          "instructionType": "Create",
+          "prompt": {
+            "type": "PromptBlock",
+            "target": "math"
+          },
+          "message": {
+            "type": "InstructionMessage",
+            "parts": [
+              { "type": "Text", "value": "equation for surface area of cube" }
+            ]
+          }
+        },
+        {
+          "type": "Text",
+          "value": " with a blank instruction "
+        },
+        {
+          "type": "InstructionInline",
+          "instructionType": "Create",
+          "prompt": {
+            "type": "PromptBlock",
+            "target": "math"
+          }
+        },
+        {
+          "type": "Text",
+          "value": " and "
+        },
+        {
+          "type": "InstructionInline",
+          "instructionType": "Edit",
+          "prompt": {
+            "type": "PromptBlock",
+            "target": "edit"
+          },
+          "message": {
+            "type": "InstructionMessage",
+            "parts": [{ "type": "Text", "value": "please improve this" }]
+          },
+          "content": [
+            {
+              "type": "Text",
+              "value": "existing content"
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "value": "."
+        }
+      ]
+    },
+    {
+      "type": "Paragraph",
+      "content": [
+        {
+          "type": "Text",
+          "value": "Instructions with a suggestion: "
+        },
+        {
+          "type": "InstructionInline",
+          "instructionType": "Create",
+          "prompt": {
+            "type": "PromptBlock",
+            "target": "math"
+          },
+          "message": {
+            "type": "InstructionMessage",
+            "parts": [{ "type": "Text", "value": "area of circle" }]
+          },
+          "suggestions": [
+            {
+              "type": "SuggestionInline",
+              "content": [
+                {
+                  "type": "MathInline",
+                  "code": "2 /pi r^2",
+                  "mathLanguage": "tex"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "value": " and "
+        },
+        {
+          "type": "InstructionInline",
+          "instructionType": "Edit",
+          "message": {
+            "type": "InstructionMessage",
+            "parts": [{ "type": "Text", "value": "improve" }]
+          },
+          "content": [{ "type": "Text", "value": "existing content" }],
+          "suggestions": [
+            {
+              "type": "SuggestionInline",
+              "content": [{ "type": "Text", "value": "improved content" }]
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "value": "."
+        }
+      ]
+    }
+  ]
+}

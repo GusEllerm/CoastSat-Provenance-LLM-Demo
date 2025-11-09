@@ -1,0 +1,142 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "@context": "https://stencila.org/context.jsonld",
+  "type": "Article",
+  "content": [
+    {
+      "type": "CodeChunk",
+      "code": "import logging\n\nlogger = logging.getLogger('test')\nlogger.setLevel('DEBUG')\nlogger.debug('a debug message')\nlogger.info('some info')\nlogger.warn('a warning')\nlogger.error('an error')",
+      "programmingLanguage": "python",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 17895925889447038124
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 17895925889447038124
+      },
+      "executionCount": 1,
+      "executionRequired": "ExecutionFailed",
+      "executionStatus": "Errors",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644293806,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 562,
+        "timeUnit": "Millisecond"
+      },
+      "executionMessages": [
+        {
+          "type": "ExecutionMessage",
+          "level": "Debug",
+          "message": "a debug message",
+          "errorType": "test"
+        },
+        {
+          "type": "ExecutionMessage",
+          "level": "Info",
+          "message": "some info",
+          "errorType": "test"
+        },
+        {
+          "type": "ExecutionMessage",
+          "level": "Warning",
+          "message": "a warning",
+          "errorType": "test"
+        },
+        {
+          "type": "ExecutionMessage",
+          "level": "Error",
+          "message": "an error",
+          "errorType": "test"
+        }
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "code": "if # This is a syntax error",
+      "programmingLanguage": "python",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 3336210365850448917
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 3336210365850448917
+      },
+      "executionCount": 1,
+      "executionRequired": "ExecutionFailed",
+      "executionStatus": "Exceptions",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644293807,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 0,
+        "timeUnit": "Millisecond"
+      },
+      "executionMessages": [
+        {
+          "type": "ExecutionMessage",
+          "level": "Exception",
+          "message": "invalid syntax (<code>, line 1)",
+          "errorType": "SyntaxError",
+          "stackTrace": "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<code>\", line 1\n    if # This is a syntax error\n    ^^\nSyntaxError: invalid syntax"
+        }
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "code": "foo # This is a runtime error",
+      "programmingLanguage": "python",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 9711510898348166796
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 9711510898348166796
+      },
+      "executionCount": 1,
+      "executionRequired": "ExecutionFailed",
+      "executionStatus": "Exceptions",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644293808,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 1,
+        "timeUnit": "Millisecond"
+      },
+      "executionMessages": [
+        {
+          "type": "ExecutionMessage",
+          "level": "Exception",
+          "message": "name 'foo' is not defined",
+          "errorType": "NameError",
+          "stackTrace": "File \"/home/nokome/.config/stencila/kernels/python\", line 506, in execute\n    value = eval(last, CONTEXT)\n            ^^^^^^^^^^^^^^^^^^^\n  File \"<code>\", line 1, in <module>\nNameError: name 'foo' is not define"
+        }
+      ]
+    }
+  ],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1714644293808,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 564,
+    "timeUnit": "Millisecond"
+  }
+}

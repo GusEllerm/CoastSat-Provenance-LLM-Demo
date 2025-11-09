@@ -1,0 +1,449 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 67
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: A note.
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 7
+        - type: Note
+          noteType: Footnote
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: A footnote
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 10
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 10
+                  characterPercent: 100
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 17
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: More notes.
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 11
+        - type: Note
+          noteType: Footnote
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: A footnote with...
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 18
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 18
+                  characterPercent: 100
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "some text:"
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 10
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 10
+                  characterPercent: 100
+            - type: QuoteBlock
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: and a quote
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 11
+                  authors:
+                    - type: AuthorRole
+                      author:
+                        type: Person
+                        givenNames:
+                          - Alice
+                      roleName: Importer
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 11
+                      characterPercent: 100
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 11
+                  characterPercent: 100
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 50
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: A note.
+        - type: Note
+          noteType: Footnote
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: A footnote
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: More notes.
+        - type: Note
+          noteType: Footnote
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: A footnote with...
+            - type: QuoteBlock
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: added quote.
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "some text:"
+            - type: QuoteBlock
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: and a quote
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 79
+      characterPercent: 100
+  content:
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: A note.
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 7
+        - type: Note
+          noteType: Footnote
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: A footnote
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 10
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 10
+                  characterPercent: 100
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 17
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: More notes.
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 11
+        - type: Note
+          noteType: Footnote
+          content:
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: A footnote with...
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 18
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 18
+                  characterPercent: 100
+            - type: QuoteBlock
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: added quote.
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 12
+                  authors:
+                    - type: AuthorRole
+                      author:
+                        type: Person
+                        givenNames:
+                          - Bob
+                      roleName: Writer
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 12
+                      characterPercent: 100
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Bob
+                  roleName: Writer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 12
+                  characterPercent: 100
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: "some text:"
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 10
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 10
+                  characterPercent: 100
+            - type: QuoteBlock
+              content:
+                - type: Paragraph
+                  content:
+                    - type: Text
+                      value:
+                        string: and a quote
+                        authorship:
+                          - - 1
+                            - 0
+                            - 0
+                            - 11
+                  authors:
+                    - type: AuthorRole
+                      author:
+                        type: Person
+                        givenNames:
+                          - Alice
+                      roleName: Importer
+                  provenance:
+                    - type: ProvenanceCount
+                      provenanceCategory: Hw
+                      characterCount: 11
+                      characterPercent: 100
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 11
+                  characterPercent: 100
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 62
+          characterPercent: 100
+ops:
+  - - - content
+      - 1
+      - content
+      - 1
+      - content
+    - Insert:
+        - - 1
+          - type: QuoteBlock
+            content:
+              - type: Paragraph
+                content:
+                  - type: Text
+                    value:
+                      string: added quote.

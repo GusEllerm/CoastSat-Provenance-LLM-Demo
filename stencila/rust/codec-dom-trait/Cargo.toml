@@ -1,0 +1,14 @@
+[package]
+name = "codec-dom-trait"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+codec-dom-derive = { path = "../codec-dom-derive" }
+common = { path = "../common" }
+html-escape = "0.2.13"
+node-id = { path = "../node-id" }
+node-type = { path = "../node-type" }
+
+[lints]
+workspace = true

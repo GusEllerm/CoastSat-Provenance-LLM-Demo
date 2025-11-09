@@ -1,0 +1,14 @@
+title: TableRowType
+'@id': stencila:TableRowType
+extends: Enumeration
+category: works
+description: Indicates whether the row is in the header, body or footer of the table.
+proptest: {}
+default: BodyRow
+anyOf:
+  - const: HeaderRow
+    '@id': stencila:HeaderRow
+  - const: BodyRow
+    '@id': stencila:BodyRow
+  - const: FooterRow
+    '@id': stencila:FooterRow

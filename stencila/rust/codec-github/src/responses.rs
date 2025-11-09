@@ -1,0 +1,29 @@
+use serde::Deserialize;
+
+use crate::search_code::CodeSearchItem;
+use crate::search_repos::RepositorySearchItem;
+use crate::search_users::UserSearchItem;
+
+/// The response from GitHub search API endpoints
+///
+/// See https://docs.github.com/en/rest/search/search
+#[derive(Deserialize)]
+pub struct SearchResponse<T> {
+    /// Total number of search results
+    pub total_count: i64,
+
+    /// Whether the search results are incomplete
+    pub incomplete_results: bool,
+
+    /// Array of search result items
+    pub items: Vec<T>,
+}
+
+/// Response for search code API calls
+pub type SearchCodeResponse = SearchResponse<CodeSearchItem>;
+
+/// Response for search users API calls
+pub type SearchUsersResponse = SearchResponse<UserSearchItem>;
+
+/// Response for search repositories API calls
+pub type SearchRepositoriesResponse = SearchResponse<RepositorySearchItem>;

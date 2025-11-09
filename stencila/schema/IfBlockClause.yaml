@@ -1,0 +1,40 @@
+title: IfBlockClause
+'@id': stencila:IfBlockClause
+nick: ibc
+extends: CodeExecutable
+category: flow
+description: A clause within an `IfBlock` node.
+status: beta
+markdown:
+  derive: false
+proptest: {}
+required:
+  - content
+core:
+  - isActive
+properties:
+  isActive:
+    '@id': stencila:isActive
+    description: Whether this clause is the active clause in the parent `IfBlock` node
+    type: boolean
+    strip: [output]
+  content:
+    '@id': stencila:content
+    description: The content to render if the result is truthy
+    type: array
+    items:
+      $ref: Block
+    dom:
+      elem: div
+    html:
+      slot: div
+    proptest:
+      min:
+        description: A single, simple paragraph.
+        value: vec![p([t("If clause content")])]
+      low:
+        description: Generate up to two arbitrary, non-recursive, block nodes.
+        strategy: vec_blocks_non_recursive(2)
+      max:
+        description: Generate up to four arbitrary, non-recursive, block nodes.
+        strategy: vec_blocks_non_recursive(4)

@@ -1,0 +1,21 @@
+title: Duration
+'@id': schema:Duration
+extends: Entity
+category: data
+description: A value that represents the difference between two timestamps.
+jats:
+  elem: duration
+  special: true
+proptest: {}
+required:
+  - value
+  - timeUnit
+properties:
+  value:
+    '@id': schema:value
+    description: The time difference in `timeUnit`s.
+    type: integer
+  timeUnit:
+    '@id': stencila:timeUnit
+    description: The time unit that the `value` represents.
+    $ref: TimeUnit

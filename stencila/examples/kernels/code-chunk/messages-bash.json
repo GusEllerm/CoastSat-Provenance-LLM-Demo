@@ -1,0 +1,86 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "@context": "https://stencila.org/context.jsonld",
+  "type": "Article",
+  "content": [
+    {
+      "type": "CodeChunk",
+      "code": "if # This is a syntax error",
+      "programmingLanguage": "bash",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 10543643426506011557
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 10543643426506011557
+      },
+      "executionCount": 1,
+      "executionRequired": "ExecutionFailed",
+      "executionStatus": "Errors",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644292306,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 20,
+        "timeUnit": "Millisecond"
+      },
+      "executionMessages": [
+        {
+          "type": "ExecutionMessage",
+          "level": "Error",
+          "message": "/home/nokome/.config/stencila/kernels/bash: eval: line 76: syntax error: unexpected end of file\n"
+        }
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "code": "foo # This is a runtime error",
+      "programmingLanguage": "bash",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 17604437288788554289
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 17604437288788554289
+      },
+      "executionCount": 1,
+      "executionRequired": "ExecutionFailed",
+      "executionStatus": "Errors",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644292310,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 4,
+        "timeUnit": "Millisecond"
+      },
+      "executionMessages": [
+        {
+          "type": "ExecutionMessage",
+          "level": "Error",
+          "message": "/home/nokome/.config/stencila/kernels/bash: line 75: foo: command not found\n"
+        }
+      ]
+    }
+  ],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1714644292310,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 25,
+    "timeUnit": "Millisecond"
+  }
+}

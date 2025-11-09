@@ -1,0 +1,110 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/TableRow.schema.json",
+  "@id": "stencila:TableRow",
+  "title": "TableRow",
+  "nick": "tbr",
+  "extends": [
+    "Entity"
+  ],
+  "category": "works",
+  "description": "A row within a Table.",
+  "dom": {
+    "derive": false
+  },
+  "html": {
+    "elem": "tr"
+  },
+  "jats": {
+    "special": true
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "cells"
+  ],
+  "core": [
+    "id",
+    "rowType"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "cells": {
+      "@id": "stencila:cells",
+      "description": "An array of cells in the row.",
+      "aliases": [
+        "cell"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "walk": true,
+      "dom": {
+        "elem": "tr"
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a single, arbitrary, table cell.",
+          "strategy": "vec(TableCell::arbitrary(), size_range(1..=1))"
+        },
+        "low": {
+          "description": "Generate two, arbitrary, table cells.",
+          "strategy": "vec(TableCell::arbitrary(), size_range(2..=2))"
+        },
+        "high": {
+          "description": "Generate four, arbitrary, table cells.",
+          "strategy": "vec(TableCell::arbitrary(), size_range(4..=4))"
+        },
+        "max": {
+          "description": "Generate up to eight, arbitrary, table cells.",
+          "strategy": "vec(TableCell::arbitrary(), size_range(1..=8))"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "TableCell.schema.json"
+      }
+    },
+    "rowType": {
+      "@id": "stencila:rowType",
+      "description": "The type of row.",
+      "aliases": [
+        "row-type",
+        "row_type"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "$ref": "TableRowType.schema.json"
+    }
+  }
+}

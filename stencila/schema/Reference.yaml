@@ -1,0 +1,160 @@
+title: Reference
+"@id": stencila:Reference
+extends: Entity
+category: works
+description: A reference to a creative work, including books, movies, photographs, software programs, etc.
+markdown:
+  derive: false
+core:
+  - workType
+  - doi
+  - authors
+  - editors
+  - publisher
+  - date
+  - title
+  - isPartOf
+  - volumeNumber
+  - issueNumber
+  - pageStart
+  - pageEnd
+  - pagination
+  - version
+  - identifiers
+  - url
+  - text
+properties:
+  workType:
+    "@id": stencila:workType
+    description: The type of `CreativeWork` being referenced(e.g. Article, Book, Dataset).
+    $ref: CreativeWorkType
+  doi:
+    "@id": stencila:doi
+    description: The Digital Object Identifier (https://doi.org/) of the work being referenced.
+    type: string
+  authors:
+    "@id": schema:author
+    description: The authors of the work.
+    type: array
+    items:
+      $ref: Author
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+  editors:
+    "@id": schema:editor
+    description: People who edited the referenced work.
+    $comment: |
+      Note that, consistent with schema.org, this property can only include
+      a `Person`, unlike `authors` which can also include `Organization`.
+    type: array
+    items:
+      $ref: Person
+    strip: [metadata]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+  publisher:
+    "@id": schema:publisher
+    description: |
+      A publisher of the referenced work.
+    anyOf:
+      - $ref: Person
+      - $ref: Organization
+    strip: [metadata]
+    serde:
+      deserializeWith: option_string_or_object
+  date:
+    "@id": schema:date
+    description: Date of first publication.
+    $ref: Date
+    serde:
+      deserializeWith: option_string_or_object
+    dom:
+      with: Date::to_dom_attr
+  title:
+    "@id": schema:headline
+    description: The title of the referenced work.
+    $comment: |
+      An array of inlines (rather than a string) to be consistent with `CreativeWork.title`
+      and allow for italicization of species names, math etc.
+    aliases:
+      - headline
+    type: array
+    items:
+      $ref: Inline
+    walk: true
+    dom:
+      elem: span
+  isPartOf:
+    "@id": schema:isPartOf
+    description: Another `Reference` that this reference is a part of.
+    $ref: Reference
+  volumeNumber:
+    "@id": schema:volumeNumber
+    description: |
+      Identifies the volume of publication or multi-part work; for example, "iii" or "2".
+    anyOf:
+      - type: integer
+      - type: string
+  issueNumber:
+    "@id": schema:issueNumber
+    description: |
+      Identifies the issue of a serial publication; for example, "3" or "12".
+    anyOf:
+      - type: integer
+      - type: string
+  pageStart:
+    "@id": schema:pageStart
+    description: The page on which the article starts; for example "135" or "xiii".
+    anyOf:
+      - type: integer
+      - type: string
+  pageEnd:
+    "@id": schema:pageEnd
+    description: The page on which the article ends; for example "138" or "xvi".
+    anyOf:
+      - type: integer
+      - type: string
+  pagination:
+    "@id": schema:pagination
+    description: |
+      Any description of pages that is not separated into pageStart and pageEnd;
+      for example, "1-6, 9, 55".
+    type: string
+  version:
+    "@id": schema:version
+    description: The version/edition of the referenced work.
+    $comment: |
+      In this case `string` is listed as an alternative before `number` to
+      avoid semantic version numbers e.g. `1.0` being parsed, and subsequently
+      encoded, as `1` thereby resulting in loss of information.
+    anyOf:
+      - type: string
+      - type: number
+    strip: [metadata]
+  identifiers:
+    "@id": schema:identifier
+    description: Any kind of identifier for the referenced work.
+    $comment: |
+      Some identifiers have specific properties e.g the `doi` property.
+      These should be used in preference to this property which is intended
+      for identifiers that do not yet have a specific property like ISBN.
+      Identifiers can be represented as strings, but using a `PropertyValue`
+      will usually be better because it allows for `propertyID` (i.e. the type of identifier).
+    type: array
+    items:
+      anyOf:
+        - $ref: PropertyValue
+        - type: string
+    strip: [metadata]
+  url:
+    "@id": schema:url
+    description: The URL of the referenced work.
+    type: string
+    format: uri
+  text:
+    "@id": schema:text
+    description: Plain text representation of the referenced work.
+    $comment: |
+      Used when the properties of a reference can not be extract from plain text.
+      In those circumstances, we fallback to using this `text` property.
+    type: string

@@ -1,0 +1,56 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/data
+title: CoastSat Data Lineage Summary
+description: Describe how a data artefact is produced and used within the CoastSat workflow.
+
+version: "0.1.1"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are explaining the provenance of a single data artefact inside the CoastSat workflow.
+
+Step metadata is provided as JSON with these keys:
+- `artefact` (parameter identifier, human summary, `total_files`)
+- `produced_by.step` (name, id, position, language, `code_repository`, `code_repository_markdown` when available)
+- `metadata` (name, type, encoding format, size, hash, link when provided)
+- `files` (list of notable file entries with `link`, encoding format, size)
+- `counts` (`total_files`, `files_listed`)
+- `context_lines` (additional factual notes)
+
+Return Markdown with the following sections (omit a section only when the metadata is missing):
+
+**Produced by:** identify the originating step and briefly describe what it does to create the artefact. Use the Markdown-linked step reference when `code_repository_markdown` is provided.
+
+**Characteristics:** list key properties (format, size, hash, purpose) using only supplied metadata.
+
+**Related files:** bullet list of the notable files, linking each with the provided Markdown `link`. If there are more files than listed, note the total from `counts.total_files`.
+
+Guidelines:
+- Use only the provided context; do not infer or invent additional behaviour.
+- Prefer aggregate wording when many files are involved (e.g. “hundreds of tide records”).
+- Maintain a concise, factual tone.
+- Render every supplied URL/path as a Markdown link.
+
+# Example
+
+```
+**Produced by:** `[tidal_correction.ipynb](https://github.com/UoA-eResearch/CoastSat/blob/b91acb30495b8cbaa237ac74dd9aa3c08def3c20/tidal_correction.ipynb)` — applies NIWA tide corrections to raw transect series using API downloads and despiking routines.
+
+**Characteristics:** CSV (tidally corrected transect series); SHA-256 `d94b79…`; stored at [transect_time_series_tidally_corrected.csv](file:///.../transect_time_series_tidally_corrected.csv); generated for 3,703 shoreline transects.
+
+**Related files:**
+- [transect_time_series_tidally_corrected.csv](file:///.../transect_time_series_tidally_corrected.csv)
+- [tides.csv](file:///.../tides.csv)
+```
+
+# Artefact Metadata
+
+{{ instruction.target }}
+
+# Shared Context
+
+:::: include ../../partials/context/coastsat/overview.smd

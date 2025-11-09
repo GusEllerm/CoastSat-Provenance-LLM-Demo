@@ -1,0 +1,127 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "@context": "https://stencila.org/context.jsonld",
+  "type": "Article",
+  "content": [
+    {
+      "type": "CodeChunk",
+      "code": "warning('a warning')\nstop('an error')",
+      "programmingLanguage": "r",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 16339334101103122313
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 16339334101103122313
+      },
+      "executionCount": 1,
+      "executionRequired": "ExecutionFailed",
+      "executionStatus": "Exceptions",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644294854,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 275,
+        "timeUnit": "Millisecond"
+      },
+      "executionMessages": [
+        {
+          "type": "ExecutionMessage",
+          "level": "Warning",
+          "message": "a warning"
+        },
+        {
+          "type": "ExecutionMessage",
+          "level": "Exception",
+          "message": "an error",
+          "errorType": "RuntimeError"
+        }
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "code": "if # This is a syntax error",
+      "programmingLanguage": "r",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 5654209351285914488
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 5654209351285914488
+      },
+      "executionCount": 1,
+      "executionRequired": "ExecutionFailed",
+      "executionStatus": "Exceptions",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644294864,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 9,
+        "timeUnit": "Millisecond"
+      },
+      "executionMessages": [
+        {
+          "type": "ExecutionMessage",
+          "level": "Exception",
+          "message": "<text>:2:0: unexpected end of input\n1: if # This is a syntax error\n   ^",
+          "errorType": "SyntaxError"
+        }
+      ]
+    },
+    {
+      "type": "CodeChunk",
+      "code": "foo # This is a runtime error",
+      "programmingLanguage": "r",
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 3399545167262736070
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 3399545167262736070
+      },
+      "executionCount": 1,
+      "executionRequired": "ExecutionFailed",
+      "executionStatus": "Exceptions",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644294870,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 6,
+        "timeUnit": "Millisecond"
+      },
+      "executionMessages": [
+        {
+          "type": "ExecutionMessage",
+          "level": "Exception",
+          "message": "object 'foo' not found",
+          "errorType": "RuntimeError"
+        }
+      ]
+    }
+  ],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1714644294870,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 291,
+    "timeUnit": "Millisecond"
+  }
+}

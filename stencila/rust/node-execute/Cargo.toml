@@ -1,0 +1,25 @@
+[package]
+name = "node-execute"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+base64 = { workspace = true }
+codec-cbor = { path = "../codec-cbor" }
+codec-markdown = { path = "../codec-markdown" }
+codecs = { path = "../codecs" }
+common = { path = "../common" }
+kernels = { path = "../kernels" }
+stencila-linters = { path = "../linters" }
+models = { path = "../models" }
+node-contains = { path = "../node-contains" }
+node-diagnostics = { path = "../node-diagnostics" }
+parsers = { path = "../parsers" }
+prompts = { path = "../prompts" }
+schema = { path = "../schema" }
+
+[dev-dependencies]
+common-dev = { path = "../common-dev" }
+
+[lints]
+workspace = true

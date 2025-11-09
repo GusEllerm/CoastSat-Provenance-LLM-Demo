@@ -1,0 +1,130 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/QuoteBlock.schema.json",
+  "@id": "stencila:QuoteBlock",
+  "title": "QuoteBlock",
+  "nick": "qtb",
+  "extends": [
+    "Entity"
+  ],
+  "category": "prose",
+  "description": "A section quoted from somewhere else.",
+  "html": {
+    "elem": "blockquote"
+  },
+  "jats": {
+    "elem": "disp-quote"
+  },
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "content"
+  ],
+  "core": [
+    "id",
+    "source",
+    "authors",
+    "provenance"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "source": {
+      "@id": "stencila:source",
+      "description": "The source of the quote.",
+      "anyOf": [
+        {
+          "$ref": "Citation.schema.json"
+        },
+        {
+          "$ref": "Text.schema.json"
+        }
+      ]
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "The content of the quote.",
+      "dom": {
+        "elem": "blockquote"
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a single arbitrary paragraph.",
+          "strategy": "vec_paragraphs(1)"
+        },
+        "low": {
+          "description": "Generate up to two arbitrary, non-recursive, block nodes.",
+          "strategy": "vec_blocks_non_recursive(2)"
+        },
+        "high": {
+          "description": "Generate up to four arbitrary, non-recursive, block nodes.",
+          "strategy": "vec_blocks_non_recursive(4)"
+        },
+        "max": {
+          "description": "Generate up to eight arbitrary, non-recursive, block nodes.",
+          "strategy": "vec_blocks_non_recursive(8)"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Block.schema.json"
+      }
+    },
+    "authors": {
+      "@id": "schema:author",
+      "description": "The authors of the quote.",
+      "aliases": [
+        "author"
+      ],
+      "strip": [
+        "authors"
+      ],
+      "serde": {
+        "deserializeWith": "option_one_or_many_string_or_object"
+      },
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Author.schema.json"
+      }
+    },
+    "provenance": {
+      "@id": "stencila:provenance",
+      "description": "A summary of the provenance of the content within the section.",
+      "strip": [
+        "provenance"
+      ],
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ProvenanceCount.schema.json"
+      }
+    }
+  }
+}

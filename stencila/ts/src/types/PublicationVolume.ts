@@ -1,0 +1,46 @@
+// Generated file; do not edit. See https://github.com/stencila/stencila/tree/main/rust/schema-gen
+
+import { CreativeWork } from "./CreativeWork.js";
+import { IntegerOrString } from "./IntegerOrString.js";
+
+/**
+ * A part of a successively published publication such as a periodical or multi-volume work.
+ */
+export class PublicationVolume extends CreativeWork {
+  // @ts-expect-error 'not assignable to the same property in base type'
+  type: "PublicationVolume";
+
+  /**
+   * The page on which the volume starts; for example "135" or "xiii".
+   */
+  pageStart?: IntegerOrString;
+
+  /**
+   * The page on which the volume ends; for example "138" or "xvi".
+   */
+  pageEnd?: IntegerOrString;
+
+  /**
+   * Any description of pages that is not separated into pageStart and pageEnd; for example, "1-6, 9, 55".
+   */
+  pagination?: string;
+
+  /**
+   * Identifies the volume of publication or multi-part work; for example, "iii" or "2".
+   */
+  volumeNumber?: IntegerOrString;
+
+  constructor(options?: Partial<PublicationVolume>) {
+    super();
+    this.type = "PublicationVolume";
+    if (options) Object.assign(this, options);
+    
+  }
+}
+
+/**
+* Create a new `PublicationVolume`
+*/
+export function publicationVolume(options?: Partial<PublicationVolume>): PublicationVolume {
+  return new PublicationVolume(options);
+}

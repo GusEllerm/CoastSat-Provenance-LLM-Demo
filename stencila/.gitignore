@@ -1,0 +1,13 @@
+# Patterns ignored throughout this repo
+.DS_Store
+.envrc
+.idea
+.parcel-cache
+.venv
+lcov.info
+node_modules
+
+# Path specific patterns ignored
+/target
+/codecov
+/codecov.*

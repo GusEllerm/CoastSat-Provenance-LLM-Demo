@@ -1,0 +1,18 @@
+{
+  "@id": "https://stencila.org/Array",
+  "name": "Array",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "https://schema.org/",
+    "stencila": "https://stencila.org/"
+  },
+  "@graph": [
+    {
+      "@id": "stencila:Array",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Array",
+      "rdfs:comment": "A value comprised of other primitive nodes."
+    }
+  ]
+}

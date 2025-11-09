@@ -1,0 +1,49 @@
+{
+  "$schema": "https://stencila.org/Article.schema.json",
+  "@context": "https://stencila.org/context.jsonld",
+  "type": "Article",
+  "content": [
+    {
+      "type": "CodeChunk",
+      "code": "print(\"Hello world!\")",
+      "programmingLanguage": "r",
+      "outputs": [
+        "Hello world!"
+      ],
+      "compilationDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 14805953098595234719
+      },
+      "executionDigest": {
+        "type": "CompilationDigest",
+        "stateDigest": 14805953098595234719
+      },
+      "executionCount": 1,
+      "executionRequired": "No",
+      "executionStatus": "Succeeded",
+      "executionEnded": {
+        "type": "Timestamp",
+        "value": 1714644291908,
+        "timeUnit": "Millisecond"
+      },
+      "executionDuration": {
+        "type": "Duration",
+        "value": 310,
+        "timeUnit": "Millisecond"
+      }
+    }
+  ],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1714644291908,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 310,
+    "timeUnit": "Millisecond"
+  }
+}

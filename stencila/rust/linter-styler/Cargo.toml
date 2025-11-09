@@ -1,0 +1,11 @@
+[package]
+name = "stencila-linter-styler"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+stencila-linter = { path = "../linter" }
+tools = { path = "../tools" }
+
+[lints]
+workspace = true

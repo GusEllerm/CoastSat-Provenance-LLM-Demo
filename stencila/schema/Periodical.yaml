@@ -1,0 +1,37 @@
+title: Periodical
+'@id': schema:Periodical
+nick: pdl
+extends: CreativeWork
+category: works
+description: A periodical publication.
+$comment: |
+  A publication in any medium issued in successive parts bearing numerical or chronological designations and intended,
+  such as a magazine, scholarly journal, or newspaper to continue indefinitely. Often embedded as the `isPartOf` property
+  in a [`PublicationVolume`](./PublicationVolume).
+core:
+  - name
+properties:
+  dateStart:
+    '@id': schema:startDate
+    description: The date this Periodical was first published.
+    $ref: Date
+    serde:
+      deserializeWith: option_string_or_object
+  dateEnd:
+    '@id': schema:endDate
+    description: The date this Periodical ceased publication.
+    $ref: Date
+    serde:
+      deserializeWith: option_string_or_object
+  issns:
+    '@id': schema:issn
+    description: The International Standard Serial Number(s) (ISSN) that identifies this serial publication.
+    $comment: |
+      A periodical may have multiple ISSN (e.g. for online and print versions).
+      See [issn.org](https://www.issn.org/understanding-the-issn/assignment-rules/the-issn-for-electronic-media/)
+      for more details.
+    type: array
+    items:
+      type: string
+    serde:
+      deserializeWith: option_csv_or_array

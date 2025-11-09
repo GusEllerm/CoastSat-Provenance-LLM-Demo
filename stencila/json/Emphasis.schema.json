@@ -1,0 +1,85 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Emphasis.schema.json",
+  "@id": "stencila:Emphasis",
+  "title": "Emphasis",
+  "extends": [
+    "Mark"
+  ],
+  "category": "prose",
+  "description": "Emphasized content.",
+  "$comment": "Analogues of `Emphasis` in other schema include:\n  - HTML [`<em>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/em)\n  - JATS XML [`<italic>`](https://jats.nlm.nih.gov/archiving/tag-library/1.1/element/italic.html)\n  - MDAST [`Emphasis`](https://github.com/syntax-tree/mdast#emphasis)\n  - Pandoc [`Emph`](https://github.com/jgm/pandoc-types/blob/1.17.5.4/Text/Pandoc/Definition.hs#L256)\n",
+  "dom": {
+    "elem": "em"
+  },
+  "html": {
+    "elem": "em"
+  },
+  "jats": {
+    "elem": "italic"
+  },
+  "latex": {
+    "command": "emph"
+  },
+  "markdown": {
+    "template": "_{{content}}_",
+    "escape": "_"
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "content"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "The content that is marked.",
+      "dom": {
+        "elem": "none"
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a single fixed text value.",
+          "value": "vec![t(\"text\")]"
+        },
+        "low": {
+          "description": "Generate a single arbitrary, non-recursive, inline node",
+          "strategy": "vec_inlines_non_recursive(1)"
+        },
+        "high": {
+          "description": "Generate up to two arbitrary, non-recursive, inline nodes",
+          "strategy": "vec_inlines_non_recursive(2)"
+        },
+        "max": {
+          "description": "Generate up to four arbitrary, non-recursive, inline nodes",
+          "strategy": "vec_inlines_non_recursive(4)"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Inline.schema.json"
+      }
+    }
+  }
+}

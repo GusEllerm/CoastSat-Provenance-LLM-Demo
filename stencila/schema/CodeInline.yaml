@@ -1,0 +1,15 @@
+title: CodeInline
+'@id': stencila:CodeInline
+nick: cdi
+extends: CodeStatic
+category: code
+description: Inline code.
+dom:
+  derive: false
+html:
+  elem: code
+jats:
+  elem: code
+markdown:
+  derive: false
+proptest: {}

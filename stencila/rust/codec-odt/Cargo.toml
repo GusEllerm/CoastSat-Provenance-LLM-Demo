@@ -1,0 +1,13 @@
+[package]
+name = "codec-odt"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+codec = { path = "../codec" }
+codec-json = { path = "../codec-json" }
+codec-pandoc = { path = "../codec-pandoc" }
+node-reconstitute = { path = "../node-reconstitute" }
+
+[lints]
+workspace = true

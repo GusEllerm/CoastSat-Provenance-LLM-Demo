@@ -1,0 +1,27 @@
+title: StyledBlock
+'@id': stencila:StyledBlock
+nick: stb
+status: beta
+extends: Styled
+category: style
+description: Styled block content.
+dom:
+  derive: false
+html:
+  elem: div
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}
+required:
+  - content
+properties:
+  content:
+    '@id': stencila:content
+    description: The content within the styled block
+    type: array
+    items:
+      $ref: Block
+    dom:
+      elem: div

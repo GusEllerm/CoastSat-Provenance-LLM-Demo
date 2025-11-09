@@ -1,0 +1,13 @@
+[package]
+name = "cloud"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+cached = { workspace = true }
+common = { "path" = "../common" }
+secrets = { "path" = "../secrets" }
+version = { "path" = "../version" }
+
+[lints]
+workspace = true

@@ -1,0 +1,579 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/ForBlock.schema.json",
+  "@id": "stencila:ForBlock",
+  "title": "ForBlock",
+  "nick": "frb",
+  "extends": [
+    "CodeExecutable"
+  ],
+  "category": "flow",
+  "description": "Repeat a block content for each item in an array.",
+  "status": "beta",
+  "latex": {
+    "derive": false
+  },
+  "markdown": {
+    "derive": false
+  },
+  "proptest": {},
+  "required": [
+    "type",
+    "code",
+    "variable",
+    "content"
+  ],
+  "core": [
+    "id",
+    "executionMode",
+    "programmingLanguage",
+    "executionBounds",
+    "authors",
+    "provenance",
+    "otherwise",
+    "iterations"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "executionMode": {
+      "@id": "stencila:executionMode",
+      "description": "Under which circumstances the node should be executed.",
+      "$comment": "This property is in the `code` strip scope, and is allowed to be patched by some formats,\nbecause it is not a byproduct of execution and can be part of the source of the document.\n",
+      "aliases": [
+        "execution-mode",
+        "execution_mode"
+      ],
+      "strip": [
+        "code"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex"
+        ]
+      },
+      "$ref": "ExecutionMode.schema.json"
+    },
+    "compilationDigest": {
+      "@id": "stencila:compilationDigest",
+      "description": "A digest of the content, semantics and dependencies of the node.",
+      "aliases": [
+        "compilation-digest",
+        "compilation_digest"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "dom": {
+        "skip": true
+      },
+      "$ref": "CompilationDigest.schema.json"
+    },
+    "compilationMessages": {
+      "@id": "stencila:compilationMessages",
+      "description": "Messages generated while compiling the code.",
+      "aliases": [
+        "compilation-messages",
+        "compilation_messages",
+        "compilationMessage",
+        "compilation-message",
+        "compilation_message"
+      ],
+      "strip": [
+        "compilation"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "CompilationMessage.schema.json"
+      }
+    },
+    "executionDigest": {
+      "@id": "stencila:executionDigest",
+      "description": "The `compilationDigest` of the node when it was last executed.",
+      "aliases": [
+        "execution-digest",
+        "execution_digest"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "dom": {
+        "skip": true
+      },
+      "$ref": "CompilationDigest.schema.json"
+    },
+    "executionDependencies": {
+      "@id": "stencila:executionDependencies",
+      "description": "The upstream dependencies of this node.",
+      "aliases": [
+        "execution-dependencies",
+        "execution_dependencies",
+        "executionDependency",
+        "execution-dependency",
+        "execution_dependency"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ExecutionDependency.schema.json"
+      }
+    },
+    "executionDependants": {
+      "@id": "stencila:executionDependants",
+      "description": "The downstream dependants of this node.",
+      "aliases": [
+        "execution-dependants",
+        "execution_dependants",
+        "executionDependant",
+        "execution-dependant",
+        "execution_dependant"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ExecutionDependant.schema.json"
+      }
+    },
+    "executionTags": {
+      "@id": "stencila:executionTags",
+      "description": "Tags in the code which affect its execution.",
+      "aliases": [
+        "execution-tags",
+        "execution_tags",
+        "executionTag",
+        "execution-tag",
+        "execution_tag"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ExecutionTag.schema.json"
+      }
+    },
+    "executionCount": {
+      "@id": "stencila:executionCount",
+      "description": "A count of the number of times that the node has been executed.",
+      "$comment": "Intended to increment with each successive execution of the node, including across sessions.\nNote that this differs to the `execution_count` in Jupyter Notebook format which is\nthe \"code cell's prompt number\" and which resets at the start of each new session.\n",
+      "aliases": [
+        "execution-count",
+        "execution_count"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "type": "integer",
+      "minimum": 0.0
+    },
+    "executionRequired": {
+      "@id": "stencila:executionRequired",
+      "description": "Whether, and why, the code requires execution or re-execution.",
+      "aliases": [
+        "execution-required",
+        "execution_required"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "$ref": "ExecutionRequired.schema.json"
+    },
+    "executionStatus": {
+      "@id": "stencila:executionStatus",
+      "description": "Status of the most recent, including any current, execution.",
+      "aliases": [
+        "execution-status",
+        "execution_status"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "$ref": "ExecutionStatus.schema.json"
+    },
+    "executionInstance": {
+      "@id": "stencila:executionInstance",
+      "description": "The id of the kernel instance that performed the last execution.",
+      "$comment": "Used to help identify whether execution is required due to the last execution\nbeing in a difference instance (e.g. after a kernel restart).\n",
+      "aliases": [
+        "execution-instance",
+        "execution_instance"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "type": "string"
+    },
+    "executionEnded": {
+      "@id": "stencila:executionEnded",
+      "description": "The timestamp when the last execution ended.",
+      "aliases": [
+        "execution-ended",
+        "execution_ended"
+      ],
+      "strip": [
+        "execution",
+        "timestamps"
+      ],
+      "dom": {
+        "with": "Timestamp::to_dom_attr"
+      },
+      "$ref": "Timestamp.schema.json"
+    },
+    "executionDuration": {
+      "@id": "stencila:executionDuration",
+      "description": "Duration of the last execution.",
+      "aliases": [
+        "execution-duration",
+        "execution_duration"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "dom": {
+        "with": "Duration::to_dom_attr"
+      },
+      "$ref": "Duration.schema.json"
+    },
+    "executionMessages": {
+      "@id": "stencila:executionMessages",
+      "description": "Messages emitted while executing the node.",
+      "aliases": [
+        "execution-messages",
+        "execution_messages",
+        "executionMessage",
+        "execution-message",
+        "execution_message"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ExecutionMessage.schema.json"
+      }
+    },
+    "code": {
+      "@id": "stencila:code",
+      "description": "The code.",
+      "strip": [
+        "code"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex"
+        ]
+      },
+      "jats": {
+        "content": true
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a simple fixed string of code.",
+          "value": "Cord::from(\"code\")"
+        },
+        "low": {
+          "description": "Generate a random string of up to 10 alphanumeric characters (excludes whitespace which\ncan be problematic in Markdown).\n",
+          "strategy": "r\"[a-zA-Z0-9]{1,10}\".prop_map(Cord::from)"
+        },
+        "high": {
+          "description": "Generate a random string of up to 100 characters (excluding control characters).\n",
+          "strategy": "r\"[^\\p{C}]{1,100}\".prop_map(Cord::from)"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "String::arbitrary().prop_map(Cord::from)"
+        }
+      },
+      "$ref": "Cord.schema.json"
+    },
+    "programmingLanguage": {
+      "@id": "schema:programmingLanguage",
+      "description": "The programming language of the code.",
+      "aliases": [
+        "programming-language",
+        "programming_language"
+      ],
+      "strip": [
+        "code"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex"
+        ]
+      },
+      "jats": {
+        "attr": "language"
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a simple fixed string.",
+          "value": "Some(String::from(\"lang\"))"
+        },
+        "low": {
+          "description": "Generate one of the well known programming language short names.",
+          "strategy": "option::of(r\"(cpp)|(js)|(py)|(r)|(ts)\")"
+        },
+        "high": {
+          "description": "Generate a random string of up to 10 alphanumeric characters.",
+          "strategy": "option::of(r\"[a-zA-Z0-9]{1,10}\")"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "option::of(String::arbitrary())"
+        }
+      },
+      "type": "string"
+    },
+    "executionBounds": {
+      "@id": "stencila:executionBounds",
+      "description": "The environment in which code should be executed.",
+      "$comment": "This property is in the `code` strip scope, and is allowed to be patched by some formats,\nbecause it is not a byproduct of execution and can be part of the source of the document.\n",
+      "aliases": [
+        "execution-bounds",
+        "execution_bounds"
+      ],
+      "strip": [
+        "code"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex"
+        ]
+      },
+      "$ref": "ExecutionBounds.schema.json"
+    },
+    "executionBounded": {
+      "@id": "stencila:executionBounded",
+      "description": "The execution bounds, if any, on the last execution.",
+      "aliases": [
+        "execution-bounded",
+        "execution_bounded"
+      ],
+      "strip": [
+        "execution"
+      ],
+      "$ref": "ExecutionBounds.schema.json"
+    },
+    "authors": {
+      "@id": "schema:author",
+      "description": "The authors of the executable code.",
+      "aliases": [
+        "author"
+      ],
+      "strip": [
+        "authors"
+      ],
+      "serde": {
+        "deserializeWith": "option_one_or_many_string_or_object"
+      },
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Author.schema.json"
+      }
+    },
+    "provenance": {
+      "@id": "stencila:provenance",
+      "description": "A summary of the provenance of the code.",
+      "strip": [
+        "provenance"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ProvenanceCount.schema.json"
+      }
+    },
+    "variable": {
+      "@id": "stencila:variable",
+      "description": "The name to give to the variable representing each item in the iterated array",
+      "strip": [
+        "code"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex"
+        ]
+      },
+      "proptest": {
+        "min": {
+          "description": "Generate a fixed variable name.",
+          "value": "String::from(\"item\")"
+        },
+        "low": {
+          "description": "Generate a random string of up to 10 alphanumeric characters (and at most one underscore to avoid\na clash with Markdown emphasis).\n",
+          "regex": "[a-zA-Z_][a-zA-Z0-9]{0,9}"
+        },
+        "high": {
+          "description": "Generate a random string of up to 100 characters (excluding control characters).\n",
+          "regex": "[^\\p{C}]{1,100}"
+        },
+        "max": {
+          "description": "Generate an arbitrary string.",
+          "strategy": "String::arbitrary()"
+        }
+      },
+      "type": "string"
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "The content to repeat for each item",
+      "strip": [
+        "code"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd",
+          "latex"
+        ]
+      },
+      "walk": true,
+      "dom": {
+        "elem": "div"
+      },
+      "proptest": {
+        "min": {
+          "description": "A single simple paragraph.",
+          "value": "vec![p([t(\"For content\")])]"
+        },
+        "low": {
+          "description": "Generate up to four arbitrary, non-recursive, block nodes.",
+          "strategy": "vec_blocks_non_recursive(4)"
+        },
+        "max": {
+          "description": "Generate up to eight arbitrary, non-recursive, block nodes.",
+          "strategy": "vec_blocks_non_recursive(8)"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Block.schema.json"
+      }
+    },
+    "otherwise": {
+      "@id": "stencila:otherwise",
+      "description": "The content to render if there are no items",
+      "strip": [
+        "code"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "walk": true,
+      "dom": {
+        "elem": "div"
+      },
+      "proptest": {
+        "min": {
+          "description": "No otherwise clause.",
+          "value": "None"
+        },
+        "low": {
+          "description": "Generate up to two arbitrary, non-recursive, block nodes.",
+          "strategy": "option::of(vec_blocks_non_recursive(2))"
+        },
+        "max": {
+          "description": "Generate up to four arbitrary, non-recursive, block nodes.",
+          "strategy": "option::of(vec_blocks_non_recursive(4))"
+        }
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Block.schema.json"
+      }
+    },
+    "iterations": {
+      "@id": "stencila:iterations",
+      "description": "The content repeated for each iteration",
+      "$comment": "Usually each item in `iterations` will be a `Section` with `SectionType: Iteration`\nbut it could be another `Block` type depending upon the implementation.\n",
+      "aliases": [
+        "iteration"
+      ],
+      "strip": [
+        "output"
+      ],
+      "walk": true,
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Block.schema.json"
+      }
+    }
+  }
+}

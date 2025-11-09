@@ -1,0 +1,13 @@
+[package]
+name = "codec-html"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+codec = { path = "../codec" }
+codec-html-trait = { path = "../codec-html-trait" }
+quick-xml = { workspace = true }
+tl = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,78 @@
+title: Section
+"@id": stencila:Section
+extends: Entity
+category: prose
+description: A section of a document.
+jats:
+  elem: sec
+html:
+  elem: section
+  special: true
+latex:
+  derive: false
+markdown:
+  derive: false
+proptest: {}
+required:
+  - content
+core:
+  - sectionType
+  - authors
+  - provenance
+properties:
+  sectionType:
+    "@id": stencila:sectionType
+    description: The type of section.
+    $ref: SectionType
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    jats:
+      attr: sec-type
+    proptest:
+      min:
+        description: No type.
+        value: None
+      low:
+        description: Generate an arbitrary section type.
+        strategy: option::of(SectionType::arbitrary())
+  content:
+    "@id": stencila:content
+    description: The content within the section.
+    type: array
+    items:
+      $ref: Block
+    dom:
+      elem: section
+    proptest:
+      min:
+        description: An empty vector
+        value: Vec::new()
+      low:
+        description: Generate an arbitrary heading and an arbitrary paragraph.
+        strategy: vec_heading_paragraph()
+      high:
+        description: Generate up to four arbitrary, non-recursive, block nodes.
+        strategy: vec_blocks_non_recursive(4)
+      max:
+        description: Generate up to eight arbitrary, non-recursive, block nodes.
+        strategy: vec_blocks_non_recursive(8)
+  authors:
+    "@id": schema:author
+    description: The authors of the section.
+    type: array
+    items:
+      $ref: Author
+    strip: [authors]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+    dom:
+      elem: div
+  provenance:
+    "@id": stencila:provenance
+    description: A summary of the provenance of the content within the section.
+    type: array
+    items:
+      $ref: ProvenanceCount
+    strip: [provenance]
+    dom:
+      elem: div

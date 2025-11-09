@@ -1,0 +1,59 @@
+[package]
+name = "codecs"
+version = "0.0.0"
+edition = "2024"
+
+[features]
+proptest-min = ["codec/proptest-min"]
+proptest-low = ["codec/proptest-low"]
+proptest-high = ["codec/proptest-high"]
+proptest-max = ["codec/proptest-max"]
+
+[dependencies]
+ask = { path = "../ask" }
+cli-utils = { path = "../cli-utils" }
+codec = { path = "../codec" }
+codec-arxiv = { path = "../codec-arxiv" }
+codec-cbor = { path = "../codec-cbor" }
+codec-cff = { path = "../codec-cff" }
+codec-csl = { path = "../codec-csl" }
+codec-csv = { path = "../codec-csv" }
+codec-debug = { path = "../codec-debug" }
+codec-directory = { path = "../codec-directory" }
+codec-docx = { path = "../codec-docx" }
+codec-doi = { path = "../codec-doi" }
+codec-dom = { path = "../codec-dom" }
+codec-gdocx = { path = "../codec-gdocx" }
+codec-github = { path = "../codec-github" }
+codec-html = { path = "../codec-html" }
+codec-ipynb = { path = "../codec-ipynb" }
+codec-jats = { path = "../codec-jats" }
+codec-json = { path = "../codec-json" }
+codec-json5 = { path = "../codec-json5" }
+codec-jsonld = { path = "../codec-jsonld" }
+codec-latex = { path = "../codec-latex" }
+codec-lexical = { path = "../codec-lexical" }
+codec-markdown = { path = "../codec-markdown" }
+codec-meca = { path = "../codec-meca" }
+codec-odt = { path = "../codec-odt" }
+codec-openrxiv = { path = "../codec-openrxiv" }
+codec-pandoc = { path = "../codec-pandoc" }
+codec-pdf = { path = "../codec-pdf" }
+codec-pmcoa = { path = "../codec-pmcoa" }
+codec-png = { path = "../codec-png" }
+codec-rnw = { path = "../codec-rnw" }
+codec-swb = { path = "../codec-swb" }
+codec-text = { path = "../codec-text" }
+codec-utils = { path = "../codec-utils" }
+codec-xlsx = { path = "../codec-xlsx" }
+codec-yaml = { path = "../codec-yaml" }
+node-strip = { path = "../node-strip" }
+url = { workspace = true}
+walkdir = "2.5.0"
+
+[dev-dependencies]
+common-dev = { path = "../common-dev" }
+json_value_merge = "2.0.1"
+
+[lints]
+workspace = true

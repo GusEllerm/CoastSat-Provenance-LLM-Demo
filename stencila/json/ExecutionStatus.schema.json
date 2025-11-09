@@ -1,0 +1,195 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/ExecutionStatus.schema.json",
+  "@id": "stencila:ExecutionStatus",
+  "title": "ExecutionStatus",
+  "extends": [
+    "Enumeration"
+  ],
+  "category": "flow",
+  "description": "Status of the most recent, including any current, execution of a document node.",
+  "required": [
+    "type"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "alternateNames": {
+      "@id": "schema:alternateName",
+      "description": "Alternate names (aliases) for the item.",
+      "aliases": [
+        "alternate-names",
+        "alternate_names",
+        "alternateName",
+        "alternate-name",
+        "alternate_name"
+      ],
+      "strip": [
+        "metadata"
+      ],
+      "serde": {
+        "deserializeWith": "option_csv_or_array"
+      },
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "@id": "schema:description",
+      "description": "A description of the item.",
+      "strip": [
+        "metadata"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "type": "string"
+    },
+    "identifiers": {
+      "@id": "schema:identifier",
+      "description": "Any kind of identifier for any kind of Thing.",
+      "$comment": "Some identifiers have specific properties e.g the `issn` property for\nthe `Periodical` type. These should be used in preference to this\nproperty which is intended for identifiers that do not yet have a\nspecific property. Identifiers can be represented as strings, but\nusing a `PropertyValue` will usually be better because it allows\nfor `propertyID` (i.e. the type of identifier).\n",
+      "aliases": [
+        "identifier"
+      ],
+      "strip": [
+        "metadata"
+      ],
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "PropertyValue.schema.json"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "images": {
+      "@id": "schema:image",
+      "description": "Images of the item.",
+      "aliases": [
+        "image"
+      ],
+      "strip": [
+        "metadata"
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "ImageObject.schema.json"
+      }
+    },
+    "name": {
+      "@id": "schema:name",
+      "description": "The name of the item.",
+      "strip": [
+        "metadata"
+      ],
+      "type": "string"
+    },
+    "url": {
+      "@id": "schema:url",
+      "description": "The URL of the item.",
+      "strip": [
+        "metadata"
+      ],
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "anyOf": [
+    {
+      "@id": "stencila:Scheduled",
+      "description": "Execution of the node has been scheduled for some time in the future.",
+      "const": "Scheduled"
+    },
+    {
+      "@id": "stencila:Pending",
+      "description": "Execution of the node is pending.",
+      "const": "Pending"
+    },
+    {
+      "@id": "stencila:Skipped",
+      "description": "Execution of the node or node type was explicitly skipped by the user.",
+      "const": "Skipped"
+    },
+    {
+      "@id": "stencila:Locked",
+      "description": "Execution of the node was skipped because it is locked.",
+      "const": "Locked"
+    },
+    {
+      "@id": "stencila:Rejected",
+      "description": "Execution of the node was skipped because it is a rejected suggestion.",
+      "const": "Rejected"
+    },
+    {
+      "@id": "stencila:Empty",
+      "description": "Execution of the node was skipped because it has code, or other property, that is empty.",
+      "const": "Empty"
+    },
+    {
+      "@id": "stencila:Running",
+      "description": "The node is currently being executed.",
+      "const": "Running"
+    },
+    {
+      "@id": "stencila:Succeeded",
+      "description": "Execution of the node completed without warning, error, or exception messages.",
+      "const": "Succeeded"
+    },
+    {
+      "@id": "stencila:Warnings",
+      "description": "Execution of the node completed but with warning messages.",
+      "const": "Warnings"
+    },
+    {
+      "@id": "stencila:Errors",
+      "description": "Execution of the node completed but with error messages.",
+      "const": "Errors"
+    },
+    {
+      "@id": "stencila:Exceptions",
+      "description": "Execution of the node did not complete because there was an exception message.",
+      "const": "Exceptions"
+    },
+    {
+      "@id": "stencila:Cancelled",
+      "description": "Execution of the node was pending but was cancelled.",
+      "const": "Cancelled"
+    },
+    {
+      "@id": "stencila:Interrupted",
+      "description": "Execution of the node was running but was interrupted.",
+      "const": "Interrupted"
+    }
+  ]
+}

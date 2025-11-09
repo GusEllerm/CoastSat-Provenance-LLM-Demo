@@ -1,0 +1,16 @@
+title: ExecutionBounds
+'@id': stencila:ExecutionBounds
+extends: Enumeration
+category: flow
+description: The bounds placed on the execution of a document node.
+default: Main
+anyOf:
+  - const: Main
+    '@id': stencila:Main
+    description: Execute within the main set of kernels with full capabilities.
+  - const: Fork
+    '@id': stencila:Fork
+    description: Execute within a forked set of kernels with full capabilities.
+  - const: Box
+    '@id': stencila:Box
+    description: Execute within a forked set of kernels with restricted capabilities.

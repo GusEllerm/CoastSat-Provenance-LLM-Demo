@@ -1,0 +1,24 @@
+[package]
+name = "prompts"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+cached = { workspace = true }
+cli-utils = { path = "../cli-utils" }
+codec-markdown = {path = "../codec-markdown" }
+codecs = {path = "../codecs" }
+common = { path = "../common" }
+derive_more = { workspace = true }
+dirs = { path = "../dirs" }
+flate2 = { workspace = true }
+images = { path = "../images" }
+model = { path = "../model" }
+models = { path = "../models" }
+prompt = { path = "../prompt" }
+rust-embed = { version = "8.7.2", features = ["interpolate-folder-path", "include-exclude"] }
+semver = { workspace = true }
+version = { path = "../version" }
+
+[lints]
+workspace = true

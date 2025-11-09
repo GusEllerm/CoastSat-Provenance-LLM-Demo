@@ -1,0 +1,107 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/InstructionMessage.schema.json",
+  "@id": "stencila:InstructionMessage",
+  "title": "InstructionMessage",
+  "nick": "ime",
+  "extends": [
+    "Entity"
+  ],
+  "category": "edits",
+  "description": "A message within an `Instruction`.",
+  "markdown": {
+    "derive": false
+  },
+  "required": [
+    "type",
+    "parts"
+  ],
+  "core": [
+    "id",
+    "role",
+    "authors",
+    "provenance"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "role": {
+      "@id": "stencila:role",
+      "description": "The role of the message in the conversation.",
+      "$ref": "MessageRole.schema.json"
+    },
+    "parts": {
+      "@id": "schema:hasParts",
+      "description": "Parts of the message.",
+      "aliases": [
+        "part"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "serde": {
+        "default": true
+      },
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "MessagePart.schema.json"
+      }
+    },
+    "authors": {
+      "@id": "schema:author",
+      "description": "The authors of the message.",
+      "aliases": [
+        "author"
+      ],
+      "strip": [
+        "authors"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Author.schema.json"
+      }
+    },
+    "provenance": {
+      "@id": "stencila:provenance",
+      "description": "A summary of the provenance of the messages and content within the instruction.",
+      "strip": [
+        "provenance"
+      ],
+      "dom": {
+        "elem": "span"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "ProvenanceCount.schema.json"
+      }
+    }
+  }
+}

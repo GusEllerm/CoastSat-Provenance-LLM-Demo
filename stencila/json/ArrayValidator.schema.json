@@ -1,0 +1,153 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/ArrayValidator.schema.json",
+  "@id": "stencila:ArrayValidator",
+  "title": "ArrayValidator",
+  "nick": "arv",
+  "extends": [
+    "Entity"
+  ],
+  "category": "data",
+  "description": "A validator specifying constraints on an array node.",
+  "markdown": {
+    "derive": false
+  },
+  "required": [
+    "type"
+  ],
+  "core": [
+    "id",
+    "itemsNullable",
+    "itemsValidator",
+    "contains",
+    "minItems",
+    "maxItems",
+    "uniqueItems"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "itemsNullable": {
+      "@id": "stencila:itemsNullable",
+      "description": "Whether items can have the value `Node::Null`",
+      "aliases": [
+        "items-nullable",
+        "items_nullable"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "type": "boolean"
+    },
+    "itemsValidator": {
+      "@id": "stencila:itemsValidator",
+      "description": "Another validator node specifying the constraints on all items in the array.",
+      "aliases": [
+        "items-validator",
+        "items_validator"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "$ref": "Validator.schema.json"
+    },
+    "contains": {
+      "@id": "stencila:contains",
+      "description": "An array node is valid if at least one of its items is valid against the `contains` schema.",
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "$ref": "Validator.schema.json"
+    },
+    "minItems": {
+      "@id": "stencila:minItems",
+      "description": "An array node is valid if its size is greater than, or equal to, this value.",
+      "aliases": [
+        "min-items",
+        "min_items"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "type": "integer",
+      "minimum": 0.0
+    },
+    "maxItems": {
+      "@id": "stencila:maxItems",
+      "description": "An array node is valid if its size is less than, or equal to, this value.",
+      "aliases": [
+        "max-items",
+        "max_items"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "type": "integer",
+      "minimum": 0.0
+    },
+    "uniqueItems": {
+      "@id": "stencila:uniqueItems",
+      "description": "A flag to indicate that each value in the array should be unique.",
+      "aliases": [
+        "unique-items",
+        "unique_items"
+      ],
+      "patch": {
+        "formats": [
+          "md",
+          "smd",
+          "myst",
+          "ipynb",
+          "qmd"
+        ]
+      },
+      "type": "boolean"
+    }
+  }
+}

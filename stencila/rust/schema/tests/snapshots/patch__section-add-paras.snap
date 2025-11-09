@@ -1,0 +1,382 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 51
+      characterPercent: 100
+  content:
+    - type: Section
+      content:
+        - type: Heading
+          level: 1
+          content:
+            - type: Text
+              value:
+                string: Header 1
+                authorship:
+                  - - 1
+                    - 0
+                    - 0
+                    - 8
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Alice
+              roleName: Importer
+          provenance:
+            - type: ProvenanceCount
+              provenanceCategory: Hw
+              characterCount: 8
+              characterPercent: 100
+        - type: Paragraph
+          content:
+            - type: Text
+              value:
+                string: Text.
+                authorship:
+                  - - 1
+                    - 0
+                    - 0
+                    - 5
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Alice
+              roleName: Importer
+          provenance:
+            - type: ProvenanceCount
+              provenanceCategory: Hw
+              characterCount: 5
+              characterPercent: 100
+        - type: Section
+          content:
+            - type: Heading
+              level: 2
+              content:
+                - type: Text
+                  value:
+                    string: Sub section
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 11
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 11
+                  characterPercent: 100
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: This is in the sub section.
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 27
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 27
+                  characterPercent: 100
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Alice
+              roleName: Importer
+          provenance:
+            - type: ProvenanceCount
+              provenanceCategory: Hw
+              characterCount: 38
+              characterPercent: 100
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 51
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: Section
+      content:
+        - type: Heading
+          level: 1
+          content:
+            - type: Text
+              value:
+                string: Header 1
+        - type: Paragraph
+          content:
+            - type: Text
+              value:
+                string: Text.
+        - type: Paragraph
+          content:
+            - type: Text
+              value:
+                string: More text.
+        - type: Section
+          content:
+            - type: Heading
+              level: 2
+              content:
+                - type: Text
+                  value:
+                    string: Sub section
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: This is in the sub section.
+        - type: Paragraph
+          content:
+            - type: Text
+              value:
+                string: End text.
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 70
+      characterPercent: 100
+  content:
+    - type: Section
+      content:
+        - type: Heading
+          level: 1
+          content:
+            - type: Text
+              value:
+                string: Header 1
+                authorship:
+                  - - 1
+                    - 0
+                    - 0
+                    - 8
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Alice
+              roleName: Importer
+          provenance:
+            - type: ProvenanceCount
+              provenanceCategory: Hw
+              characterCount: 8
+              characterPercent: 100
+        - type: Paragraph
+          content:
+            - type: Text
+              value:
+                string: Text.
+                authorship:
+                  - - 1
+                    - 0
+                    - 0
+                    - 5
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Alice
+              roleName: Importer
+          provenance:
+            - type: ProvenanceCount
+              provenanceCategory: Hw
+              characterCount: 5
+              characterPercent: 100
+        - type: Paragraph
+          content:
+            - type: Text
+              value:
+                string: More text.
+                authorship:
+                  - - 1
+                    - 0
+                    - 0
+                    - 10
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Bob
+              roleName: Writer
+          provenance:
+            - type: ProvenanceCount
+              provenanceCategory: Hw
+              characterCount: 10
+              characterPercent: 100
+        - type: Section
+          content:
+            - type: Heading
+              level: 2
+              content:
+                - type: Text
+                  value:
+                    string: Sub section
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 11
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 11
+                  characterPercent: 100
+            - type: Paragraph
+              content:
+                - type: Text
+                  value:
+                    string: This is in the sub section.
+                    authorship:
+                      - - 1
+                        - 0
+                        - 0
+                        - 27
+              authors:
+                - type: AuthorRole
+                  author:
+                    type: Person
+                    givenNames:
+                      - Alice
+                  roleName: Importer
+              provenance:
+                - type: ProvenanceCount
+                  provenanceCategory: Hw
+                  characterCount: 27
+                  characterPercent: 100
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Alice
+              roleName: Importer
+          provenance:
+            - type: ProvenanceCount
+              provenanceCategory: Hw
+              characterCount: 38
+              characterPercent: 100
+        - type: Paragraph
+          content:
+            - type: Text
+              value:
+                string: End text.
+                authorship:
+                  - - 1
+                    - 0
+                    - 0
+                    - 9
+          authors:
+            - type: AuthorRole
+              author:
+                type: Person
+                givenNames:
+                  - Bob
+              roleName: Writer
+          provenance:
+            - type: ProvenanceCount
+              provenanceCategory: Hw
+              characterCount: 9
+              characterPercent: 100
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 70
+          characterPercent: 100
+ops:
+  - - - content
+      - 0
+      - content
+    - Insert:
+        - - 2
+          - type: Paragraph
+            content:
+              - type: Text
+                value:
+                  string: More text.
+        - - 4
+          - type: Paragraph
+            content:
+              - type: Text
+                value:
+                  string: End text.

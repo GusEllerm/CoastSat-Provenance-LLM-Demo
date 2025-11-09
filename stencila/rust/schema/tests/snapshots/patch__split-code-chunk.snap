@@ -1,0 +1,166 @@
+---
+source: rust/schema/tests/patch.rs
+expression: "Fixture { old, new, ops: patch.ops, merged }"
+---
+old:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 7
+      characterPercent: 100
+  content:
+    - type: CodeChunk
+      code:
+        string: "1\n2\n3\n4"
+        authorship:
+          - - 1
+            - 0
+            - 0
+            - 7
+      programmingLanguage: python
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 7
+          characterPercent: 100
+new:
+  type: Article
+  content:
+    - type: CodeChunk
+      code:
+        string: "1\n2\n3"
+      programmingLanguage: python
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para
+    - type: CodeChunk
+      code:
+        string: "4"
+      programmingLanguage: python
+merged:
+  type: Article
+  authors:
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Alice
+      roleName: Importer
+    - type: AuthorRole
+      author:
+        type: Person
+        givenNames:
+          - Bob
+      roleName: Writer
+  provenance:
+    - type: ProvenanceCount
+      provenanceCategory: Hw
+      characterCount: 10
+      characterPercent: 100
+  content:
+    - type: CodeChunk
+      code:
+        string: "1\n2\n3"
+        authorship:
+          - - 1
+            - 0
+            - 0
+            - 5
+      programmingLanguage: python
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Alice
+          roleName: Importer
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 5
+          characterPercent: 100
+    - type: Paragraph
+      content:
+        - type: Text
+          value:
+            string: para
+            authorship:
+              - - 1
+                - 0
+                - 0
+                - 4
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 4
+          characterPercent: 100
+    - type: CodeChunk
+      code:
+        string: "4"
+        authorship:
+          - - 1
+            - 0
+            - 0
+            - 1
+      programmingLanguage: python
+      authors:
+        - type: AuthorRole
+          author:
+            type: Person
+            givenNames:
+              - Bob
+          roleName: Writer
+      provenance:
+        - type: ProvenanceCount
+          provenanceCategory: Hw
+          characterCount: 1
+          characterPercent: 100
+ops:
+  - - - content
+    - Append:
+        - type: Paragraph
+          content:
+            - type: Text
+              value:
+                string: para
+        - type: CodeChunk
+          code:
+            string: "4"
+          programmingLanguage: python
+  - - - content
+      - 0
+      - code
+    - Apply:
+        - Delete:
+            start: 5
+            end: 7

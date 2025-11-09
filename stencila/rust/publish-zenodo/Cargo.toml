@@ -1,0 +1,18 @@
+[package]
+name = "publish-zenodo"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+cli-utils = { path = "../cli-utils" }
+codec = { path = "../codec" }
+codec-text = { path = "../codec-text" }
+common = { "path" = "../common" }
+document = { path = "../document" }
+url = { workspace = true }
+
+[dev-dependencies]
+common-dev = { path = "../common-dev" }
+
+[lints]
+workspace = true

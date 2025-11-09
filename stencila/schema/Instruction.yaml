@@ -1,0 +1,62 @@
+title: Instruction
+"@id": stencila:Instruction
+extends: Executable
+abstract: true
+category: edits
+description: Abstract base type for a document editing instruction.
+required:
+  - instructionType
+  - prompt
+  - message
+  - modelParameters
+core:
+  - activeSuggestion
+properties:
+  instructionType:
+    "@id": stencila:instructionType
+    description: The type of instruction describing the operation to be performed.
+    $ref: InstructionType
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+  prompt:
+    "@id": stencila:prompt
+    description: The prompt selected, rendered and provided to the model
+    $ref: PromptBlock
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    serde:
+      default: true
+    dom:
+      elem: div
+  message:
+    "@id": stencila:message
+    description: The instruction message, possibly including images, audio, or other media.
+    $ref: InstructionMessage
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    serde:
+      default: true
+    dom:
+      elem: div
+  modelParameters:
+    "@id": stencila:modelParameters
+    description: Model selection and inference parameters.
+    $ref: ModelParameters
+    aliases:
+      - model-parameters
+      - model_parameters
+      - model-params
+      - model_params
+      - model-pars
+      - model_pars
+      - model
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    serde:
+      default: true
+    dom:
+      elem: div
+  activeSuggestion:
+    "@id": stencila:activeSuggestion
+    description: The index of the suggestion that is currently active
+    $ref: UnsignedInteger

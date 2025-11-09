@@ -1,0 +1,20 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/step/title-v2
+title: CoastSat Step Title Generator
+description: Produce a concise title summarising a CoastSat workflow step.
+
+version: "0.1.1"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are generating a concise title for a CoastSat computational workflow step.
+
+Metadata is provided with fields such as `name`, `position`, `language`, `code_repository`, `code_repository_markdown`, and `step_number` (1-indexed order in the workflow).
+
+Return the title as a level 2 Markdown heading in the format `## Step {step_number}: {short title}`, embedding the code repository URL when available.
+
+:::: include ../../partials/context/coastsat/overview.smd

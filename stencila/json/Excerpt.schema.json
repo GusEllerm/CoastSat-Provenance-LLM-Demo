@@ -1,0 +1,106 @@
+{
+  "$schema": "https://stencila.org/meta.schema.json",
+  "$id": "https://stencila.org/Excerpt.schema.json",
+  "@id": "stencila:Excerpt",
+  "title": "Excerpt",
+  "nick": "exc",
+  "extends": [
+    "Entity"
+  ],
+  "description": "An excerpt from a `CreativeWork`.",
+  "markdown": {
+    "derive": false
+  },
+  "required": [
+    "type",
+    "source",
+    "nodePath",
+    "nodeAncestors",
+    "nodeType",
+    "content"
+  ],
+  "core": [
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "@id": "schema:type",
+      "description": "The type of this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@type` keyword.\n",
+      "type": "string"
+    },
+    "id": {
+      "@id": "schema:id",
+      "description": "The identifier for this item.",
+      "$comment": "This is a special property analogous to JSON-LD's `@id` keyword.\n",
+      "strip": [
+        "metadata"
+      ],
+      "html": {
+        "attr": "id"
+      },
+      "type": "string"
+    },
+    "source": {
+      "@id": "stencila:source",
+      "description": "A `Reference` to the `CreativeWork` that the excerpt was taken from.",
+      "strip": [
+        "metadata"
+      ],
+      "dom": {
+        "elem": "div"
+      },
+      "$ref": "Reference.schema.json"
+    },
+    "nodePath": {
+      "@id": "stencila:nodePath",
+      "description": "A `Reference` to the `CreativeWork` that the excerpt was taken from.",
+      "aliases": [
+        "node-path",
+        "node_path"
+      ],
+      "strip": [
+        "metadata"
+      ],
+      "type": "string"
+    },
+    "nodeAncestors": {
+      "@id": "stencila:nodeAncestors",
+      "description": "The route to the node that was excerpted including the .",
+      "aliases": [
+        "node-ancestors",
+        "node_ancestors"
+      ],
+      "strip": [
+        "metadata"
+      ],
+      "type": "string"
+    },
+    "nodeType": {
+      "@id": "stencila:nodeType",
+      "description": "The type of the node that was excerpted.",
+      "aliases": [
+        "node-type",
+        "node_type"
+      ],
+      "strip": [
+        "metadata"
+      ],
+      "type": "string"
+    },
+    "content": {
+      "@id": "stencila:content",
+      "description": "The excerpted content.",
+      "strip": [
+        "content"
+      ],
+      "dom": {
+        "elem": "div"
+      },
+      "type": "array",
+      "items": {
+        "$ref": "Block.schema.json"
+      }
+    }
+  }
+}

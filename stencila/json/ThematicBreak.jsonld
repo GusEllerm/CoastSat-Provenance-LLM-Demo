@@ -1,0 +1,21 @@
+{
+  "@id": "https://stencila.org/ThematicBreak",
+  "name": "ThematicBreak",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "https://schema.org/",
+    "stencila": "https://stencila.org/"
+  },
+  "@graph": [
+    {
+      "@id": "stencila:ThematicBreak",
+      "@type": "rdfs:Class",
+      "rdfs:label": "ThematicBreak",
+      "rdfs:comment": "A thematic break, such as a scene change in a story, a transition to another topic, or a new document.",
+      "rdfs:subClassOf": {
+        "@id": "stencila:Entity"
+      }
+    }
+  ]
+}

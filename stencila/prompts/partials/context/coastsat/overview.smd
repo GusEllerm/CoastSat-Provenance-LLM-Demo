@@ -1,0 +1,3 @@
+# CoastSat Overview
+
+CoastSat is a computational workflow for extracting and analysing shoreline positions from satellite imagery. It combines NIWA tide records, transect geometries, and Python notebooks to correct, smooth, and model shoreline change over time. Data and notebooks are versioned in GitHub (see the `UoA-eResearch/CoastSat` repository) and packaged as RO-Crates inside `interface.crate`. Use this context when describing individual workflow steps, artefacts, or intermediate data.

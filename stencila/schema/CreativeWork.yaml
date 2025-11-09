@@ -1,0 +1,341 @@
+title: CreativeWork
+"@id": schema:CreativeWork
+extends: Thing
+category: works
+description: A creative work, including books, movies, photographs, software programs, etc.
+$comment: |
+  This is an implementation, and extension, of schema.org [`CreativeWork`](https://schema.org/CreativeWork).
+  It extends schema.org `CreativeWork` by, adding several properties including `dateAccepted`
+  and `fundedBy`.
+core:
+  - workType
+  - doi
+properties:
+  workType:
+    "@id": stencila:workType
+    description: The type of `CreativeWork` (e.g. article, book, software application).
+    $ref: CreativeWorkType
+  doi:
+    "@id": stencila:doi
+    description: The work's Digital Object Identifier (https://doi.org/).
+    type: string
+  about:
+    "@id": schema:about
+    description: The subject matter of the content.
+    $comment: |
+      Consistent with https://schema.org/about, this property allows for
+      linking to one of more `Thing` nodes. This could for example include
+      a `Person` (e.g for a bibliography) or a `DefinedTerm` (e.g. for
+      subject areas the creative work relates to).
+    type: array
+    items:
+      $ref: ThingVariant
+    strip: [metadata]
+  abstract:
+    "@id": schema:abstract
+    description: A short description that summarizes a `CreativeWork`.
+    type: array
+    items:
+      $ref: Block
+    strip: [metadata]
+    walk: true
+    dom:
+      elem: section
+  authors:
+    "@id": schema:author
+    description: The authors of the `CreativeWork`.
+    type: array
+    items:
+      $ref: Author
+    strip: [authors]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+    dom:
+      elem: section
+  provenance:
+    "@id": stencila:provenance
+    description: A summary of the provenance of the content within the work.
+    type: array
+    items:
+      $ref: ProvenanceCount
+    strip: [provenance]
+    dom:
+      elem: div
+  contributors:
+    "@id": schema:contributor
+    description: A secondary contributor to the `CreativeWork`.
+    type: array
+    items:
+      $ref: Author
+    strip: [metadata]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+    dom:
+      elem: section
+  editors:
+    "@id": schema:editor
+    description: People who edited the `CreativeWork`.
+    $comment: |
+      Note that, consistent with schema.org, this property can only include
+      a `Person`, unlike `authors` and `maintainers` which can also include
+      `Organization`.
+    type: array
+    items:
+      $ref: Person
+    strip: [metadata]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+    dom:
+      elem: section
+  maintainers:
+    "@id": schema:maintainer
+    description: The maintainers of the `CreativeWork`.
+    $comment: |
+      A maintainer of a `Dataset`, `SoftwareApplication`, or other `CreativeWork`.
+      A maintainer is a `Person` or `Organization` that manages contributions to,
+      and/or publication of, some (typically complex) artifact. It is common for
+      distributions of software and data to be based on "upstream" sources.
+      When maintainer is applied to a specific version of something e.g. a particular
+      version or packaging of a Dataset, it is always possible that the upstream
+      source has a different maintainer. The `isBasedOn` property can be used to
+      indicate such relationships between datasets to make the different maintenance
+      roles clear. Similarly in the case of software, a package may have dedicated
+      maintainers working on integration into software distributions such as Ubuntu,
+      as well as upstream maintainers of the underlying work.
+    type: array
+    items:
+      anyOf:
+        - $ref: Person
+        - $ref: Organization
+    strip: [metadata]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+    dom:
+      elem: section
+  comments:
+    "@id": schema:comment
+    description: Comments about this creative work.
+    type: array
+    items:
+      $ref: Comment
+    strip: [metadata]
+    dom:
+      elem: section
+  dateCreated:
+    "@id": schema:dateCreated
+    description: Date/time of creation.
+    $ref: Date
+    strip: [metadata]
+    serde:
+      deserializeWith: option_string_or_object
+    dom:
+      with: Date::to_dom_attr
+  dateReceived:
+    "@id": schema:dateReceived
+    description: Date/time that work was received.
+    $ref: Date
+    strip: [metadata]
+    serde:
+      deserializeWith: option_string_or_object
+    dom:
+      with: Date::to_dom_attr
+  dateAccepted:
+    "@id": stencila:dateAccepted
+    description: Date/time of acceptance.
+    $comment: |
+      This is not yet a schema.org property but the term is used
+      [in Dublin Core](http://purl.org/dc/terms/dateAccepted).
+    $ref: Date
+    strip: [metadata]
+    serde:
+      deserializeWith: option_string_or_object
+    dom:
+      with: Date::to_dom_attr
+  dateModified:
+    "@id": schema:dateModified
+    description: Date/time of most recent modification.
+    $ref: Date
+    strip: [metadata]
+    serde:
+      deserializeWith: option_string_or_object
+    dom:
+      with: Date::to_dom_attr
+  datePublished:
+    "@id": schema:datePublished
+    aliases:
+      # This assumes that a user specifying `date` means the date published
+      # and not the date modified or created.
+      - date
+    description: Date of first publication.
+    $ref: Date
+    strip: [metadata]
+    serde:
+      deserializeWith: option_string_or_object
+    dom:
+      with: Date::to_dom_attr
+  funders:
+    "@id": schema:funder
+    description: People or organizations that funded the `CreativeWork`.
+    type: array
+    items:
+      anyOf:
+        - $ref: Person
+        - $ref: Organization
+    strip: [metadata]
+    serde:
+      deserializeWith: option_one_or_many_string_or_object
+    dom:
+      elem: section
+  fundedBy:
+    "@id": stencila:fundedBy
+    description: Grants that funded the `CreativeWork`; reverse of `fundedItems`.
+    $comment: |
+      This follows the proposal [here](https://github.com/schemaorg/schemaorg/issues/2258)
+      for a property that is the reverse of `fundedItems`.
+      It is an any because a `CreativeWork` may have been funded through more than
+      one `Grant`.
+    type: array
+    items:
+      anyOf:
+        - $ref: Grant
+        - $ref: MonetaryGrant
+    strip: [metadata]
+    dom:
+      elem: section
+  genre:
+    "@id": schema:genre
+    description: Genre of the creative work, broadcast channel or group.
+    type: array
+    items:
+      type: string
+    strip: [metadata]
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    serde:
+      deserializeWith: option_csv_or_array
+  keywords:
+    "@id": schema:keywords
+    description: |
+      Keywords or tags used to describe this content.
+      Multiple entries in a keywords list are typically delimited by commas.
+    type: array
+    items:
+      type: string
+    strip: [metadata]
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    serde:
+      deserializeWith: option_csv_or_array
+  isPartOf:
+    "@id": schema:isPartOf
+    description: |
+      An item or other CreativeWork that this CreativeWork is a part of.
+    $ref: CreativeWorkVariant
+    strip: [metadata]
+  licenses:
+    "@id": schema:license
+    description: |
+      License documents that applies to this content, typically indicated by URL, but may be
+      a `CreativeWork` itself.
+    type: array
+    items:
+      anyOf:
+        - $ref: CreativeWorkVariant
+        - type: string
+          pattern: url
+    strip: [metadata]
+    dom:
+      elem: section
+  parts:
+    # The name "parts" seems more intuitive for users and developers than schema.orgs's "hasParts".
+    # We provide the latter as an alias.
+    "@id": schema:hasParts
+    aliases:
+      - hasParts
+    description: |
+      Elements of the collection which can be a variety of different elements,
+      such as Articles, Datatables, Tables and more.
+    type: array
+    items:
+      $ref: CreativeWorkVariant
+    strip: [content]
+    dom:
+      elem: section
+  publisher:
+    "@id": schema:publisher
+    description: |
+      A publisher of the CreativeWork.
+    anyOf:
+      - $ref: Person
+      - $ref: Organization
+    strip: [metadata]
+    serde:
+      deserializeWith: option_string_or_object
+    dom:
+      elem: section
+  references:
+    "@id": schema:citation
+    aliases:
+      - citations
+    description: |
+      References to other creative works, such as another publication,
+      web page, scholarly article, etc.
+    type: array
+    items:
+      $ref: Reference
+    strip: [metadata]
+    dom:
+      elem: section
+  text:
+    "@id": schema:text
+    description: The textual content of this creative work.
+    $ref: Text
+    strip: [content]
+  title:
+    # The name "title" is more appropriate to our context than schema.org's "headline".
+    # We provide the latter as an alias.
+    "@id": schema:headline
+    description: The title of the creative work.
+    aliases:
+      - headline
+    type: array
+    items:
+      $ref: Inline
+    strip: [metadata]
+    walk: true
+    patch:
+      formats: [md, smd, myst, ipynb, qmd]
+    dom:
+      elem: h1
+  repository:
+    '@id': schema:codeRepository
+    description: |
+      URL of the repository where the un-compiled, human readable source of the work is located.
+    type: string
+    format: uri
+  path:
+    "@id": stencila:path
+    description: The file system path of the source of the work.
+    $comment: |
+      Usually only used when the work is within a Git (or other version control) repository,
+      and then is usually relative to the repository root.
+    type: string
+    strip: [metadata]
+  commit:
+    "@id": stencila:commit
+    description: The commit hash (or similar) of the source of the work.
+    $comment: |
+      Only used when the work's source file is within a Git (or other version control) repository.
+    type: string
+    strip: [metadata]
+  version:
+    "@id": schema:version
+    description: The version of the creative work.
+    $comment: |
+      In this case `string` is listed as an alternative before `number` to
+      avoid semantic version numbers e.g. `1.0` being parsed, and subsequently
+      encoded, as `1` thereby resulting in loss of information.
+    anyOf:
+      - type: string
+      - type: number
+    strip: [metadata]

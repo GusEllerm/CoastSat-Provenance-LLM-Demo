@@ -1,0 +1,102 @@
+{
+  "title": "ThingVariant",
+  "description": "Union type for all types that are descended from `Thing`",
+  "anyOf": [
+    {
+      "$ref": "Article.schema.json"
+    },
+    {
+      "$ref": "AudioObject.schema.json"
+    },
+    {
+      "$ref": "Brand.schema.json"
+    },
+    {
+      "$ref": "Chat.schema.json"
+    },
+    {
+      "$ref": "Claim.schema.json"
+    },
+    {
+      "$ref": "Collection.schema.json"
+    },
+    {
+      "$ref": "Comment.schema.json"
+    },
+    {
+      "$ref": "ContactPoint.schema.json"
+    },
+    {
+      "$ref": "CreativeWork.schema.json"
+    },
+    {
+      "$ref": "Datatable.schema.json"
+    },
+    {
+      "$ref": "DefinedTerm.schema.json"
+    },
+    {
+      "$ref": "Enumeration.schema.json"
+    },
+    {
+      "$ref": "Figure.schema.json"
+    },
+    {
+      "$ref": "Grant.schema.json"
+    },
+    {
+      "$ref": "ImageObject.schema.json"
+    },
+    {
+      "$ref": "ListItem.schema.json"
+    },
+    {
+      "$ref": "MediaObject.schema.json"
+    },
+    {
+      "$ref": "MonetaryGrant.schema.json"
+    },
+    {
+      "$ref": "Organization.schema.json"
+    },
+    {
+      "$ref": "Periodical.schema.json"
+    },
+    {
+      "$ref": "Person.schema.json"
+    },
+    {
+      "$ref": "PostalAddress.schema.json"
+    },
+    {
+      "$ref": "Product.schema.json"
+    },
+    {
+      "$ref": "Prompt.schema.json"
+    },
+    {
+      "$ref": "PropertyValue.schema.json"
+    },
+    {
+      "$ref": "PublicationIssue.schema.json"
+    },
+    {
+      "$ref": "PublicationVolume.schema.json"
+    },
+    {
+      "$ref": "Review.schema.json"
+    },
+    {
+      "$ref": "SoftwareApplication.schema.json"
+    },
+    {
+      "$ref": "SoftwareSourceCode.schema.json"
+    },
+    {
+      "$ref": "Table.schema.json"
+    },
+    {
+      "$ref": "VideoObject.schema.json"
+    }
+  ]
+}
