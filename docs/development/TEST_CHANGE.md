@@ -1,8 +1,8 @@
-# Test Change: Verifying Local Build Works
+# Test Change: Verifying the Development Build
 
 ## What We Changed
 
-Added a simple log message to the LSP server startup to verify the extension is using your local build.
+Added a temporary log message to the LSP server startup to verify that the Extension Development Host is running the repository build.
 
 **File:** `stencila/rust/lsp/src/run.rs`
 **Line:** After logging setup
@@ -21,7 +21,7 @@ tracing::info!("🧪 Stencila LSP Server started - USING LOCAL DEVELOPMENT BUILD
    cargo build --bin stencila
    ```
 
-2. **In your development window** (Extension Development Host):
+2. **In the Extension Development Host**:
    - Open the Output panel: View > Output
    - Select "Stencila" from the dropdown
    
@@ -30,22 +30,14 @@ tracing::info!("🧪 Stencila LSP Server started - USING LOCAL DEVELOPMENT BUILD
    - "Stencila: Restart Language Server"
 
 4. **Look for the test message**:
-   You should see:
    ```
    🧪 Stencila LSP Server started - USING LOCAL DEVELOPMENT BUILD
    ```
 
-## If You See the Message
+## Interpreting the Result
 
-✅ **Success!** The extension is using your local build. Your changes will be reflected.
-
-## If You Don't See the Message
-
-❌ Check:
-- Did you rebuild the CLI? (`cargo build --bin stencila`)
-- Did you restart the LSP server?
-- Check the Output panel for errors
-- Verify the CLI exists: `ls -la stencila/target/debug/stencila`
+- ✅ Message present → the extension is wiring through the repository build.
+- ❌ Message absent → rebuild the CLI, restart the language server, check the Output panel for errors, and ensure `stencila/target/debug/stencila` exists.
 
 ## Reverting the Change
 

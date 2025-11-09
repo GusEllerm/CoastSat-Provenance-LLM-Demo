@@ -13,7 +13,7 @@ From the project root, run:
 This will:
 1. ✅ Build the Stencila CLI
 2. ✅ Compile the VS Code extension
-3. ✅ Open Cursor/VS Code with the extension workspace
+3. ✅ Open VS Code (or another VS Code–compatible IDE) with the extension workspace
 4. Press **F5** to launch the development window!
 
 ## Daily Development Workflow
@@ -39,7 +39,7 @@ This sets up everything. After that, you can use the quick start script.
 ./scripts/quick-dev.sh
 ```
 
-Then in Cursor/VS Code:
+Then in VS Code:
 1. Press **F5** to launch development window
 2. Open your test files in the development window
 
@@ -125,11 +125,10 @@ Then just restart LSP server or reload window after changes are detected.
 
 ```bash
 # 1. Start development (one time per session)
-cd /Users/eller/Projects/stencila_dev
 ./scripts/start-dev.sh
 
-# 2. In Cursor/VS Code that opens:
-#    - Press F5 to launch development window
+# 2. In the VS Code window that opens:
+#    - Press F5 to launch the Extension Development Host
 #    - Open test-files/ in the development window
 
 # 3. Make changes to CLI
@@ -168,9 +167,9 @@ chmod +x scripts/*.sh
 
 ### IDE doesn't open
 
-Check if Cursor/VS Code is in your PATH:
+Check if `code` (or your IDE launcher) is in your PATH:
 ```bash
-which cursor  # or which code
+which code
 ```
 
 If not, add it to your PATH or use the full path.
@@ -197,5 +196,5 @@ cargo install cargo-watch
 
 **Then press F5** and you're ready to develop!
 
-The development window will automatically use your local CLI build, so all your changes are immediately testable.
+The development window will automatically use the repository CLI build, so changes become testable immediately.
 

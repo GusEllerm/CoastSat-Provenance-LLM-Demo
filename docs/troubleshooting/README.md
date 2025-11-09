@@ -21,12 +21,12 @@ cargo build --bin stencila
 - The `web` workspace uses Tailwind CSS v3.4.17
 - Parcel auto-installs v4 plugins which conflict with v3
 
-**Impact:** This is **not critical** for development! The CLI works fine, and the extension will still function in development mode even if the web components fail to build. The extension uses your local CLI build automatically.
+**Impact:** This is **not critical** for development! The CLI works fine, and the extension will still function in development mode even if the web components fail to build. The extension continues to launch the repository CLI build automatically.
 
 **Workaround:**
 1. **Continue development** - The CLI build is what matters for most development work
 2. **Extension still works** - Press F5 in the extension workspace to launch development mode
-3. **Skip web build** - The extension will use your local CLI even without web components built
+3. **Skip web build** - The extension will use the repository CLI even without web components built
 
 **If you need the web components:**
 ```bash

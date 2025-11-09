@@ -1,8 +1,8 @@
-# How Extension Development Mode Finds Your Local CLI
+# How Extension Development Mode Locates the Repository CLI
 
 ## How It Works: Relative Path Resolution
 
-When you launch the extension in development mode (F5), the extension automatically detects it's in development and uses a **relative path** to find your local CLI build.
+When the extension runs in development or test mode, it detects that status and resolves a **relative path** to the CLI built in the repository.
 
 ## The Code
 
@@ -49,18 +49,9 @@ stencila/
         └── stencila   ← What it's looking for (../../target/debug/stencila)
 ```
 
-## Why This Works
-
-The extension code assumes a specific repository structure:
-- Extension code is in `vscode/`
-- Compiled extension is in `vscode/out/`
-- CLI build is in `target/debug/` (relative to repo root)
-
-When you run in development mode from `stencila/vscode/`, this relative path calculation finds your local build automatically!
-
 ## Verification
 
-You can verify which CLI is being used:
+To confirm which CLI was launched:
 
 1. **Check the Output panel** in the development window:
    - View > Output
@@ -69,8 +60,7 @@ You can verify which CLI is being used:
 
 2. **Use the Stencila Shell**:
    - Command Palette → "Stencila: Stencila Shell"
-   - Run `stencila --version`
-   - Should show 2.6.0 (your local build)
+   - Run `stencila --version` and confirm it matches the repository build
 
 3. **Check the code path**:
    ```bash
@@ -84,9 +74,7 @@ You can verify which CLI is being used:
 ## What Happens If CLI Not Found
 
 If the CLI binary doesn't exist at the expected path:
-- The extension logs a warning: `Debug binary not found at ...`
-- Falls back to using `stencila` from PATH (your global install)
-- You'll see this in the Output panel
+The extension logs a warning (`Debug binary not found at ...`) and falls back to whatever `stencila` is available on `PATH`. The Output panel records the message.
 
 ## Making Sure It Works
 
@@ -106,11 +94,5 @@ If the CLI binary doesn't exist at the expected path:
 
 ## Summary
 
-The extension uses **relative path resolution** from its compiled code location to find your local CLI build. This works because:
-- No configuration needed
-- Works automatically in development mode
-- Finds your local build without any setup
-- Falls back gracefully if not found
-
-The path: `vscode/out/` → `../../target/debug/stencila` → `stencila/target/debug/stencila`
+Extension development mode relies on relative path resolution from the compiled extension directory to `../../target/debug/stencila`. No extra configuration is needed, and the mechanism gracefully falls back to `stencila` on `PATH` if the repository build is missing.
 

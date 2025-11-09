@@ -40,18 +40,18 @@ This document describes the recommended workflow for developing and testing Sten
 
 ## Typical Development Session
 
-### 1. Start Your Session
+### 1. Start the session
 
 ```bash
-# Navigate to the project
-cd /Users/eller/Projects/stencila_dev
+# Navigate to the repository root
+cd /path/to/stencila_dev
 
-# Ensure everything is up to date
+# Optional: fetch latest changes
 cd stencila
-git pull  # If you want latest changes
+git pull
 
-# Verify your environment
-./scripts/test-rust.sh  # Quick sanity check
+# Quick sanity check
+./scripts/test-rust.sh
 ```
 
 ### 2. Make Your Changes

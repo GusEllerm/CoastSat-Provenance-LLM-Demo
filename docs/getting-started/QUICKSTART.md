@@ -9,7 +9,7 @@ Get up and running with Stencila development in 5 minutes.
 ./scripts/start-dev.sh
 ```
 
-Then press **F5** in Cursor/VS Code and you're ready! 
+Then press **F5** in VS Code (or any VS Code–compatible IDE) and you're ready! 
 
 See [Development Workflow](../development/DEVELOPMENT_WORKFLOW.md) for the full automated workflow.
 

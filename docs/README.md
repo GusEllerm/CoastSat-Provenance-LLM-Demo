@@ -15,7 +15,7 @@ This directory contains all documentation for the Stencila development environme
 
 ### Extension Development
 - **[VS Code Extension Guide](extension/VSCODE_EXTENSION.md)** - Working with the extension
-- **[Cursor Development](extension/CURSOR_DEVELOPMENT.md)** - Cursor IDE setup and usage
+- **[IDE Development Workflow](extension/IDE_DEVELOPMENT.md)** - Run and debug the extension locally
 - **[How Dev Mode Works](extension/HOW_DEV_MODE_WORKS.md)** - Understanding extension development mode
 
 ### Examples
