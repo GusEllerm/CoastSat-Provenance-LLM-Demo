@@ -5,7 +5,7 @@ name: livepublication/template_describe/summary
 title: LivePublication Summary Prompt
 description: Provide a concise summary tailored for LivePublication documents.
 
-version: "0.1.0"
+version: "0.1.1"
 instruction-type: TemplateDescribe
 ---
 

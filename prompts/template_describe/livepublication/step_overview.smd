@@ -5,7 +5,7 @@ name: livepublication/coastsat/step
 title: Coastsat Workflow Step Overview
 description: Summarise a CoastSat workflow step using structured metadata.
 
-version: "0.1.0"
+version: "0.1.1"
 instruction-type: TemplateDescribe
 ---
 
@@ -53,4 +53,4 @@ Guidelines:
 **Notebook insight:** 1: [Code cell 1](file:///.../cell_1.py) — imports analysis libraries; 2: [Code cell 2](file:///.../cell_2.py) — loads site polygons; 3: [Code cell 9](file:///.../cell_9.py) — applies despiking.
 ```
 
-# Step Metadata
+:::: include ../../partials/context/coastsat/overview.smd

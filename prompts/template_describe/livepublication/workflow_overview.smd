@@ -1,0 +1,36 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/workflow/overview-v2
+title: CoastSat Workflow Overview
+description: Provide a high-level narrative of the CoastSat workflow goals.
+
+version: "0.1.1"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are writing the introductory overview for the CoastSat workflow. Stay at a high level: explain the scientific objectives, data sources, and analysis themes without repeating the per-step prose that appears later in the document.
+
+Metadata is provided as JSON with these keys:
+- `site` (site identifier used in the example)
+- `total_steps`
+- `steps` (ordered list of step dicts) where each step includes:
+  - `name`, `position`, `language`, `code_repository_markdown`
+  - `inputs_summary`, `outputs_summary`
+  - `inputs` and `outputs` (each is a shortened list of parameter briefs with `name`, `format`, `description`, `source_link`, `total_files`, `transient_note`)
+
+Return two short paragraphs (max ~160 words total). Requirements:
+- Mention the overall analytical aim and how satellite shoreline data is processed.
+- Highlight how the workflow progresses (input acquisition → processing → analysis → publication) referencing step names when useful.
+- Acknowledge the open-source nature by citing one or more `code_repository_markdown` links.
+- Do not invent steps or tools beyond the supplied list.
+
+# Workflow Metadata
+
+{{ instruction.target }}
+
+# Shared Context
+
+:::: include ../../partials/context/coastsat/overview.smd

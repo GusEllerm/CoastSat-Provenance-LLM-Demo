@@ -1,0 +1,35 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/step/output-v2
+title: CoastSat Step Output Summary
+description: Summarise an output artefact for a CoastSat workflow step.
+
+version: "0.1.1"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are documenting an output artefact produced by a CoastSat workflow step.
+
+Metadata is provided as JSON with these keys:
+- `step` (name, position, language, `code_repository_markdown` when available)
+- `parameter`, `name`, `format`, `description`
+- `source_link` (Markdown link when a public URL exists, otherwise plain name)
+- `linked_examples` (list of public Markdown links)
+- `total_linked_files` (integer count of linked files in the crate)
+- `linked_files_note` (plain-text description of linked-file availability)
+- `transient_note` (optional note when the artefact is a transient, non-materialised state)
+- `cell_refs` (list of notebook cell names), `cell_refs_note` (fallback sentence)
+- `context_lines` (supplementary bullet-style facts about the step)
+
+Return **one sentence** (max 35 words) describing what this output provides and how downstream work can use it. Requirements:
+- Begin with the artefact name (`name`) and explain the product using `description` or `format`.
+- Cite the public `source_link` when available.
+- Reference the contributing notebook cells via `cell_refs` (or state `cell_refs_note` when none are documented).
+- If `linked_examples` contains a link, mention the first example inline and reference `total_linked_files` for scale.
+- Weave in `linked_files_note` and `transient_note` (when present) without speculation.
+- Use only supplied metadata; do not invent results or performance claims.
+
+:::: include ../../partials/context/coastsat/overview.smd
