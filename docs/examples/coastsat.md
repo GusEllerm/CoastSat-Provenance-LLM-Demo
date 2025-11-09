@@ -1,6 +1,6 @@
 # CoastSat LLM Methodology Example
 
-This case study demonstrates how we transform provenance stored in `interface.crate` into a reproducible, LLM-assisted methodology narrative. It lives under `test-files/examples/CoastSat-example/` and produces the rendered exemplar `example.html`.
+This case study demonstrates how we transform provenance stored in `interface.crate` into a reproducible, LLM-assisted methodology narrative. The sources remain in `test-files/examples/CoastSat-example/`, while the rendered exemplar is published at `docs/coastsat-example/example.html`.
 
 ## Key Assets
 
@@ -8,7 +8,7 @@ This case study demonstrates how we transform provenance stored in `interface.cr
 - `extract_steps_mini.py`: Deterministic extractor that prepares per-step payloads (metadata tables, notebook snapshots, inputs/outputs).
 - `coastsat_llm.smd`: Stencila document orchestrating micro-prompts and display logic.
 - `render_and_preview.sh` / `compile_coastsat_llm.sh`: Convenience scripts for rendering locally.
-- `example.html`: Reference output capturing the workflow narrative, diagram, and per-step summaries.
+- `docs/coastsat-example/example.html`: Reference output capturing the workflow narrative, diagram, and per-step summaries (served via GitHub Pages at [`https://gusellerm.github.io/stencila-dev/coastsat-example/example.html`](https://gusellerm.github.io/stencila-dev/coastsat-example/example.html)).
 
 ## Setup & Rendering
 
@@ -38,7 +38,7 @@ This case study demonstrates how we transform provenance stored in `interface.cr
 
 ## Maintenance Notes
 
-- Regenerate `example.html` after updating `interface.crate`, micro-prompts, or extractor logic.
+- Regenerate `docs/coastsat-example/example.html` after updating `interface.crate`, micro-prompts, or extractor logic (copy or move the newly rendered HTML into `docs/coastsat-example/`).
 - Clear Stencila caches (`stencila clean coastsat_llm.smd`) if prompt changes appear stale.
 - The extractor and prompts use ASCII-only formatting for compatibility; keep new additions consistent unless data demands otherwise.
 

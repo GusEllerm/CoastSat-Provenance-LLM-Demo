@@ -42,7 +42,7 @@ The CoastSat experiment uses interface.crate provenance and a Dynamic Authoring 
 - **`test-files/examples/CoastSat-example/coastsat_llm.smd`** – Stencila document assembling overview, diagram, and per-step sections; invokes the micro-prompts.
 - **Stencila prompt suite** (`stencila/prompts/template_describe/livepublication/*.smd`) – TemplateDescribe micro-prompts for titles, objectives, operations, inputs, outputs, overview, diagram, outcomes, etc.
 - **`test-files/examples/CoastSat-example/render_and_preview.sh`** – Renders the document with the repo prompt directory (`STENCILA_PROMPTS_DIR`) enforced.
-- **`test-files/examples/CoastSat-example/example.html`** – Reference output illustrating the methodology, provenance links, and Mermaid workflow diagram.
+- **`docs/coastsat-example/example.html`** – Reference output illustrating the methodology, provenance links, and Mermaid workflow diagram (also published via GitHub Pages at [`https://gusellerm.github.io/stencila-dev/coastsat-example/example.html`](https://gusellerm.github.io/stencila-dev/coastsat-example/example.html)).
 
 ## Rendering the CoastSat Example
 
