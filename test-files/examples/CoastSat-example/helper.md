@@ -176,7 +176,18 @@ Each entry in the list returned by `extract_workflow_step_dicts` / `extract_step
     - `name`: cell label (“Code cell 7”)
     - `position`: integer order inside the notebook
     - `workExample`: `{"@id": "<relative path>", "path": "<absolute path>", "content": "<inline text>", "content_truncated": true?}` or `None`
-- `raw`: original metadata dictionary produced by `extract_workflow_steps`
+- `inputs_detail` / `outputs_detail`: enriched metadata for each formal parameter (name, type, encoding format, SHA-256, etc.).
+- `linked_files`: grouped artefact references keyed by `inputs` / `outputs`, each containing the resolved files that reference the parameter.
+- `language` / `code_repository`: normalised values ready for rendering without additional processing.
+- `prompt_context`: aggregate multi-line string used directly as the LLM prompt content.
+- `stats`: dictionary of counts, example strings, and Markdown-ready link lists for inputs/outputs/linked artefacts.
+- `tables`: structured Stencila datatables, currently:
+  - `metadata`: Field/Value pairs for the step (counts, links, examples).
+  - `notebook_cells`: preview of notebook code cells (position, name, truncated snippet, path) when a notebook crate exists.
+- `notebook_summary`: list of dictionaries describing the first few notebook cells (position, name, path, preview string).
+- `link_lists`: Markdown links for inputs/outputs/linked artefacts (`inputs`, `outputs`, `linked_inputs`, `linked_outputs`).
+- `lineage_targets`: list of curated artefact summaries (≤25 files each) primed for data-lineage prompts.
+- `raw`: original metadata dictionary produced by `extract_workflow_steps`.
 
 These keys are safe to access inside Stencila templates (e.g. `{{step["position"]}}`, `{{step["notebook_crate"]["steps"][0]["workExample"]["path"]}}`).
 

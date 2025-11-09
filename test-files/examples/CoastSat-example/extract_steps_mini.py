@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 from __future__ import annotations
 
 import json
@@ -5,6 +8,8 @@ import sys
 from pathlib import Path
 from typing import Any, Optional
 from collections import OrderedDict
+from textwrap import shorten
+from urllib.parse import urlparse
 
 from rocrate.model.contextentity import ContextEntity  # type: ignore[import]
 from rocrate.rocrate import ROCrate  # type: ignore[import]
@@ -436,6 +441,54 @@ def _summarise_linked(linked, kind):
     return summary, total_params, total_files, examples
 
 
+def _to_uri(url: Optional[str]) -> Optional[str]:
+    if not url:
+        return None
+    if urlparse(url).scheme in {"http", "https", "file"}:
+        return url
+    try:
+        return Path(url).resolve().as_uri()
+    except Exception:
+        return url
+
+
+def _make_markdown_link(name: str | None, url: str | None) -> str:
+    if not name:
+        name = url or "(unknown)"
+    url = _to_uri(url)
+    if url:
+        return f"[{name}]({url})"
+    return name or "(unknown)"
+
+
+def _links_from_details(entries: list[dict[str, Any]] | None) -> list[str]:
+    links = []
+    if not entries:
+        return links
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        url = entry.get("url") or entry.get("path")
+        name = entry.get("name") or entry.get("id")
+        links.append(_make_markdown_link(name, url))
+    return links
+
+
+def _links_from_linked_entries(entries: list[dict[str, Any]] | None) -> list[str]:
+    links = []
+    if not entries:
+        return links
+    for entry in entries:
+        parameter = entry.get("parameter")
+        for file_entry in entry.get("files") or []:
+            if not isinstance(file_entry, dict):
+                continue
+            url = file_entry.get("url") or file_entry.get("path")
+            name = file_entry.get("name") or file_entry.get("id") or parameter
+            links.append(_make_markdown_link(name, url))
+    return links
+
+
 def _normalise_language(language):
     if isinstance(language, dict):
         return language.get("name") or language.get("@id") or language.get("value") or "Unknown"
@@ -456,20 +509,25 @@ def _build_step_metadata_table(step, stats):
         ("Linked outputs", stats["linked_output_summary"]),
     ])
 
-    if stats.get("input_examples_text"):
-        rows["Input examples"] = stats["input_examples_text"]
-    if stats.get("output_examples_text"):
-        rows["Output examples"] = stats["output_examples_text"]
-    if stats.get("linked_input_examples_text"):
-        rows["Linked input examples"] = stats["linked_input_examples_text"]
-    if stats.get("linked_output_examples_text"):
-        rows["Linked output examples"] = stats["linked_output_examples_text"]
+    optional_fields = [
+        ("Input links", stats.get("input_links_text")),
+        ("Output links", stats.get("output_links_text")),
+        ("Linked input links", stats.get("linked_input_links_text")),
+        ("Linked output links", stats.get("linked_output_links_text")),
+        ("Input examples", stats.get("input_examples_text")),
+        ("Output examples", stats.get("output_examples_text")),
+        ("Linked input examples", stats.get("linked_input_examples_text")),
+        ("Linked output examples", stats.get("linked_output_examples_text")),
+    ]
+    for label, value in optional_fields:
+        if value:
+            rows[label] = value
 
     def _fmt(value):
         if value in (None, "", [], {}):
             return "–"
         if isinstance(value, (list, tuple)):
-            return ", ".join(str(item) for item in value if item)
+            return "<br />".join(str(item) for item in value if item)
         return str(value)
 
     columns = [
@@ -482,6 +540,60 @@ def _build_step_metadata_table(step, stats):
             "type": "DatatableColumn",
             "name": "Value",
             "values": [_fmt(value) for value in rows.values()],
+        },
+    ]
+    return {"type": "Datatable", "columns": columns}
+
+
+def _build_notebook_summary(notebook_crate: Optional[dict]) -> list[dict[str, Any]]:
+    if not notebook_crate:
+        return []
+    summary = []
+    for step in notebook_crate.get("steps", [])[:6]:
+        entry: dict[str, Any] = {
+            "position": step.get("position"),
+            "name": step.get("name"),
+        }
+        work = step.get("workExample") or {}
+        path = work.get("path")
+        entry["path"] = path
+        entry["uri"] = _to_uri(path)
+        entry["id"] = work.get("@id") or step.get("id")
+        preview = ""
+        if path:
+            try:
+                content = Path(path).read_text(encoding="utf-8", errors="ignore")
+                preview = shorten(content.strip(), width=200, placeholder="…")
+            except Exception:
+                preview = ""
+        entry["preview"] = preview
+        summary.append(entry)
+    return summary
+
+
+def _build_notebook_table(summary: list[dict[str, Any]]) -> Optional[dict[str, Any]]:
+    if not summary:
+        return None
+    columns = [
+        {
+            "type": "DatatableColumn",
+            "name": "Position",
+            "values": [entry.get("position") for entry in summary],
+        },
+        {
+            "type": "DatatableColumn",
+            "name": "Name",
+            "values": [entry.get("name") for entry in summary],
+        },
+        {
+            "type": "DatatableColumn",
+            "name": "Preview",
+            "values": [entry.get("preview") for entry in summary],
+        },
+        {
+            "type": "DatatableColumn",
+            "name": "Path",
+            "values": [entry.get("uri") or entry.get("path") for entry in summary],
         },
     ]
     return {"type": "Datatable", "columns": columns}
@@ -564,6 +676,11 @@ def _step_view(step: dict) -> dict:
         linked_output_examples,
     ) = _summarise_linked(linked, "outputs")
 
+    input_links = _links_from_details(inputs_detail)
+    output_links = _links_from_details(outputs_detail)
+    linked_input_links = _links_from_linked_entries(linked.get("inputs") if isinstance(linked, dict) else None)
+    linked_output_links = _links_from_linked_entries(linked.get("outputs") if isinstance(linked, dict) else None)
+
     prompt_lines = [
         f"Step name: {step.get('name')}",
         f"Step identifier: {step.get('id')}",
@@ -573,10 +690,18 @@ def _step_view(step: dict) -> dict:
         input_summary,
         output_summary,
     ]
+    if input_links:
+        prompt_lines.append("Input links: " + ", ".join(input_links[:5]))
+    if output_links:
+        prompt_lines.append("Output links: " + ", ".join(output_links[:5]))
     if linked_input_summary:
         prompt_lines.append(linked_input_summary)
+    if linked_input_links:
+        prompt_lines.append("Linked input artefacts: " + ", ".join(linked_input_links[:5]))
     if linked_output_summary:
         prompt_lines.append(linked_output_summary)
+    if linked_output_links:
+        prompt_lines.append("Linked output artefacts: " + ", ".join(linked_output_links[:5]))
 
     stats = {
         "input_summary": input_summary,
@@ -593,7 +718,27 @@ def _step_view(step: dict) -> dict:
         "linked_input_file_count": linked_input_files,
         "linked_output_parameter_count": linked_output_params,
         "linked_output_file_count": linked_output_files,
+        "input_links_text": ", ".join(input_links),
+        "output_links_text": ", ".join(output_links),
+        "linked_input_links_text": ", ".join(linked_input_links),
+        "linked_output_links_text": ", ".join(linked_output_links),
     }
+
+    notebook_summary = _build_notebook_summary(step.get("notebook_crate"))
+    notebook_table = _build_notebook_table(notebook_summary)
+
+    notebook_lines = []
+    for cell in notebook_summary[:3]:
+        label = cell.get("name") or f"Cell {cell.get('position')}"
+        link = _make_markdown_link(label, cell.get("uri") or cell.get("path"))
+        preview = cell.get("preview") or ""
+        notebook_lines.append(f"{cell.get('position')}: {link} — {preview}")
+    if notebook_lines:
+        prompt_lines.append("Notebook cells: " + " | ".join(notebook_lines))
+
+    lineage_targets = _build_lineage_targets(step, outputs_detail or [])
+    for target in lineage_targets:
+        prompt_lines.append("Output artefact: " + target["summary"])
 
     result = {
         "id": step["@id"],
@@ -627,8 +772,21 @@ def _step_view(step: dict) -> dict:
                 stats,
             ),
         },
-        "lineage_targets": _build_lineage_targets(step, outputs_detail or []),
+        "lineage_targets": lineage_targets,
+        "notebook_summary": notebook_summary,
     }
+
+    if notebook_table:
+        result["tables"]["notebook_cells"] = notebook_table
+
+    if input_links:
+        result.setdefault("link_lists", {})["inputs"] = input_links
+    if output_links:
+        result.setdefault("link_lists", {})["outputs"] = output_links
+    if linked_input_links:
+        result.setdefault("link_lists", {})["linked_inputs"] = linked_input_links
+    if linked_output_links:
+        result.setdefault("link_lists", {})["linked_outputs"] = linked_output_links
 
     return result
 
