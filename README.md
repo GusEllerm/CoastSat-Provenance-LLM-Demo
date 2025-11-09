@@ -26,13 +26,9 @@ stencila_dev/
 
 ## Overview
 
-# Stencila as a templating engine for provenance-aware LLM authoring.
-#
-# The CoastSat experiment uses interface.crate provenance and a Dynamic Authoring Framework
-# to generate methodology prose via bounded micro-inference tasks. Each LLM call is supplied
-# with deterministic context prepared in Python, preserving traceability between narrative
-# text and the underlying computational workflow.
-# Key aims
+### Stencila as a templating engine for provenance-aware LLM authoring. The CoastSat experiment uses interface.crate provenance and a Dynamic Authoring Framework to generate methodology prose via bounded micro-inference tasks. Each LLM call is supplied with deterministic context prepared in Python, preserving traceability between narrative text and the underlying computational workflow.
+
+### Motivations
 - Reduce hallucination risk by constraining prompts to narrowly scoped tasks.
 - Preserve epistemic grounding by deferring factual weight to provenance artefacts, not model output.
 - Showcase how interface-level provenance can be surfaced to readers alongside narrative text.
