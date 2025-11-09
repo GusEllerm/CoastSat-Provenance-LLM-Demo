@@ -6,8 +6,9 @@ use common::{
 };
 use models::{ModelOutput, ModelOutputKind, ModelTask};
 use schema::{
-    Article, AudioObject, AuthorRole, Block, File, ImageObject, Inline, InstructionAttachment,
-    InstructionMessage, Link, MessagePart, MessageRole, Node, Text, VideoObject, shortcuts::p,
+    Article, AudioObject, AuthorRole, AuthorRoleAuthor, AuthorRoleName, Block, File, ImageObject,
+    Inline, InstructionAttachment, InstructionMessage, Link, MessagePart, MessageRole, Node, Text,
+    VideoObject, shortcuts::p,
 };
 
 /// Render Stencila [`Block`] nodes to a "system prompt"
@@ -123,12 +124,17 @@ fn attachment_to_message_parts(attachment: &InstructionAttachment) -> Vec<Messag
 pub(super) async fn model_task_to_blocks_and_authors(
     task: ModelTask,
 ) -> Result<(Vec<Block>, Vec<AuthorRole>)> {
+    let prompt_text = task.prompt_as_text();
     let ModelOutput {
-        authors,
+        mut authors,
         kind,
         format,
         content,
     } = models::perform_task(task).await?;
+
+    if let Some(prompt) = prompt_text.as_ref() {
+        annotate_generator_authors(&mut authors, prompt);
+    }
 
     let blocks = match kind {
         ModelOutputKind::Text => {
@@ -198,6 +204,25 @@ pub(super) async fn model_task_to_blocks_and_authors(
     };
 
     Ok((blocks, authors))
+}
+
+fn annotate_generator_authors(authors: &mut [AuthorRole], prompt: &str) {
+    let prompt = prompt.trim();
+    if prompt.is_empty() {
+        return;
+    }
+
+    let description = format!("Prompt sent to model:\n\n{prompt}");
+
+    for author in authors.iter_mut() {
+        if author.role_name != AuthorRoleName::Generator {
+            continue;
+        }
+
+        if let AuthorRoleAuthor::SoftwareApplication(app) = &mut author.author {
+            app.options.description = Some(description.clone());
+        }
+    }
 }
 
 /// Put any chain-of-thought output into a collapsed admonition

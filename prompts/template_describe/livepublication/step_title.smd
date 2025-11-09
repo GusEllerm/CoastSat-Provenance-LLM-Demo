@@ -1,0 +1,28 @@
+---
+type: Prompt
+
+name: livepublication/coastsat/step/title
+title: CoastSat Step Title Generator
+description: Produce a concise title summarising a CoastSat workflow step.
+
+version: "0.1.0"
+instruction-type: TemplateDescribe
+---
+
+# Instructions
+
+You are naming a computational step inside the CoastSat shoreline workflow.
+
+Produce **one** short Markdown heading (no more than 8 words) that summarises the step. Requirements:
+- Incorporate the key operation or outcome (e.g., “Tide Correction of Transect Series”).
+- If a code repository URL is provided, embed the title as a Markdown link pointing to that URL.
+- Avoid punctuation beyond basic words (no trailing periods, no quotes).
+- Do not add additional commentary or descriptions—return only the title line.
+
+# Step Metadata
+
+{{ instruction.target }}
+
+# Shared Context
+
+:::: include ../../partials/context/coastsat/overview.smd

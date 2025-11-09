@@ -13,20 +13,34 @@ instruction-type: TemplateDescribe
 
 You are explaining the provenance of a single data artefact inside the CoastSat workflow.
 
-Using the supplied metadata, produce one concise paragraph that:
-- Identifies which workflow steps generate the artefact and the operations that lead to it.
-- Summarises the main characteristics of the artefact (format, size, purpose) when given.
-- Describes how downstream steps consume or transform it, again using aggregate counts rather than exhaustive lists.
-- Notes any external repositories, APIs, or notebooks linked to the artefact.
+Return Markdown with the following sections (omit a section only when the metadata is missing):
 
-Do not speculate. Report only what is explicitly provided.
+**Produced by:** identify the step(s) and key operations that create the artefact (link to the step or notebook when a URL/path is provided).
+
+**Characteristics:** describe format, size, purpose, and any relevant hashes or encodings (use the supplied values only).
+
+**Consumed by:** outline downstream steps that rely on the artefact and how they use it.
+
+**Related files:** bullet list of notable files (use Markdown links to GitHub or file URIs supplied in the metadata).
+
+Guidelines:
+- Use only the provided context; do not infer or invent additional behaviour.
+- Prefer aggregate wording when many files are involved (e.g. “hundreds of tide records”).
+- Maintain a concise, factual tone.
+- Render every supplied URL/path as a Markdown link.
+
+# Example
+
+```
+**Produced by:** `tidal_correction-1.ipynb` — applies NIWA tide corrections and despiking to raw transect series.
+
+**Characteristics:** CSV (tidally corrected transect time series); SHA-256 `d94b79…`; stored at [transect_time_series_tidally_corrected.csv](file:///.../transect_time_series_tidally_corrected.csv).
+
+**Consumed by:** `linear_models.ipynb` to compute shoreline trends and `make_xlsx.py` for report exports.
+
+**Related files:**
+- [transect_time_series_tidally_corrected.csv](file:///.../transect_time_series_tidally_corrected.csv)
+- [tides.csv](file:///.../tides.csv)
+```
 
 # Artefact Metadata
-
-{{ instruction.target }}
-
-# Document Context
-
-:::: include ../../partials/context/document/metadata.smd
-:::: include ../../partials/context/document/paragraphs/previous.smd
-

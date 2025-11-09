@@ -107,6 +107,42 @@ export class UINodeAuthor extends LitElement {
       }
     })()
 
+    const trimmedDetails = this.details?.trim()
+    const singleLineClasses = apply([
+      'text-2xs',
+      'w-[90%]',
+      'leading-none',
+      'overflow-hidden',
+      'whitespace-nowrap',
+      'text-ellipsis',
+      'inline-block',
+      'mt-1',
+    ])
+    const multilineClasses = apply([
+      'text-2xs',
+      'leading-5',
+      'whitespace-pre-wrap',
+      'break-words',
+      'border',
+      'border-gray-200',
+      'rounded',
+      'bg-gray-50',
+      'p-3',
+      'mt-2',
+      'w-full',
+      'max-h-64',
+      'overflow-auto',
+    ])
+    const detailsContent = trimmedDetails
+      ? trimmedDetails.includes('\n')
+        ? html`<pre class=${multilineClasses} title=${trimmedDetails}>
+            ${trimmedDetails}
+          </pre>`
+        : html`<span class=${singleLineClasses} title=${trimmedDetails}>
+            ${trimmedDetails}
+          </span>`
+      : null
+
     return html`
       <div class="@container w-full">
         <div class="flex flex-col gap-x-2 font-sans mb-4 @xs:flex-row @xs:mb-0">
@@ -131,13 +167,7 @@ export class UINodeAuthor extends LitElement {
               >
                 ${this.renderName()}
               </span>
-              ${this.details
-                ? html`<span
-                    class=${`text-2xs w-[90%] leading-none overflow-hidden whitespace-nowrap text-ellipsis inline-block`}
-                  >
-                    ${this.details}
-                  </span>`
-                : ''}
+              ${detailsContent ?? ''}
             </div>
           </div>
           <div

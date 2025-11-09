@@ -36,6 +36,11 @@ export class UINodeAuthors extends LitElement {
   private hasItems = false
 
   /**
+   * Ensure we only auto expand once when prompt details are detected
+   */
+  private autoExpanded = false
+
+  /**
    * Allow the list of authors to be expanded from outside this component
    */
   public expand() {
@@ -56,9 +61,18 @@ export class UINodeAuthors extends LitElement {
       'slot:not([name="provenance"])'
     )
     if (slot) {
+      const evaluate = () => {
+        const elements = slot.assignedElements({ flatten: true })
+        this.hasItems = elements.length !== 0
+        this.autoExpandIfPromptDetails(elements)
+      }
+
       slot.addEventListener('slotchange', () => {
-        this.hasItems = slot.assignedElements({ flatten: true }).length !== 0
+        evaluate()
       })
+
+      // If the slot already has assigned elements, evaluate immediately
+      evaluate()
     }
   }
 
@@ -73,5 +87,21 @@ export class UINodeAuthors extends LitElement {
       <slot name="provenance" slot="header-content"></slot>
       <slot></slot>
     </stencila-ui-node-collapsible-details>`
+  }
+
+  private autoExpandIfPromptDetails(elements: Element[]) {
+    if (this.autoExpanded || this.expanded) return
+
+    const hasPromptDetails = elements.some((element) => {
+      if (!(element instanceof HTMLElement)) return false
+      const details = element.getAttribute('details') ?? ''
+      return details.trim().startsWith('Prompt sent to model:')
+    })
+
+    if (hasPromptDetails) {
+      this.autoExpanded = true
+      this.expanded = true
+      this.requestUpdate()
+    }
   }
 }

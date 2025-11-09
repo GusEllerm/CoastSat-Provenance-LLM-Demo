@@ -117,27 +117,54 @@ impl DomCodec for AuthorRole {
                 context.push_attr("_id", id);
             }
 
-            let mut details = String::new();
+            let mut details_sections: Vec<String> = Vec::new();
 
-            if let Some(version) = &app.options.software_version.clone().or_else(|| {
-                app.version.as_ref().map(|version| match version {
-                    StringOrNumber::String(string) => string.clone(),
-                    StringOrNumber::Number(number) => number.to_string(),
+            if let Some(description) = app.options.description.as_ref() {
+                let description = description.trim();
+                if !description.is_empty() {
+                    details_sections.push(description.to_string());
+                }
+            }
+
+            let version = app
+                .options
+                .software_version
+                .as_ref()
+                .map(|value| value.trim().to_string())
+                .filter(|value| !value.is_empty())
+                .or_else(|| {
+                    app.version.as_ref().map(|value| match value {
+                        StringOrNumber::String(string) => string.trim().to_string(),
+                        StringOrNumber::Number(number) => number.to_string(),
+                    })
                 })
-            }) {
-                details.push('v');
-                details.push_str(version);
+                .filter(|value| !value.is_empty());
+
+            let mut trailing: Vec<String> = Vec::new();
+            if let Some(version) = version {
+                let version = version.trim();
+                if !version.is_empty() {
+                    if version.starts_with('v') || version.starts_with('V') {
+                        trailing.push(version.to_string());
+                    } else {
+                        trailing.push(format!("v{version}"));
+                    }
+                }
             }
 
-            if let Some(url) = &app.options.url {
-                if !details.is_empty() {
-                    details.push(' ')
-                };
-                details.push_str(url);
+            if let Some(url) = app.options.url.as_ref() {
+                let url = url.trim();
+                if !url.is_empty() {
+                    trailing.push(url.to_string());
+                }
             }
 
-            if !details.is_empty() {
-                context.push_attr("details", &details);
+            if !trailing.is_empty() {
+                details_sections.push(trailing.join(" "));
+            }
+
+            if !details_sections.is_empty() {
+                context.push_attr("details", &details_sections.join("\n\n"));
             }
         }
 

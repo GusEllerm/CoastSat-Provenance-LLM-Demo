@@ -5,7 +5,10 @@ use common::{
     strum::Display,
 };
 use format::Format;
-use schema::{InstructionAttachment, InstructionMessage, InstructionType, ModelParameters};
+use schema::{
+    InstructionAttachment, InstructionMessage, InstructionType, MessagePart, MessageRole,
+    ModelParameters,
+};
 
 /// The kind of generative model task
 #[derive(Debug, Default, Display, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -225,5 +228,79 @@ impl ModelTask {
             seed,
             ..Default::default()
         }
+    }
+
+    /// Render the messages for this task to a human readable string
+    pub fn prompt_as_text(&self) -> Option<String> {
+        messages_to_prompt_string(&self.messages)
+    }
+}
+
+fn messages_to_prompt_string(messages: &[InstructionMessage]) -> Option<String> {
+    let mut sections: Vec<String> = Vec::new();
+
+    for message in messages {
+        let body = message
+            .parts
+            .iter()
+            .filter_map(message_part_to_string)
+            .collect::<Vec<_>>()
+            .join("\n\n")
+            .trim()
+            .to_string();
+
+        if body.is_empty() {
+            continue;
+        }
+
+        let role = message_role_label(message.role.unwrap_or_default());
+        sections.push(format!("{role}:\n{body}"));
+    }
+
+    if sections.is_empty() {
+        None
+    } else {
+        Some(sections.join("\n\n---\n\n"))
+    }
+}
+
+fn message_part_to_string(part: &MessagePart) -> Option<String> {
+    match part {
+        MessagePart::Text(text) => {
+            let value = text.value.string.trim();
+            (!value.is_empty()).then(|| value.to_string())
+        }
+        MessagePart::ImageObject(image) => {
+            let url = image.content_url.trim();
+            if url.is_empty() {
+                None
+            } else {
+                Some(format!("![Image]({url})"))
+            }
+        }
+        MessagePart::AudioObject(audio) => {
+            let url = audio.content_url.trim();
+            if url.is_empty() {
+                None
+            } else {
+                Some(format!("(audio: {url})"))
+            }
+        }
+        MessagePart::VideoObject(video) => {
+            let url = video.content_url.trim();
+            if url.is_empty() {
+                None
+            } else {
+                Some(format!("(video: {url})"))
+            }
+        }
+    }
+}
+
+fn message_role_label(role: MessageRole) -> &'static str {
+    match role {
+        MessageRole::System => "System",
+        MessageRole::User => "User",
+        MessageRole::Model => "Assistant",
     }
 }

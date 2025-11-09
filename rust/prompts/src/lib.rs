@@ -39,10 +39,11 @@ use rust_embed::RustEmbed;
 use model::{
     ModelOutput, ModelOutputKind, ModelTask,
     schema::{
-        Article, AudioObject, Author, AuthorRole, Block, CompilationMessage, ExecutionMessage,
-        ImageObject, Inline, InstructionBlock, InstructionMessage, InstructionType, Link,
-        MessageLevel, MessagePart, Node, NodeType, Prompt, SuggestionBlock, SuggestionStatus,
-        Timestamp, UnsignedIntegerOrString, VideoObject, authorship, shortcuts::p,
+        Article, AudioObject, Author, AuthorRole, AuthorRoleAuthor, AuthorRoleName, Block,
+        CompilationMessage, ExecutionMessage, ImageObject, Inline, InstructionBlock,
+        InstructionMessage, InstructionType, Link, MessageLevel, MessagePart, Node, NodeType,
+        Prompt, SuggestionBlock, SuggestionStatus, Timestamp, UnsignedIntegerOrString, VideoObject,
+        authorship, shortcuts::p,
     },
 };
 
@@ -571,6 +572,25 @@ async fn update_builtin() -> Result<()> {
     Ok(())
 }
 
+fn annotate_generator_authors(authors: &mut [AuthorRole], prompt: &str) {
+    let prompt = prompt.trim();
+    if prompt.is_empty() {
+        return;
+    }
+
+    let description = format!("Prompt sent to model:\n\n{prompt}");
+
+    for author in authors.iter_mut() {
+        if author.role_name != AuthorRoleName::Generator {
+            continue;
+        }
+
+        if let AuthorRoleAuthor::SoftwareApplication(app) = &mut author.author {
+            app.options.description = Some(description.clone());
+        }
+    }
+}
+
 /// Execute an [`InstructionBlock`]
 pub async fn execute_instruction_block(
     mut instructors: Vec<AuthorRole>,
@@ -690,6 +710,7 @@ pub async fn execute_instruction_block(
         instruction.options.attachments.clone(),
     );
     task.dry_run = dry_run;
+    let prompt_text = task.prompt_as_text();
 
     // Perform the task
     let started = Timestamp::now();
@@ -699,6 +720,9 @@ pub async fn execute_instruction_block(
         format,
         content,
     } = models::perform_task(task).await?;
+    if let Some(prompt) = prompt_text.as_ref() {
+        annotate_generator_authors(&mut authors, prompt);
+    }
     let ended = Timestamp::now();
 
     let blocks = match kind {
