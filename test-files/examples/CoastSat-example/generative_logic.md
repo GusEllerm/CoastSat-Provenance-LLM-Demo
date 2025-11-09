@@ -5,6 +5,7 @@ This note captures how the CoastSat example now iterates over RO-Crate provenanc
 ## 1. Enrich the Provenance Data (Python)
 - `extract_steps_mini.py` resolves `interface.crate` and augments each workflow step with:
   - `inputs_detail` / `outputs_detail`: friendly metadata for each formal parameter.
+  - `inputs_overview` / `outputs_overview`: deterministic summaries containing GitHub-safe links, notebook cell references, transient artefact notes, and site-aware sample links (filtered to the current `site_id` when possible).
   - `linked_files`: grouped mappings of parameters to the files that reference them (`exampleOfWork`).
 - The helper also summarises notebook crates and truncates large blobs so we can work with deterministic strings.
 - Re-run the helper inside the example virtualenv to inspect the enriched structure:
@@ -15,35 +16,38 @@ This note captures how the CoastSat example now iterates over RO-Crate provenanc
   or load `extract_step_dicts('interface.crate')` inside a REPL/notebook for programmatic access.
 
 ## 2. Pre-compute Prompt Context in `coastsat_llm.smd`
-- The document imports `extract_step_dicts` and, for each step:
-  - Generates aggregate summaries (counts, representative examples, total linked files).
-  - Builds a compact `prompt_context` string that lists the step name, position, programming language, repo URL, IO summaries, and linked artefact totals.
-  - Selects a small number of output artefacts (`<=25` files each) to create `lineage_targets` with concise metadata and file samples.
-- These pre-computed strings keep LLM prompts deterministic and bounded, avoiding full payloads of thousands of files.
+- The document imports `extract_step_dicts` and builds two collections:
+  - `workflow_overview_input`, `workflow_diagram_input`, `workflow_outcomes_input` — aggregate datasets spanning all steps, used for the front-matter overview section.
+  - `display_steps` — the subset of steps rendered in the main body (currently sliced for testing).
+- For each step we still construct compact `prompt_context` strings and reuse the deterministic IO summaries so every prompt sees bounded, repeatable metadata.
 
 ## 3. Controlled Generative Calls
-- **`@coastsat/step_overview`** (TemplateDescribe)
-  - Input: `step.prompt_context` (aggregate summary only).
-  - Goal: produce one or two paragraphs that explain the methodological role of the step and how its inputs/outputs fit together.
-- **`@coastsat/data_lineage`** (TemplateDescribe)
-  - Triggered only for artefacts with manageable file counts.
-  - Input: curated context string per artefact (`parameter`, counts, metadata, sample filenames).
-  - Goal: explain provenance and downstream usage without enumerating every file.
-- Both prompts inherit document-level context partials so they remain aware of surrounding narrative while staying scoped to the supplied metadata.
+- **Top-level overview (new)**
+  - `@livepublication/coastsat/workflow/overview-v2` — two introductory paragraphs about goals and tooling.
+  - `@livepublication/coastsat/workflow/diagram-v2` — Mermaid flowchart connecting steps with repo links.
+  - `@livepublication/coastsat/workflow/outcomes-v2` — bullet list of primary artefacts plus representative GitHub files.
+- **Per-step micro-prompts**
+  - `@livepublication/coastsat/step/title-v2` — 8-word title with repo link.
+  - `@livepublication/coastsat/step/objective-v2` — single neutral objective sentence.
+  - `@livepublication/coastsat/step/operations-v2` — 2-4 verb-led bullets referencing notebook cells.
+  - `@livepublication/coastsat/step/input-v2` — 50-word input description referencing notebook cells and linked files.
+  - `@livepublication/coastsat/step/output-v2` — 50-word output description referencing notebook cells and linked files.
+- All prompts inherit document-level context partials so they remain aware of the broader narrative while staying scoped to supplied metadata. Lineage prompts are currently disabled because we prioritise concise IO narratives.
 
 ## 4. Rendering the Document
-- Within the `:::: for step in step_dicts` loop we now:
-  1. Emit deterministic bullet summaries (counts, repositories, example IDs).
-  2. Call `@coastsat/step_overview` for the narrative description.
-  3. Optionally call `@coastsat/data_lineage` for highlighted outputs.
-- The previous free-form describe prompt that inlined `step.raw` has been removed to avoid excessive context and hallucination risk.
+- The high-level overview appears before the per-step loop, giving readers goals, diagram, and headline outputs.
+- Within the `:::: for step in display_steps` loop we now:
+  1. Prepare deterministic Python payloads for the step (including a `_sequence` field used for numbered headings).
+  2. Emit the title/objective/operations sections.
+  3. Iterate deterministic lists of inputs and outputs, running the dedicated micro-prompts.
+- Because each LLM call receives a curated payload, we avoid enumerating thousands of files yet maintain traceability through GitHub links and notebook references.
 
 ## 5. Testing & Iteration
 - Always run the helper script (or a targeted REPL snippet) after changing `extract_steps_mini.py` to confirm that summarised fields still exist and remain small.
 - Use the `.venv` in `CoastSat-example/` when executing the Stencila document so the same library versions are available.
-- When experimenting with new prompts, add them under `prompts/local/coastsat/` so they can be selected with `@coastsat/...` without affecting the global library.
+- When experimenting with new prompts, add them under `stencila/prompts/template_describe/livepublication/` (or a `local/` namespace) so they can be selected with `@livepublication/...` without affecting the global library.
 
 ## 6. Extending the Workflow
-- To cover additional artefact types (e.g., inputs consumed by later steps), extend the summarisation logic to produce new aggregate strings and hook them into a dedicated prompt.
+- To cover additional artefact types (e.g., downstream dependency summaries), extend the summarisation logic to produce new aggregate strings and hook them into a dedicated prompt.
 - Consider logging total prompt tokens or execution counts during iteration to track cost as provenance grows.
-- Document any changes to thresholds (e.g., the `<=25` file rule for lineage prompts) here so future iterations know why certain artefacts are skipped.
+- Document any changes to thresholds (e.g., file-count limits or step slices) here so future iterations know why certain artefacts are skipped.

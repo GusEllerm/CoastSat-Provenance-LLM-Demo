@@ -14,7 +14,10 @@ if [ -z "$CLI" ]; then
   exit 1
 fi
 
-"$CLI" render coastsat_llm.smd test.html
+PROMPTS_DIR="/Users/eller/Projects/stencila_dev/stencila/prompts"
+export STENCILA_PROMPTS_DIR="$PROMPTS_DIR"
+
+"$CLI" render coastsat_llm.smd test.html --debug
 
 if command -v open >/dev/null 2>&1; then
   open test.html

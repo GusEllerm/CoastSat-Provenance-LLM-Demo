@@ -461,32 +461,69 @@ def _make_markdown_link(name: str | None, url: str | None) -> str:
     return name or "(unknown)"
 
 
-def _links_from_details(entries: list[dict[str, Any]] | None) -> list[str]:
-    links = []
+def _make_prompt_link(name: str | None, url: str | None) -> str:
+    if not name:
+        name = url or "(unknown)"
+    if url:
+        parsed = urlparse(url)
+        if parsed.scheme in {"http", "https"}:
+            return f"[{name}]({url})"
+    return name or "(unknown)"
+
+
+def _limit_list(values: list[str], limit: int, total_count: int | None = None) -> list[str]:
+    if total_count is None:
+        total_count = len(values)
+    if limit <= 0 or len(values) <= limit:
+        if total_count > len(values):
+            values = values + [f"… (+{total_count - len(values)} more)"]
+        return values
+    trimmed = values[:limit]
+    if total_count > limit:
+        trimmed.append(f"… (+{total_count - limit} more)")
+    return trimmed
+
+
+def _links_from_details(entries: list[dict[str, Any]] | None, limit: int = 5) -> list[str]:
     if not entries:
-        return links
+        return []
+    links: list[str] = []
+    seen: set[str] = set()
+    total = 0
     for entry in entries:
         if not isinstance(entry, dict):
             continue
         url = entry.get("url") or entry.get("path")
         name = entry.get("name") or entry.get("id")
-        links.append(_make_markdown_link(name, url))
-    return links
+        total += 1
+        link = _make_markdown_link(name, url)
+        if link in seen:
+            continue
+        seen.add(link)
+        links.append(link)
+    return _limit_list(links, limit, total)
 
 
-def _links_from_linked_entries(entries: list[dict[str, Any]] | None) -> list[str]:
-    links = []
+def _links_from_linked_entries(entries: list[dict[str, Any]] | None, limit: int = 5) -> list[str]:
     if not entries:
-        return links
+        return []
+    links: list[str] = []
+    seen: set[str] = set()
+    total_files = 0
     for entry in entries:
-        parameter = entry.get("parameter")
-        for file_entry in entry.get("files") or []:
+        files = entry.get("files") or []
+        for file_entry in files:
             if not isinstance(file_entry, dict):
                 continue
+            total_files += 1
             url = file_entry.get("url") or file_entry.get("path")
-            name = file_entry.get("name") or file_entry.get("id") or parameter
-            links.append(_make_markdown_link(name, url))
-    return links
+            name = file_entry.get("name") or file_entry.get("id") or entry.get("parameter")
+            link = _make_markdown_link(name, url)
+            if link in seen:
+                continue
+            seen.add(link)
+            links.append(link)
+    return _limit_list(links, limit, total_files)
 
 
 def _normalise_language(language):
@@ -498,7 +535,7 @@ def _normalise_language(language):
 
 
 def _build_step_metadata_table(step, stats):
-    rows = OrderedDict([
+    rows: OrderedDict[str, Any] = OrderedDict([
         ("Identifier", step.get("id")),
         ("Position", step.get("position")),
         ("Programming language", step.get("language")),
@@ -556,16 +593,27 @@ def _build_notebook_summary(notebook_crate: Optional[dict]) -> list[dict[str, An
         }
         work = step.get("workExample") or {}
         path = work.get("path")
-        entry["path"] = path
-        entry["uri"] = _to_uri(path)
-        entry["id"] = work.get("@id") or step.get("id")
+        content = work.get("content")
+        truncated = bool(work.get("content_truncated"))
         preview = ""
-        if path:
+        if content is None and path:
             try:
-                content = Path(path).read_text(encoding="utf-8", errors="ignore")
-                preview = shorten(content.strip(), width=200, placeholder="…")
+                text = Path(path).read_text(encoding="utf-8", errors="ignore")
+                content = text
+            except Exception:
+                content = None
+        if isinstance(content, str) and content.strip():
+            preview = shorten(content.strip(), width=200, placeholder="…")
+        elif path:
+            try:
+                text = Path(path).read_text(encoding="utf-8", errors="ignore")
+                preview = shorten(text.strip(), width=200, placeholder="…")
             except Exception:
                 preview = ""
+        entry["content"] = content
+        entry["content_truncated"] = truncated
+        entry["path"] = path
+        entry["uri"] = _to_uri(path)
         entry["preview"] = preview
         summary.append(entry)
     return summary
@@ -599,57 +647,101 @@ def _build_notebook_table(summary: list[dict[str, Any]]) -> Optional[dict[str, A
     return {"type": "Datatable", "columns": columns}
 
 
-def _build_lineage_targets(step, outputs_detail):
+def _format_lineage_file(entry: dict[str, Any], default_label: str) -> dict[str, Any]:
+    name = entry.get("name") or entry.get("id") or default_label
+    web_url = entry.get("url")
+    if not web_url:
+        entry_id = entry.get("id")
+        if isinstance(entry_id, str) and entry_id.startswith(("http://", "https://")):
+            web_url = entry_id
+    display_url = web_url or entry.get("path")
+    link = _make_markdown_link(name, display_url)
+    prompt_link = _make_prompt_link(name, web_url)
+    return {
+        "name": name,
+        "link": link,
+        "prompt_link": prompt_link,
+        "path": entry.get("path"),
+        "url": web_url,
+        "encoding_format": entry.get("encodingFormat"),
+        "content_size": entry.get("contentSize"),
+        "sha256": entry.get("sha256"),
+        "description": entry.get("description"),
+    }
+
+
+def _build_lineage_targets(step, outputs_detail, language, code_repo):
     linked = step.get("linked_files") if isinstance(step.get("linked_files"), dict) else {}
     output_entries = linked.get("outputs") or []
+    produced_by = {
+        "name": step.get("name"),
+        "id": step.get("@id"),
+        "position": step.get("position"),
+        "code_repository": code_repo,
+        "language": language,
+        "code_repository_markdown": _make_markdown_link(step.get("name"), code_repo) if code_repo else None,
+    }
+
     targets = []
     for entry in output_entries:
         files = entry.get("files") or []
         total_files = len(files)
-        if total_files == 0 or total_files > 25:
-            continue
         parameter_id = entry.get("parameter")
         detail = next((d for d in outputs_detail if d.get("id") == parameter_id), {})
+        if total_files == 0 and not detail:
+            continue
+
         context_lines = [
             f"Artefact parameter: {parameter_id}",
-            f"Produced by workflow step {step.get('name')} ({step.get('id')})",
+            f"Produced by workflow step {step.get('name')} ({step.get('@id')})",
             f"Total files in crate: {total_files}",
         ]
-        if detail:
-            metadata_parts = []
-            if detail.get("name"):
-                metadata_parts.append(f"name={detail.get('name')}")
-            if detail.get("type"):
-                metadata_parts.append(f"type={detail.get('type')}")
-            if detail.get("encodingFormat"):
-                metadata_parts.append(f"encodingFormat={detail.get('encodingFormat')}")
-            if detail.get("sha256"):
-                metadata_parts.append(f"sha256={detail.get('sha256')}")
-            if metadata_parts:
-                context_lines.append("Metadata: " + ", ".join(metadata_parts))
-        sample_files = []
-        for file_info in files[:3]:
+
+        metadata = {
+            "name": detail.get("name"),
+            "type": detail.get("type"),
+            "encoding_format": detail.get("encodingFormat"),
+            "description": detail.get("description"),
+            "content_size": detail.get("contentSize"),
+            "sha256": detail.get("sha256"),
+            "link": _make_markdown_link(detail.get("name"), detail.get("path") or detail.get("url")) if detail else None,
+        }
+        metadata = {key: value for key, value in metadata.items() if value}
+
+        files_payload = []
+        for file_info in files[:5]:
             if not isinstance(file_info, dict):
                 continue
-            fname = file_info.get("name") or file_info.get("id")
-            if not fname:
-                continue
-            size = file_info.get("contentSize")
-            descriptor = f"{fname} (size {size})" if size else fname
-            sample_files.append(descriptor)
-        if sample_files:
+            files_payload.append(_format_lineage_file(file_info, parameter_id))
+        if files_payload:
+            sample_files = [file_entry["link"] for file_entry in files_payload]
             context_lines.append("Example files: " + "; ".join(sample_files))
+
+        remaining_files = max(total_files - len(files_payload), 0)
 
         targets.append(
             {
-                "parameter": parameter_id,
-                "total_files": total_files,
-                "summary": f"{parameter_id} ({total_files} files)",
-                "context": "\n".join(context_lines),
+                "artefact": {
+                    "parameter": parameter_id,
+                    "summary": f"{parameter_id} ({total_files} files)",
+                    "total_files": total_files,
+                },
+                "produced_by": {
+                    "step": produced_by,
+                },
+                "metadata": metadata,
+                "files": files_payload,
+                "counts": {
+                    "total_files": total_files,
+                    "files_listed": len(files_payload),
+                    "files_remaining": remaining_files,
+                },
+                "context_lines": context_lines,
             }
         )
         if len(targets) >= 2:
             break
+
     return targets
 
 
@@ -706,12 +798,16 @@ def _step_view(step: dict) -> dict:
     stats = {
         "input_summary": input_summary,
         "input_examples_text": ", ".join(input_samples),
+        "input_examples": input_samples,
         "output_summary": output_summary,
         "output_examples_text": ", ".join(output_samples),
+        "output_examples": output_samples,
         "linked_input_summary": linked_input_summary or "No linked input artefacts referenced.",
         "linked_input_examples_text": ", ".join(linked_input_examples),
+        "linked_input_examples": linked_input_examples,
         "linked_output_summary": linked_output_summary or "No linked output artefacts referenced.",
         "linked_output_examples_text": ", ".join(linked_output_examples),
+        "linked_output_examples": linked_output_examples,
         "input_parameter_count": len(step.get("input") or []),
         "output_parameter_count": len(step.get("output") or []),
         "linked_input_parameter_count": linked_input_params,
@@ -722,23 +818,38 @@ def _step_view(step: dict) -> dict:
         "output_links_text": ", ".join(output_links),
         "linked_input_links_text": ", ".join(linked_input_links),
         "linked_output_links_text": ", ".join(linked_output_links),
+        "input_links": input_links,
+        "output_links": output_links,
+        "linked_input_links": linked_input_links,
+        "linked_output_links": linked_output_links,
     }
 
     notebook_summary = _build_notebook_summary(step.get("notebook_crate"))
     notebook_table = _build_notebook_table(notebook_summary)
 
-    notebook_lines = []
-    for cell in notebook_summary[:3]:
-        label = cell.get("name") or f"Cell {cell.get('position')}"
-        link = _make_markdown_link(label, cell.get("uri") or cell.get("path"))
-        preview = cell.get("preview") or ""
-        notebook_lines.append(f"{cell.get('position')}: {link} — {preview}")
-    if notebook_lines:
-        prompt_lines.append("Notebook cells: " + " | ".join(notebook_lines))
+    notebook_summary_text = ""
+    if notebook_summary:
+        summary_lines = []
+        for cell in notebook_summary[:3]:
+            label = cell.get("name") or f"Cell {cell.get('position')}"
+            link = _make_markdown_link(label, cell.get("uri") or cell.get("path"))
+            preview = cell.get("preview") or ""
+            summary_lines.append(f"{cell.get('position')}: {link} — {preview}")
+        notebook_summary_text = " | ".join(summary_lines)
+        prompt_lines.append("Notebook cells: " + notebook_summary_text)
 
-    lineage_targets = _build_lineage_targets(step, outputs_detail or [])
-    for target in lineage_targets:
-        prompt_lines.append("Output artefact: " + target["summary"])
+    inputs_overview = _build_io_overview(
+        inputs_detail,
+        linked.get("inputs") if isinstance(linked, dict) else None,
+        notebook_summary,
+    )
+    outputs_overview = _build_io_overview(
+        outputs_detail,
+        linked.get("outputs") if isinstance(linked, dict) else None,
+        notebook_summary,
+    )
+
+    lineage_targets = _build_lineage_targets(step, outputs_detail or [], language, code_repo)
 
     result = {
         "id": step["@id"],
@@ -755,6 +866,8 @@ def _step_view(step: dict) -> dict:
         "notebook_crate": _to_notebook_crate_model(step.get("notebook_crate")),
         "inputs_detail": inputs_detail,
         "outputs_detail": outputs_detail,
+        "inputs_overview": inputs_overview,
+        "outputs_overview": outputs_overview,
         "linked_files": linked,
         "raw": step,
         "language": language,
@@ -774,10 +887,21 @@ def _step_view(step: dict) -> dict:
         },
         "lineage_targets": lineage_targets,
         "notebook_summary": notebook_summary,
+        "notebook_summary_text": notebook_summary_text,
     }
+
+    inputs_table = _build_io_table(inputs_overview)
+    if inputs_table:
+        result["tables"]["inputs"] = inputs_table
+    outputs_table = _build_io_table(outputs_overview)
+    if outputs_table:
+        result["tables"]["outputs"] = outputs_table
 
     if notebook_table:
         result["tables"]["notebook_cells"] = notebook_table
+        result["notebook_cells"] = notebook_summary
+    else:
+        result["notebook_cells"] = []
 
     if input_links:
         result.setdefault("link_lists", {})["inputs"] = input_links
@@ -789,6 +913,150 @@ def _step_view(step: dict) -> dict:
         result.setdefault("link_lists", {})["linked_outputs"] = linked_output_links
 
     return result
+
+
+def _build_io_overview(
+    details: list[dict[str, Any]] | None,
+    linked_entries: list[dict[str, Any]] | None,
+    notebook_cells: list[dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
+    if not details:
+        return []
+
+    linked_map = {
+        entry.get("parameter"): entry
+        for entry in (linked_entries or [])
+        if isinstance(entry, dict) and entry.get("parameter")
+    }
+
+    notebook_cells = notebook_cells or []
+
+    overview: list[dict[str, Any]] = []
+    for detail in details:
+        if not isinstance(detail, dict):
+            continue
+        parameter_id = detail.get("id") or detail.get("@id") or "–"
+        name = detail.get("name") or parameter_id or "(unnamed)"
+        encoding_format = detail.get("encodingFormat") or "–"
+        description = detail.get("description") or "–"
+
+        web_url = detail.get("url")
+        if not web_url:
+            detail_id = detail.get("id") or detail.get("@id")
+            if isinstance(detail_id, str) and detail_id.startswith(("http://", "https://")):
+                web_url = detail_id
+        source_url = web_url or detail.get("path")
+        primary_link = _make_markdown_link(name, source_url)
+        prompt_link = _make_prompt_link(name, web_url)
+
+        linked_entry = linked_map.get(parameter_id) or {}
+        files = linked_entry.get("files") or []
+        sample_files = [
+            _format_lineage_file(file_info, parameter_id)
+            for file_info in files[:5]
+            if isinstance(file_info, dict)
+        ]
+        remaining_files = max(len(files) - len(sample_files), 0)
+
+        prompt_example_links = [
+            file_entry.get("prompt_link")
+            for file_entry in sample_files
+            if isinstance(file_entry.get("prompt_link"), str)
+            and file_entry.get("prompt_link")
+            and file_entry.get("prompt_link") != file_entry.get("name")
+        ]
+
+        if sample_files:
+            file_links: list[str] = []
+            for file_entry in sample_files:
+                link_value = file_entry.get("link")
+                if isinstance(link_value, str) and link_value:
+                    file_links.append(link_value)
+            files_annotation = "; ".join(file_links)
+            if remaining_files:
+                files_annotation += f"; … (+{remaining_files} more)"
+            if files_annotation:
+                files_annotation = "Examples: " + files_annotation
+            else:
+                files_annotation = f"{len(sample_files)} linked files." + (
+                    f" (+{remaining_files} more)" if remaining_files else ""
+                )
+        else:
+            files_annotation = "No linked files recorded."
+
+        transient_note = None
+        if len(files) == 0:
+            transient_note = (
+                "No linked files are referenced for this parameter; "
+                "the crate may not capture intermediate artefacts."
+            )
+            files_annotation = "No linked files recorded (likely transient artefact)."
+
+        cell_refs: list[str] = []
+        search_terms = {parameter_id, name}
+        for cell in notebook_cells:
+            content = cell.get("content")
+            if not isinstance(content, str) or not content:
+                continue
+            if any(term and term in content for term in search_terms):
+                label = cell.get("name") or (
+                    f"Code cell {cell.get('position')}" if cell.get("position") is not None else None
+                )
+                if label and label not in cell_refs:
+                    cell_refs.append(label)
+
+        overview.append(
+            {
+                "parameter": parameter_id,
+                "name": name,
+                "format": encoding_format,
+                "description": description,
+                "primary_link": primary_link,
+                "prompt_link": prompt_link,
+                "files_annotation": files_annotation,
+                "total_files": len(files),
+                "sample_files": sample_files,
+                "prompt_example_links": prompt_example_links,
+                "remaining_files": remaining_files,
+                "transient_note": transient_note,
+                "cell_refs": cell_refs,
+            }
+        )
+
+    return overview
+
+
+def _build_io_table(entries: list[dict[str, Any]]) -> Optional[dict[str, Any]]:
+    if not entries:
+        return None
+    columns = [
+        {
+            "type": "DatatableColumn",
+            "name": "Parameter",
+            "values": [entry.get("parameter") for entry in entries],
+        },
+        {
+            "type": "DatatableColumn",
+            "name": "Name",
+            "values": [entry.get("name") for entry in entries],
+        },
+        {
+            "type": "DatatableColumn",
+            "name": "Format",
+            "values": [entry.get("format") for entry in entries],
+        },
+        {
+            "type": "DatatableColumn",
+            "name": "Source",
+            "values": [entry.get("primary_link") for entry in entries],
+        },
+        {
+            "type": "DatatableColumn",
+            "name": "Linked files",
+            "values": [entry.get("files_annotation") for entry in entries],
+        },
+    ]
+    return {"type": "Datatable", "columns": columns}
 
 
 def extract_step_dicts(
