@@ -124,111 +124,20 @@ if _extract_steps_path.exists():
     sys.modules["extract_steps_mini"] = extract_steps_mini
     spec.loader.exec_module(extract_steps_mini)
     extract_step_dicts = extract_steps_mini.extract_step_dicts
+    build_workflow_context = extract_steps_mini.build_workflow_context
 else:
     raise ImportError("Could not find extract_steps_mini.py to import extract_step_dicts")
 
-step_dicts = extract_step_dicts('interface.crate')
-for step_entry in step_dicts:
-    if step_entry.get("tables", {}).get("notebook_cells"):
-        step_entry["jupyter"] = True
-    else:
-        step_entry["jupyter"] = False
+step_dicts = extract_step_dicts('interface.crate', site_id=site_id)
 
 all_steps = step_dicts
-for index, step_entry in enumerate(all_steps, start=1):
-    step_entry["_sequence"] = index
 
-def _summary_text(stats: dict | None, key: str) -> str:
-    if not stats:
-        return ""
-    return stats.get(key, "")
-
-def _param_brief(entry: dict, site_filter: str | None = None) -> dict:
-    sample_links = entry.get("prompt_example_links") or entry.get("linked_examples") or []
-    if site_filter:
-        filtered_links = [
-            link for link in sample_links if isinstance(link, str) and site_filter in link
-        ]
-        if filtered_links:
-            sample_links = filtered_links
-    sample_links = sample_links[:1]
-    return {
-        "parameter": entry.get("parameter"),
-        "name": entry.get("name"),
-        "format": entry.get("format"),
-        "description": entry.get("description"),
-        "source_link": entry.get("prompt_link"),
-        "sample_example": sample_links,
-        "total_files": entry.get("total_files"),
-        "transient_note": entry.get("transient_note"),
-    }
-
-workflow_steps_summary = []
-workflow_outcomes = []
-for step_summary in all_steps:
-    stats = step_summary.get("stats") or {}
-    inputs = step_summary.get("inputs_overview") or []
-    outputs = step_summary.get("outputs_overview") or []
-    step_identity = {
-        "name": step_summary.get("name"),
-        "position": step_summary.get("position"),
-        "language": step_summary.get("language"),
-        "code_repository": step_summary.get("code_repository"),
-    }
-    if step_identity.get("code_repository") and step_identity.get("name"):
-        step_identity["code_repository_markdown"] = f"[{step_identity['name']}]({step_identity['code_repository']})"
-    else:
-        step_identity["code_repository_markdown"] = None
-
-    ordered_outputs = []
-    for output in outputs:
-        brief = _param_brief(output, site_id)
-        ordered_outputs.append(brief)
-        sample_link = brief["sample_example"][0] if brief["sample_example"] else None
-        workflow_outcomes.append(
-            {
-                "step_name": step_summary.get("name"),
-                "parameter": output.get("parameter"),
-                "name": output.get("name"),
-                "format": output.get("format"),
-                "description": output.get("description"),
-                "sample_link": sample_link,
-                "total_files": output.get("total_files"),
-                "transient_note": output.get("transient_note"),
-            }
-        )
-
-    workflow_steps_summary.append(
-        {
-            "name": step_summary.get("name"),
-            "position": step_summary.get("position"),
-            "code_repository_markdown": step_identity.get("code_repository_markdown"),
-            "language": step_summary.get("language"),
-            "inputs_summary": _summary_text(stats, "input_summary"),
-            "outputs_summary": _summary_text(stats, "output_summary"),
-            "inputs": [_param_brief(entry, site_id) for entry in inputs[:3]],
-            "outputs": ordered_outputs[:3],
-        }
-    )
-
-workflow_overview_input = {
-    "site": site_id,
-    "total_steps": len(all_steps),
-    "steps": workflow_steps_summary,
-}
-
-workflow_diagram_input = {
-    "steps": workflow_steps_summary,
-    "step_order": [item.get("name") for item in sorted(workflow_steps_summary, key=lambda entry: entry.get("position", 0))],
-}
-
-workflow_outcomes_input = {
-    "site": site_id,
-    "outcomes": workflow_outcomes,
-}
+workflow_context = build_workflow_context(all_steps, site_id=site_id)
+workflow_overview_input = workflow_context["overview"]
+workflow_diagram_input = workflow_context["diagram"]
+workflow_outcomes_input = workflow_context["outcomes"]
 
 display_steps = all_steps
-
 ```
 
 # CoastSat Methodology: Experimental LLM Publication
@@ -245,162 +154,11 @@ display_steps = all_steps
 ::::: for step in display_steps
 
 ```python exec
-identity = {
-    "name": step.get("name"),
-    "position": step.get("position"),
-    "language": step.get("language"),
-    "code_repository": step.get("code_repository"),
-    "step_number": step.get("_sequence"),
-}
-code_repo_url = identity.get("code_repository")
-step_name = identity.get("name")
-if code_repo_url and step_name:
-    identity["code_repository_markdown"] = f"[{step_name}]({code_repo_url})"
-else:
-    identity["code_repository_markdown"] = None
-
-link_lists = step.get("link_lists") or {}
-stats = step.get("stats") or {}
-
-data_flows = {
-    "inputs": {
-        "count": stats.get("input_parameter_count"),
-        "summary": stats.get("input_summary"),
-        "examples": stats.get("input_examples"),
-        "links": link_lists.get("inputs"),
-    },
-    "outputs": {
-        "count": stats.get("output_parameter_count"),
-        "summary": stats.get("output_summary"),
-        "examples": stats.get("output_examples"),
-        "links": link_lists.get("outputs"),
-    },
-}
-
-linked_artefacts = {
-    "inputs": {
-        "summary": stats.get("linked_input_summary"),
-        "examples": stats.get("linked_input_examples"),
-        "links": stats.get("linked_input_links"),
-        "parameters": stats.get("linked_input_parameter_count"),
-        "file_count": stats.get("linked_input_file_count"),
-    },
-    "outputs": {
-        "summary": stats.get("linked_output_summary"),
-        "examples": stats.get("linked_output_examples"),
-        "links": stats.get("linked_output_links"),
-        "parameters": stats.get("linked_output_parameter_count"),
-        "file_count": stats.get("linked_output_file_count"),
-    },
-}
-
-notebook_cells_all = step.get("notebook_cells") or []
-notebook_cells_with_content = [cell for cell in notebook_cells_all if cell.get("content")]
-max_cells = 10
-cells_for_prompt = []
-for cell in notebook_cells_with_content[:max_cells]:
-    cell_name = cell.get("name") or f"Cell {cell.get('position')}"
-    cells_for_prompt.append(
-        {
-            "name": cell_name,
-        "position": cell.get("position"),
-            "path": cell.get("path"),
-            "uri": cell.get("uri"),
-            "content": cell.get("content"),
-            "content_truncated": cell.get("content_truncated"),
-    }
-    )
-
-notebook_context = {
-    "summary": step.get("notebook_summary_text"),
-    "total_cells": len(notebook_cells_all),
-    "cells_included": len(cells_for_prompt),
-    "additional_cells": max(0, len(notebook_cells_with_content) - len(cells_for_prompt)),
-    "cells": cells_for_prompt,
-    "available_cell_names": [cell.get("name") or f"Cell {cell.get('position')}" for cell in notebook_cells_all],
-}
-
-context_lines = [line for line in (step.get("prompt_context") or "").splitlines() if line]
-
-def _clean(value):
-    if value in (None, "", "–"):
-        return None
-    return value
-
-def _build_param_payload(entry: dict, kind: str) -> dict:
-    sample_prompt_links = [
-        link
-        for link in (entry.get("prompt_example_links") or [])
-        if isinstance(link, str) and link and link != entry.get("name")
-    ]
-    if site_id:
-        site_filtered = [link for link in sample_prompt_links if site_id in link]
-        if site_filtered:
-            sample_prompt_links = site_filtered
-    total_files = entry.get("total_files") or 0
-    primary_example_links = sample_prompt_links[:1]
-
-    if total_files:
-        linked_note = f"{total_files} linked file{'s' if total_files != 1 else ''} referenced in the crate"
-        if primary_example_links:
-            linked_note += f"; representative example: {primary_example_links[0]}"
-        else:
-            linked_note += " (no public URLs)."
-    else:
-        linked_note = "No linked files recorded."
-
-    cell_refs = [ref for ref in (entry.get("cell_refs") or []) if ref]
-    cell_refs_text = ", ".join(cell_refs)
-    cell_refs_note = (
-        f"Notebook cells: {cell_refs_text}" if cell_refs_text else "Notebook cells: not documented."
-    )
-
-    return {
-        "step": identity,
-        "parameter": entry.get("parameter"),
-        "name": entry.get("name"),
-        "format": _clean(entry.get("format")),
-        "description": _clean(entry.get("description")),
-        "source_link": entry.get("prompt_link"),
-        "linked_examples": primary_example_links,
-        "total_linked_files": total_files,
-        "linked_files_note": linked_note,
-        "transient_note": entry.get("transient_note"),
-        "context_lines": context_lines,
-        "cell_refs": cell_refs,
-        "cell_refs_text": cell_refs_text,
-        "cell_refs_note": cell_refs_note,
-        "kind": kind,
-    }
-
-inputs_prompt_payload = [
-    _build_param_payload(entry, "input")
-    for entry in (step.get("inputs_overview") or [])
-]
-outputs_prompt_payload = [
-    _build_param_payload(entry, "output")
-    for entry in (step.get("outputs_overview") or [])
-]
-
-step_title_input = identity
-step_objective_input = {
-    "identity": identity,
-    "data_flows": data_flows,
-    "linked_artefacts": linked_artefacts,
-    "notebook": {"summary": notebook_context.get("summary")},
-    "context_lines": context_lines,
-    "inputs": step.get("inputs_overview"),
-    "outputs": step.get("outputs_overview"),
-}
-step_operations_input = {
-    "identity": identity,
-    "data_flows": data_flows,
-    "linked_artefacts": linked_artefacts,
-    "notebook": notebook_context,
-    "context_lines": context_lines,
-    "inputs": step.get("inputs_overview"),
-    "outputs": step.get("outputs_overview"),
-    }
+step_title_input = step["step_title_input"]
+step_objective_input = step["step_objective_input"]
+step_operations_input = step["step_operations_input"]
+inputs_prompt_payload = step.get("inputs_prompt_payload") or []
+outputs_prompt_payload = step.get("outputs_prompt_payload") or []
 ```
 
 :::::: template_describe @livepublication/coastsat/step/title-v2 [openai/gpt-5] {{step_title_input}} ::::: 
