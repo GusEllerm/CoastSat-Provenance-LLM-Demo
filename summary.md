@@ -54,5 +54,4 @@ Each prompt consumes the deterministic payloads from `extract_steps_mini.py`, re
 - [`docs/coastsat-example/example.html`](https://github.com/GusEllerm/CoastSat-Provenance-LLM-Demo/blob/master/docs/coastsat-example/example.html) (published example)
 - [`docs/examples/coastsat.md`](https://github.com/GusEllerm/CoastSat-Provenance-LLM-Demo/blob/master/docs/examples/coastsat.md) (detailed documentation)
 
-Use this summary to inform narrative explanations of how provenance data, deterministic preprocessing, and scoped LLM prompts collaborate to produce the CoastSat methodological description.*** End Patch
 
