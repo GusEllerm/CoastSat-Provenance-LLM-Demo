@@ -104,5 +104,7 @@ def get_commit_date(github_commit_url):
 # Extract version information
 coastsat_version = interface_crate.mainEntity.get("version") if interface_crate else None
 coastsat_commit_date = get_commit_date(coastsat_version)
+interface_crate_version = interface_crate.mainEntity.get("url") if interface_crate else None
+publication_crate_version = publication_crate.mainEntity.get("url") if publication_crate else None
 ```
 
