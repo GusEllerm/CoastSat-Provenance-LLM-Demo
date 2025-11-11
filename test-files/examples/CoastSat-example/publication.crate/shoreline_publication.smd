@@ -1094,9 +1094,6 @@ to_date_human = human_readable_date(to_date)
 
 ::: if date_limit and "sar" not in site_id
 
-## Time Delimited Analysis
-### From `from_date_human`{python exec} to `to_date_human`{python exec}
-
 ```python exec
 # Save original (full dataset) statistics for comparison
 original_num_transects = len(site_primary_data)
@@ -1308,20 +1305,61 @@ else:
     site_primary_data_with_time_bounded = site_primary_data.copy()
 ```
 
-### Data Processing
+```python exec
+def _safe_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
-The analysis began with the complete satellite-derived shoreline dataset containing `original_data_rows`{python exec} observations for `num_transects_total`{python exec} shore-normal transects. After applying the specified date range filter from `from_date_human`{python exec} to `to_date_human`{python exec}, the dataset was reduced to `filtered_data_rows`{python exec} observations for `num_transects_total`{python exec} shore-normal transects.
-
-:::: template_describe [openai/gpt-5] @livepublication/coastsat/NEW_META_PROMPT {meta_data} ::::
+meta_data = {
+    "site_id": site_id,
+    "location_name": location_name,
+    "analysis_window": {
+        "from": from_date_human,
+        "to": to_date_human,
+        "is_limited": bool(date_limit),
+    },
+    "time_series_available": bool("site_time_series_df" in locals() and not site_time_series_df.empty),
+    "observations": {
+        "original_total": _safe_int(locals().get("original_data_rows")),
+        "filtered_total": _safe_int(locals().get("filtered_data_rows")),
+    },
+    "transects": {
+        "total": _safe_int(locals().get("num_transects_total")),
+        "analyzed": _safe_int(locals().get("num_transects_analyzed")),
+    },
+}
+```
 
 ::: if time_bounded_analysis_available
 
-These observations span `time_period_years`{python exec} years, with an average of `avg_data_points`{python exec} data points per transect.
-The time-bounded analysis reveals an average shoreline change rate of **`avg_trend_time_bounded`{python exec} meters per year** across all analysed transects. 
-Individual transect trends ranged from `min_trend_time_bounded`{python exec} to `max_trend_time_bounded`{python exec} meters per year.
-The analysis processed a total of `total_observations_period`{python exec} valid shoreline observations across all transects during the specified period.
-
-The quality of the linear regression models is reflected in an average R² value of `avg_r2_time_bounded`{python exec}, representing the proportion of variance in shoreline position explained by calculated trend. 
+```python exec
+meta_data = {
+    "site_id": site_id,
+    "location_name": location_name,
+    "date_window": {
+        "source_start": locals().get("filtered_date_start"),
+        "source_end": locals().get("filtered_date_end"),
+        "requested_start": from_date_human,
+        "requested_end": to_date_human,
+        "span_years": locals().get("time_period_years"),
+    },
+    "transects": {
+        "analyzed_count": _safe_int(locals().get("num_transects_analyzed")),
+        "total_observations": _safe_int(locals().get("total_observations_period")),
+        "avg_points_per_transect": locals().get("avg_data_points"),
+    },
+    "trend": {
+        "average": locals().get("avg_trend_time_bounded"),
+        "minimum": locals().get("min_trend_time_bounded"),
+        "maximum": locals().get("max_trend_time_bounded"),
+    },
+    "model_quality": {
+        "average_r2": locals().get("avg_r2_time_bounded"),
+    },
+}
+```
 
 ```python exec
 # Create map showing time-bounded transect trends
@@ -1333,12 +1371,8 @@ time_bounded_map = create_transect_map(
 time_bounded_map
 ```
 
-### Comparison
+:::::: template_describe @livepublication/coastsat/time/findings-v2 [openai/gpt-5] {{meta_data}} ::::::
 
-The original analysis, based on the complete temporal record, included `original_num_transects`{python exec} transects with an average trend of **`original_avg_trend_formatted`{python exec} meters per year** (ranging from `original_min_trend_formatted`{python exec} to `original_max_trend_formatted`{python exec} meters per year).
-The time-bounded analysis shows `num_transects_analyzed`{python exec} transects with an average trend of **`avg_trend_time_bounded`{python exec} meters per year** (ranging from `min_trend_time_bounded`{python exec} to `max_trend_time_bounded`{python exec} meters per year). This represents a **`trend_change_formatted`{python exec}** in average trend compared to the historical baseline.
-Model quality also differs between approaches: the time-bounded analysis achieved an average R² of `avg_r2_time_bounded`{python exec} compared to `original_avg_r2_formatted`{python exec} for the full dataset. 
-`r2_description`{python exec}
 
 :::
 :::
