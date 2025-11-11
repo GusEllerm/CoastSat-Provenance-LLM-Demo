@@ -20,7 +20,7 @@ export STENCILA_PROMPTS_DIR="$PROMPTS_DIR"
 "$CLI" render coastsat_llm.smd test.html --debug
 
 if command -v open >/dev/null 2>&1; then
-  open test.html
+  open coastsat_methods.html
 else
-  echo "Rendered HTML at $SCRIPT_DIR/test.html"
+  echo "Rendered HTML at $SCRIPT_DIR/coastsat_methods.html"
 fi
